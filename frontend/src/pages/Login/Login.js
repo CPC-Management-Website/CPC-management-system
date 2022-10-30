@@ -1,12 +1,20 @@
 import React, { useState }  from 'react';
 import "./Login.css"
+import APIService from '../../services/APIService';
 
 function Login(){
     const [email, setEmail] = useState('');
 
+    const loginUser = () =>{
+        APIService.loginUser({email})
+        .catch(error => console.log('error',error))
+    }
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(email);
+        loginUser()
+        setEmail('')
     }
 
     return (
