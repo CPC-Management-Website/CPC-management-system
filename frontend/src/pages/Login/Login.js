@@ -19,11 +19,12 @@ function Login(){
         const res = loginUser()
         setEmail('')
         setPassword('')
-        navigate('/landingpage');
+        console.log(res)
+        navigate('/homepage');
     }
 
     return (
-        <div className='container'>
+        <div className='loginPage'>
             <div className="auth-form-container">
                 <h2>Login</h2>
                 <form className="login-form" onSubmit={handleSubmit}>

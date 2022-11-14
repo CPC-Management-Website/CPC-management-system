@@ -31,6 +31,8 @@ def login():
             # return redirect(url_for('views.home'))
         else:
             print("Password incorrect!")
+            return {"Error" : "Wrong Password"}, 401
     else:
         print("Email does not exist")
+        return {"Error" : "Email does not exist"}, 402
     return {"email" : email,"password" : password}

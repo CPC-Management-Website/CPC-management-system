@@ -1,12 +1,12 @@
 import './App.css';
-import React,{ useState, useEffect }  from 'react';
 import Login from './pages/Login/Login.js'
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes
-} from 'react-router-dom';
-import LandingPage from './pages/LandingPage/LandingPage';
+import Home from './pages/Home/Home';
+
+import React,{ useState, useEffect }  from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+
+
 function App() {
 
   const [data, setdata] = useState({
@@ -32,12 +32,14 @@ function App() {
   }, []);
 
   return (
-  <Router>
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/landingpage" element={<LandingPage />} />
-    </Routes>
-  </Router>
+    <div className='app'>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/homepage" element={<Home />} />
+        </Routes>
+      </Router>
+    </div>
   );
 }
 
