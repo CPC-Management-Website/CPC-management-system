@@ -3,10 +3,10 @@ import React,{ useState, useEffect }  from 'react';
 import Login from './pages/Login/Login.js'
 import {
   BrowserRouter as Router,
-  Routes,
   Route,
-  Link
+  Routes
 } from 'react-router-dom';
+import LandingPage from './pages/LandingPage/LandingPage';
 function App() {
 
   const [data, setdata] = useState({
@@ -32,10 +32,12 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      
-      <Login />
-    </div>
+  <Router>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/landingpage" element={<LandingPage />} />
+    </Routes>
+  </Router>
   );
 }
 
