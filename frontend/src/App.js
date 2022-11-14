@@ -1,6 +1,12 @@
 import './App.css';
 import React,{ useState, useEffect }  from 'react';
 import Login from './pages/Login/Login.js'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from 'react-router-dom';
 function App() {
 
   const [data, setdata] = useState({
