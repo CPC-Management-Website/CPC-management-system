@@ -46,7 +46,7 @@ function UserEntry(){
                             <input value={lastName} onChange={(e) => setLastName(e.target.value)}type="string" placeholder="Last Name" id="lastName" name="lastName" />
                         </form>
                     </form>
-                    <label htmlFor="Vjudge Handle">VjudgeHandle*</label>
+                    <label htmlFor="Vjudge Handle">Vjudge Handle*</label>
                     <input value={vjudgeHandle} onChange={(e) => setVjudgeHandle(e.target.value)}type="string" placeholder="Vjudge Handle" id="vjudgeHandle" name="vjudgeHandle" />
                     
                     <label htmlFor="Platform Role">Platform Role*</label>
