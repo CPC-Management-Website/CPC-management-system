@@ -51,7 +51,7 @@ function UserEntry(){
                     
                     <label htmlFor="Platform Role">Platform Role*</label>
                     <input value={platformRole} onChange={(e) => setPlatformRole(e.target.value)}type="string" placeholder="Platform Role" id="platformRole" name="platformRole" />
-                    <button type="submit">Log In</button>
+                    <button type="submit">Add User</button>
                 </form>
             </div>
 
