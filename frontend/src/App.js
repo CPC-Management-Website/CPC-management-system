@@ -1,5 +1,6 @@
 import './App.css';
 import Login from './pages/Login/Login.js'
+import UserEntry from './pages/UserEntry/UserEntry.js'
 import Home from './pages/Home/Home';
 
 import React,{ useState, useEffect }  from 'react';
@@ -36,6 +37,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/userentry" element={<UserEntry />} />
           <Route path="/homepage" element={<Home />} />
         </Routes>
       </Router>
