@@ -18,4 +18,23 @@ export default class APIService{
         }
     }
 
+    static async enterUser(email, firstName, lastName, vjudgeHandle){
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/userEntry`, {
+                'method': 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(email, firstName, lastName, vjudgeHandle)
+            })
+            console.log(response)
+            response.json()
+                .then(function (data) {
+                })
+        } catch (error) {
+            console.log(error)
+            //return console.log(error)
+        }
+    }
+
 }
