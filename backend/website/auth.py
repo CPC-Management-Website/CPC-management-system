@@ -1,9 +1,13 @@
-from flask import request, Blueprint
-from app import create_app
-from .models import User, permissions
-from flask_login import current_user, login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
 import json
+
+from app import create_app
+from flask import Blueprint, request
+from flask_login import current_user, login_required, login_user, logout_user
+from website import errors
+from werkzeug.security import check_password_hash, generate_password_hash
+import werkzeug
+
+from .models import User, permissions
 
 auth = Blueprint("auth", __name__)
 
@@ -37,10 +41,10 @@ def login():
             # return redirect(url_for('views.home'))
         else:
             print("Password incorrect!")
-            return {"Error" : "Wrong Password"}, 401
+            return errors.incorrect_password(werkzeug.exceptions.BadRequest)
     else:
         print("Email does not exist")
-        return {"Error" : "Email does not exist"}, 402
+        return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
     # TODO what to return here
     return {"email" : email,"password" : password}
 

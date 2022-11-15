@@ -24,8 +24,10 @@ def create_app():
 
     from .views import views
     from .auth import auth
+    from .errors import errors
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
+    app.register_blueprint(errors, url_prefix = "/")
 
     login_manager = LoginManager()
     login_manager.init_app(app)

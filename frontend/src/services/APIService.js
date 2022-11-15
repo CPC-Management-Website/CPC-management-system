@@ -9,9 +9,9 @@ export default class APIService{
                 body: JSON.stringify(email)
             })
             console.log(response)
-            response.json()
-                .then(function (data) {
-                })
+            // response.json()
+            //     .then(function (data) {
+            //     })
         } catch (error) {
             console.log(error)
             //return console.log(error)
