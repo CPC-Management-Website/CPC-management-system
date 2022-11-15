@@ -8,10 +8,11 @@ function UserEntry(){
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [vjudgeHandle, setVjudgeHandle] = useState('');
+    const [platformRole, setPlatformRole] = useState('');
 
     const navigate = useNavigate();
     const enterUser = () =>{
-        APIService.enterUser({email, firstName, lastName, vjudgeHandle})
+        APIService.enterUser({email, firstName, lastName, vjudgeHandle, platformRole})
         .catch(error => console.log('error',error))
     }
 
@@ -23,6 +24,7 @@ function UserEntry(){
         setFirstName('')
         setLastName('')
         setVjudgeHandle('')
+        setPlatformRole('')
         console.log(res)
         navigate('/homepage');
     }
@@ -46,6 +48,9 @@ function UserEntry(){
                     </form>
                     <label htmlFor="Vjudge Handle">VjudgeHandle*</label>
                     <input value={vjudgeHandle} onChange={(e) => setVjudgeHandle(e.target.value)}type="string" placeholder="Vjudge Handle" id="vjudgeHandle" name="vjudgeHandle" />
+                    
+                    <label htmlFor="Platform Role">Platform Role*</label>
+                    <input value={platformRole} onChange={(e) => setPlatformRole(e.target.value)}type="string" placeholder="Platform Role" id="platformRole" name="platformRole" />
                     <button type="submit">Log In</button>
                 </form>
             </div>
