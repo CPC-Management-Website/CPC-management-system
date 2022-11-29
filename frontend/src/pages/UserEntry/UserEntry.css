@@ -12,12 +12,18 @@
     flex-direction: column;
 
 }
-.userEntryVertical-form {
+.userEntry-form {
     display: flex;
     flex-direction: column;
     
 }
-.userEntryHorizontal-form {
+
+.userEntryVertical-container {
+    display: flex;
+    flex-direction: column;
+    
+}
+.userEntryHorizontal-container{
     display: flex;
     flex-direction: row;
     margin: 5px 0;
@@ -50,7 +56,15 @@ button {
     cursor: pointer;
     color: #7439db;
 }
-  
+ 
+select {
+    margin: 0.5rem 0;
+    padding: 16px 20px;
+    border: none;
+    margin-left: 1.5rem;
+    border-radius: 10px;
+}
+
 .link-btn {
     background: none;
     color: white;

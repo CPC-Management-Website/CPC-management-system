@@ -33,24 +33,30 @@ function UserEntry(){
         <div className='userEntryPage'>
             <div className="auth-form-container">
                 <h2>Add New User</h2>
-                <form className="userEntryVertical-form" onSubmit={handleSubmit}>
+                <form className="userEntry-form" onSubmit={handleSubmit}>
                     <label htmlFor="Email">User Email*</label>
                     <input value={email} onChange={(e) => setEmail(e.target.value)}type="email" placeholder="useremail@gmail.com" id="email" name="email" />
-                    <form className="userEntryHorizontal-form" >
-                         <form className="userEntryVertical-form" >
+                    <div className="userEntryHorizontal-container" >
+                         <div className="userEntryVertical-container" >
                             <label htmlFor="First Name">First Name*</label>
                             <input value={firstName} onChange={(e) => setFirstName(e.target.value)} type="string" placeholder="First Name" id="firstName" name="firstName" />
-                         </form>  
-                        <form className="userEntryVertical-form"> 
+                         </div>  
+                        <div className="userEntryVertical-container"> 
                             <label htmlFor="Last Name">Last Name*</label>
                             <input value={lastName} onChange={(e) => setLastName(e.target.value)}type="string" placeholder="Last Name" id="lastName" name="lastName" />
-                        </form>
-                    </form>
+                        </div>
+                    </div>
                     <label htmlFor="Vjudge Handle">Vjudge Handle*</label>
                     <input value={vjudgeHandle} onChange={(e) => setVjudgeHandle(e.target.value)}type="string" placeholder="Vjudge Handle" id="vjudgeHandle" name="vjudgeHandle" />
                     
                     <label htmlFor="Platform Role">Platform Role*</label>
-                    <input value={platformRole} onChange={(e) => setPlatformRole(e.target.value)}type="string" placeholder="Platform Role" id="platformRole" name="platformRole" />
+                    <select value={platformRole} onChange={(e) => setPlatformRole(e.target.value)}type="string" placeholder="Platform Role" id="platformRole" name="platformRole">
+                        <option>Admin</option>
+                        <option>Trainee</option>
+                        <option>Mentor</option>
+                        <option>Mentor Head</option>
+                    </select>
+                    
                     <button type="submit">Add User</button>
                 </form>
             </div>
