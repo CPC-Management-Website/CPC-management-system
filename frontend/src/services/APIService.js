@@ -7,14 +7,17 @@ export default class APIService{
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(email)
+            }).then(function(response){
+                if (!response.ok){
+                    const error = (response.json()) || response.status;
+                    return Promise.reject(error);
+                }
+
             })
-            console.log(response)
-            // response.json()
-            //     .then(function (data) {
-            //     })
         } catch (error) {
-            console.log(error)
-            //return console.log(error)
+            error.then(function(value){
+                console.log(value)
+            })
         }
     }
 
