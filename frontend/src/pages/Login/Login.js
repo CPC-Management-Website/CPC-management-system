@@ -1,13 +1,16 @@
-import React, { useState }  from 'react';
+import React, { useState, useContext }  from 'react';
 import "./Login.css"
 import APIService from '../../services/APIService';
 import { useNavigate } from "react-router-dom";
 import axios from '../../services/axios';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.js';
+import AuthContext from '../../context/AuthProvider';
+
 
 const LOGIN_URL = '/login'
 
 function Login(){
+    const {setAuth} = useContext(AuthContext)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errMsg, setErrMsg] = useState('');
@@ -22,7 +25,10 @@ function Login(){
             headers: {'Content-Type': 'application/json'}
             }
             );
-            //console.log(response)
+            const permissions = response?.data?.permissions
+            setAuth({email, password, permissions})
+            console.log(response)
+
             setEmail('')
             setPassword('')
             setSuccess(true)

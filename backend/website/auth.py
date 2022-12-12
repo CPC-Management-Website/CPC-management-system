@@ -38,6 +38,7 @@ def login():
             permissions_json = json.dumps(perm.__dict__)
             print(user_json)
             print(permissions_json)
+            return {"email" : email,"password" : password, "permissions" : permissions_json}
             # return redirect(url_for('views.home'))
         else:
             print("Password incorrect!")
@@ -45,8 +46,6 @@ def login():
     else:
         print("Email does not exist")
         return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
-    # TODO what to return here
-    return {"email" : email,"password" : password}
 
 @auth.route("/register", methods=["POST"], strict_slashes=False)
 def register():
