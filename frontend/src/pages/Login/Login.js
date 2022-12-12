@@ -28,9 +28,6 @@ function Login(){
             const permissions = response?.data?.permissions
             setAuth({email, password, permissions})
             console.log(response)
-
-            setEmail('')
-            setPassword('')
             setSuccess(true)
             navigate('/homepage');
             
@@ -49,6 +46,8 @@ function Login(){
     const handleSubmit = (e) => {
         e.preventDefault();
         loginUser()
+        setEmail('')
+        setPassword('')
     }
 
     return (
