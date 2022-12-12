@@ -6,6 +6,8 @@ from flask_login import current_user, login_required, login_user, logout_user
 from website import errors
 from werkzeug.security import check_password_hash, generate_password_hash
 import werkzeug
+import pandas as pd
+import os
 
 from .models import User, permissions
 
@@ -38,7 +40,6 @@ def login():
             permissions_json = json.dumps(perm.__dict__)
             print(user_json)
             print(permissions_json)
-            return {"email" : email,"password" : password, "permissions" : permissions_json}
             # return redirect(url_for('views.home'))
         else:
             print("Password incorrect!")
@@ -46,13 +47,15 @@ def login():
     else:
         print("Email does not exist")
         return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
+    # TODO what to return here
+    return {"email" : email,"password" : password}
 
-@auth.route("/register", methods=["POST"], strict_slashes=False)
+@auth.route("/userentry", methods=["POST"], strict_slashes=False)
 def register():
    
     email = request.json["email"]
-    password = request.json["password"]
-    vjudge = request.json["vjudge"]
+    password = request.json["lastName"]
+    vjudge = request.json["vjudgeHandle"]
     # email = input("email: ")
     # password = input("password: ")
     # vjudge = input("vjudge: ")
@@ -67,4 +70,45 @@ def register():
         print("User added successfully")
     # TODO what to return here?
     return {"email" : email,"password" : password}
+
+@auth.route("/userentryfile", methods=["POST"], strict_slashes=False)
+def registerfile():
+   
+    file = request.files["excel-file"]
+    
+    # email = input("email: ")
+    # password = input("password: ")
+    # vjudge = input("vjudge: ")
+    # TODO are the password checks done in the frontend or the backend
+    print(file)
+    # save_path = 'C:\Users\moham\Desktop'
+    # pd.read_csv(file.read())
+    path = os.getcwd()
+    print(path)
+    file.save(os.path.join(path,"file.xlsx"))
+
+    result = pd.read_excel(os.path.join(path,'file.xlsx'))
+    df = pd.DataFrame(result)
+    for i in df.iterrows():
+        vjudge = i[1][0]
+        email  = i[1][1]
+        password = i[1][2]
+        print(email,password,vjudge)
+        user = User.getUser(email)
+        if user:
+            print(user.email)
+            print("user already registered")
+        else:
+            User.addUser(email, vjudge, password=generate_password_hash(
+                    password, method='sha256'))
+            print("User added successfully")
+        
+    # f = file.read()
+    # print(f)
+    # workbook = pd.DataFrame(f)
+    # workbook.head()
+
+    
+    # TODO what to return here?
+    return " " #{"email" : email,"password" : password} 
 # register()
