@@ -24,6 +24,7 @@ function WelcomeEntry(){
     return (
        // <div className='WelcomePage'>
        //     <div className="WelcomeHorizontal-container" >
+       
                 <div class="sidebar">
                     <a class="active" href="#home" onclick="openPage(event, 'Home')">Home</a>
                     <a href="#profile">My Profile</a>
