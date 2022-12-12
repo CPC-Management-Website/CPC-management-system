@@ -2,6 +2,9 @@ import './App.css';
 import Login from './pages/Login/Login.js'
 import UserEntry from './pages/UserEntry/UserEntry.js'
 import Home from './pages/Home/Home';
+import WelcomePage from './pages/WelcomePage/WelcomePage.js'
+//import WelcomePage from './pages/WelcomePage-copy/WelcomePage.html'
+//import WelcomePage from './pages/welcome-page/index.html'
 
 import React,{ useState, useEffect }  from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -39,6 +42,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/userentry" element={<UserEntry />} />
           <Route path="/homepage" element={<Home />} />
+          <Route path="/welcomepage" element={<WelcomePage/>} />
         </Routes>
       </Router>
     </div>
