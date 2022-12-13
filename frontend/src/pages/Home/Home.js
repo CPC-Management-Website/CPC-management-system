@@ -9,7 +9,7 @@ function Home(){
 
         <div className="welcome-page-horizontal-container" >
         <div className="welcome-page-vertical-container" >
-        <label className="WelcomeLabel">Welcome Back! </label>
+        <label className="WelcomeLabel">Welcome back! </label>
         <label className="welcome-label-description"> Create resources, manage enrollment, track the performance of each trainee and build learning community — all in one place</label>
         </div>
         <Logo width = "600" height = "600"/>
