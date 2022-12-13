@@ -53,7 +53,7 @@ function NavBar() {
               <NavLink
 
                 exact
-                to="/history"
+                to="/transcript"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}

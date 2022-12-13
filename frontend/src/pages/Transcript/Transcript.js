@@ -1,6 +1,6 @@
 import ProgressList from "./ProgressList";
 import React, {useEffect, useState} from "react";
-
+import NavBar from "../NavBar/NavBar";
 
 function Transcript() {
 
@@ -29,6 +29,7 @@ function Transcript() {
 
     return (
         <div>
+            <NavBar/>
             <header>
                 <div>Transcript</div>
                 <div>
