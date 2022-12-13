@@ -6,6 +6,7 @@ import NavBar from './pages/NavBar/NavBar.js'
 
 import React,{ useState, useEffect }  from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Transcript from './pages/Transcript/Transcript';
 
 
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/userentry" element={<UserEntry />} />
           <Route path="/homepage" element={<Home />} />
           <Route path="/navbar" element={<NavBar/>} />
+          <Route path="/transcript" element={<Transcript/>} />
         </Routes>
       </Router>
     </div>

@@ -26,4 +26,24 @@ export default class APIService{
         }
     }
 
+    static async enterFile(excelFile){
+        try {
+            const data = new FormData();
+            data.append('excel-file', excelFile, 'file.xlsx');
+            const response = await fetch(`http://127.0.0.1:5000/userentryfile`, { 
+                'method': 'POST',
+                /*headers: {
+                    //'Content-Type': 'application/json'
+                },*/
+                body: data,
+            })
+            .then(res => res.json())
+            .then(data => console.log(data));  
+            //console.log(response) 
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 }
+

@@ -10,13 +10,17 @@ function UserEntry(){
     const [lastName, setLastName] = useState('');
     const [vjudgeHandle, setVjudgeHandle] = useState('');
     const [platformRole, setPlatformRole] = useState('');
+    const [selectedFile, setSelectedFile] = useState('');
 
     const navigate = useNavigate();
     const enterUser = () =>{
         APIService.enterUser({email, firstName, lastName, vjudgeHandle, platformRole})
         .catch(error => console.log('error',error))
     }
-
+    const enterFile = () =>{
+        APIService.enterFile(selectedFile)
+        .catch(error => console.log('error',error))
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -28,6 +32,14 @@ function UserEntry(){
         setPlatformRole('')
         console.log(res)
         navigate('/homepage');
+    }
+
+    const handleSubmitFile = (e) => {
+        e.preventDefault();
+        const res = enterFile()
+        setSelectedFile()
+        console.log(res)
+        //navigate('/homepage');
     }
 
     return (
@@ -62,6 +74,14 @@ function UserEntry(){
                     </select>
                     
                     <button type="submit">Add User</button>
+                </form>
+                <form className="userEntry-file" onSubmit={handleSubmitFile}>
+                    <input
+                        type="file"
+                        //value={selectedFile}
+                        onChange={(e) => setSelectedFile(e.target.files[0])}
+                    />
+                    <button type="submit">Add Users from file</button>
                 </form>
             </div>
 
