@@ -1,0 +1,23 @@
+
+.WelcomeText-container{
+    display: flex;
+    padding-left: 100px;
+    padding-top: 300px; 
+    /* background-image: linear-gradient(80deg, #ffb81e, #b02b1a,  #4b82c4); */
+    justify-content: center;
+    justify-items: center;
+    /* background-image: url("logo192.png"); */
+  }
+  
+  .WelcomeLabel {
+      margin: 0rem 0;
+      padding: 0rem;
+      border: none;
+      border-radius: 10px;
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
+      font-size: 50px;
+      color: rgb(114, 23, 159);
+      align-self: flex-start;
+      margin-left: 1.5rem;
+  
+  }

@@ -2,6 +2,7 @@ import React, { useState }  from 'react';
 import "./UserEntry.css"
 import APIService from '../../services/APIService';
 import { useNavigate } from "react-router-dom";
+import NavBar from "../NavBar/NavBar";
 
 function UserEntry(){
     const [email, setEmail] = useState('');
@@ -30,6 +31,9 @@ function UserEntry(){
     }
 
     return (
+        <div>
+        <NavBar/>
+
         <div className='userEntryPage'>
             <div className="auth-form-container">
                 <h2>Add New User</h2>
@@ -62,6 +66,8 @@ function UserEntry(){
             </div>
 
         </div>
+        </div>
+
     );
 }
 
