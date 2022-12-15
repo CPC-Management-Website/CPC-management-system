@@ -58,7 +58,7 @@ function NavBar() {
                 className="nav-links"
                 onClick={handleClick}
               >
-                My Assissment History
+                My Assessment History
               </NavLink>
             </li>
 
