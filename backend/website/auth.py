@@ -72,21 +72,15 @@ def register():
 @auth.route("/userentryfile", methods=["POST"], strict_slashes=False)
 def registerfile():
    
-    file = request.files["excel-file"]
-    # print(file)
-    path = os.getcwd()
-    print(path)
-    file.save(os.path.join(path,"file.xlsx"))
-
-    result = pd.read_excel(os.path.join(path,'file.xlsx'))
-    df = pd.DataFrame(result)
-    for i in df.iterrows():
-        vjudge = i[1][0]
-        email  = i[1][1]
-        password = i[1][2]
-        name = "temp"           #TODO
-        role = "Trainee"        #TODO
-        print(email,password,vjudge)
+    file = request.files.get("excel-file")
+    df = pd.DataFrame(pd.read_excel(file))
+    for i, row in df.iterrows():
+        vjudge = row["vjudge"]
+        email  = row["email"]
+        password = "password123"
+        name = row["name"]
+        role = "Trainee"
+        # print(name,email,password)
         if User.exists(email):
             print(email)
             print("user already registered")
