@@ -29,7 +29,7 @@ def login():
     email = request.json["email"]
     password = request.json["password"]
     
-    user = User.getUser(email)
+    user = User(email = email)
 
     if user:
         if check_password_hash(user.password, password):
@@ -52,21 +52,19 @@ def login():
 
 @auth.route("/userentry", methods=["POST"], strict_slashes=False)
 def register():
-   
+    name = request.json["firstName"]+" "+request.json["lastName"]
     email = request.json["email"]
-    password = request.json["lastName"]
+    password = "password123"
     vjudge = request.json["vjudgeHandle"]
-    # email = input("email: ")
-    # password = input("password: ")
-    # vjudge = input("vjudge: ")
-    # TODO are the password checks done in the frontend or the backend
-    user = User.getUser(email)
+    role = request.json["platformRole"]
 
-    if user:
+    if User.exists(email):
         print("user already registered")
     else:
-        User.addUser(email, vjudge, password=generate_password_hash(
-                password, method='sha256'))
+        User.addUser(vjudge_handle = vjudge,name = name,
+                    email = email, level = 1,role = role,
+                    active = True, points = 0,
+                    password = generate_password_hash(password, method='sha256'))
         print("User added successfully")
     # TODO what to return here?
     return {"email" : email,"password" : password}
@@ -75,14 +73,7 @@ def register():
 def registerfile():
    
     file = request.files["excel-file"]
-    
-    # email = input("email: ")
-    # password = input("password: ")
-    # vjudge = input("vjudge: ")
-    # TODO are the password checks done in the frontend or the backend
-    print(file)
-    # save_path = 'C:\Users\moham\Desktop'
-    # pd.read_csv(file.read())
+    # print(file)
     path = os.getcwd()
     print(path)
     file.save(os.path.join(path,"file.xlsx"))
@@ -93,14 +84,17 @@ def registerfile():
         vjudge = i[1][0]
         email  = i[1][1]
         password = i[1][2]
+        name = "temp"           #TODO
+        role = "Trainee"        #TODO
         print(email,password,vjudge)
-        user = User.getUser(email)
-        if user:
-            print(user.email)
+        if User.exists(email):
+            print(email)
             print("user already registered")
         else:
-            User.addUser(email, vjudge, password=generate_password_hash(
-                    password, method='sha256'))
+            User.addUser(vjudge_handle = vjudge,name = name,
+                    email = email, level = 1,role = role,
+                    active = True, points = 0,
+                    password = generate_password_hash(password, method='sha256'))
             print("User added successfully")
         
     # f = file.read()
@@ -111,4 +105,3 @@ def registerfile():
     
     # TODO what to return here?
     return " " #{"email" : email,"password" : password} 
-# register()
