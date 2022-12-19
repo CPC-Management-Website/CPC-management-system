@@ -48,7 +48,7 @@ class User(UserMixin):
         mycursor.execute(query)
         db.commit()
         print("here")
-        
+
     @staticmethod
     def getUser(email):
         mycursor = db.cursor()
@@ -97,3 +97,27 @@ class permissions():
         temp = dict(zip(mycursor.column_names, mycursor.fetchone()))
         for key in temp:
             setattr(self,key,temp[key])
+
+
+
+class ProgressPerContest():
+    # user_id = 0
+    # contest_id = 0
+    # solved_problems = 0
+    # rank = 0
+    # zone = "red"
+
+    @staticmethod
+    def addProgressPerContest(user_id, contest_id, solved_problems, rank, zone):
+        print("here1")
+        mycursor = db.cursor()
+        query  = "INSERT INTO training.progress_per_contest_2 (`zone`) VALUES ('RED');"
+        #record = (user_id, contest_id, solved_problems, rank, zone)
+        mycursor.execute(query)
+        #mycursor.execute(query)
+        print("here2")
+        db.commit()
+        print("here")
+    
+    def __init__(self) -> None:
+        print("in init")
