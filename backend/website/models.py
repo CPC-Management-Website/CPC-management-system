@@ -1,5 +1,6 @@
 from . import db
 from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
 
 class User(UserMixin):
     id = None
@@ -49,7 +50,41 @@ class User(UserMixin):
                 `active`, `points`, `password`)\
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
         mycursor.execute(query,(vjudge_handle,name,email,level,role,active,points,password,))
-        db.commit()      
+        db.commit()
+
+
+
+    @staticmethod
+    def changePasswordAdmin(email,newPassword):       
+        def isSamePassword(email,newPassword):
+            mycursor = db.cursor(dictionary=True)
+            query = "SELECT password FROM user where email=%s;"
+            mycursor.execute(query,(email,))
+            record = mycursor.fetchone()
+            # print(record)
+            # print(newPassword)
+            if(check_password_hash(record['password'],newPassword)):
+                return True
+            else:
+                return False
+
+        if(User.exists(email)):
+            if(isSamePassword(email,newPassword)):
+                print("Password for",email,"is the same")
+            else:
+                mycursor = db.cursor()
+                newPassword = generate_password_hash(newPassword, method='sha256')
+                query = "UPDATE user SET password = %s WHERE (email = %s);"
+                mycursor.execute(query,(newPassword,email,))
+                # if(mycursor.rowcount)
+                db.commit()
+                if(mycursor.rowcount!=0):
+                    print("Password for",email,"updated successfully")
+                else:
+                    print("Error Updating Password")      
+                # print(mycursor.rowcount)
+        else:
+            print("Email doesn't exist")
     
 class permissions():
     read_weekly_status = False
