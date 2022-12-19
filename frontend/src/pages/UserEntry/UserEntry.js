@@ -3,6 +3,7 @@ import "./UserEntry.css"
 import APIService from '../../services/APIService';
 import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
+import { HOMEPAGE } from '../../frontend_urls';
 
 function UserEntry(){
     const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ function UserEntry(){
         setVjudgeHandle('')
         setPlatformRole('')
         console.log(res)
-        navigate('/homepage');
+        navigate(HOMEPAGE);
     }
 
     const handleSubmitFile = (e) => {
@@ -39,7 +40,6 @@ function UserEntry(){
         const res = enterFile()
         setSelectedFile()
         console.log(res)
-        //navigate('/homepage');
     }
 
     return (

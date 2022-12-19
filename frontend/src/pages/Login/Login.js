@@ -6,6 +6,7 @@ import axios from '../../services/axios';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.js';
 import AuthContext from '../../context/AuthProvider';
 import LOGIN from '../../backend_urls'
+import { HOMEPAGE } from '../../frontend_urls';
 
 
 function Login(){
@@ -28,7 +29,7 @@ function Login(){
             setAuth({email, password, permissions})
             console.log(response)
             setSuccess(true)
-            navigate('/homepage');
+            navigate(HOMEPAGE);
             
         } catch (err) {
             if (!err?.response) {
