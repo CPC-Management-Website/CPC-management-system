@@ -79,6 +79,7 @@ function UserEntry(){
                     <input
                         type="file"
                         //value={selectedFile}
+                        accept=".xls,.xlsx"
                         onChange={(e) => setSelectedFile(e.target.files[0])}
                     />
                     <button type="submit">Add Users from file</button>

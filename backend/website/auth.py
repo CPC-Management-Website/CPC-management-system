@@ -8,13 +8,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import werkzeug
 import pandas as pd
 import os
+import secrets
 
 from .models import User, permissions
-
+from .email_api import sendPasswordEmails
 auth = Blueprint("auth", __name__)
 
 remember_logins = False     # consider changing this to true
-
+password_length = 10
 # Defining functionality for "/data" endpoint
 @auth.route('/data', methods=["GET"], strict_slashes=False)
 def get_data():
@@ -29,7 +30,7 @@ def login():
     email = request.json["email"]
     password = request.json["password"]
     
-    user = User.getUser(email)
+    user = User(email = email)
 
     if user:
         if check_password_hash(user.password, password):
@@ -52,57 +53,48 @@ def login():
 
 @auth.route("/userentry", methods=["POST"], strict_slashes=False)
 def register():
-   
+    name = request.json["firstName"]+" "+request.json["lastName"]
     email = request.json["email"]
-    password = request.json["lastName"]
+    password = secrets.token_urlsafe(password_length)
     vjudge = request.json["vjudgeHandle"]
-    # email = input("email: ")
-    # password = input("password: ")
-    # vjudge = input("vjudge: ")
-    # TODO are the password checks done in the frontend or the backend
-    user = User.getUser(email)
+    role = request.json["platformRole"]
 
-    if user:
+    if User.exists(email):
         print("user already registered")
     else:
-        User.addUser(email, vjudge, password=generate_password_hash(
-                password, method='sha256'))
+        User.addUser(vjudge_handle = vjudge,name = name,
+                    email = email, level = 1,role = role,
+                    active = True, points = 0,
+                    password = generate_password_hash(password, method='sha256'))
         print("User added successfully")
+        sendPasswordEmails([{"name":name,"password":password,"email":email}])
     # TODO what to return here?
     return {"email" : email,"password" : password}
 
 @auth.route("/userentryfile", methods=["POST"], strict_slashes=False)
 def registerfile():
    
-    file = request.files["excel-file"]
-    
-    # email = input("email: ")
-    # password = input("password: ")
-    # vjudge = input("vjudge: ")
-    # TODO are the password checks done in the frontend or the backend
-    print(file)
-    # save_path = 'C:\Users\moham\Desktop'
-    # pd.read_csv(file.read())
-    path = os.getcwd()
-    print(path)
-    file.save(os.path.join(path,"file.xlsx"))
-
-    result = pd.read_excel(os.path.join(path,'file.xlsx'))
-    df = pd.DataFrame(result)
-    for i in df.iterrows():
-        vjudge = i[1][0]
-        email  = i[1][1]
-        password = i[1][2]
-        print(email,password,vjudge)
-        user = User.getUser(email)
-        if user:
-            print(user.email)
+    file = request.files.get("excel-file")
+    df = pd.DataFrame(pd.read_excel(file))
+    emails = []
+    for i, row in df.iterrows():
+        vjudge = row["vjudge"]
+        email  = row["email"]
+        password = secrets.token_urlsafe(password_length)
+        name = row["name"]
+        role = "Trainee"
+        # print(name,email,password)
+        if User.exists(email):
+            print(email)
             print("user already registered")
         else:
-            User.addUser(email, vjudge, password=generate_password_hash(
-                    password, method='sha256'))
+            User.addUser(vjudge_handle = vjudge,name = name,
+                    email = email, level = 1,role = role,
+                    active = True, points = 0,
+                    password = generate_password_hash(password, method='sha256'))
             print("User added successfully")
-        
+            emails.append({"email":email,"name":name,"password":password})
+    sendPasswordEmails(emails)    
     # f = file.read()
     # print(f)
     # workbook = pd.DataFrame(f)
@@ -111,4 +103,3 @@ def registerfile():
     
     # TODO what to return here?
     return " " #{"email" : email,"password" : password} 
-# register()
