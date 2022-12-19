@@ -8,13 +8,14 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import werkzeug
 import pandas as pd
 import os
+import secrets
 
 from .models import User, permissions
-
+from .email_api import sendPasswordEmails
 auth = Blueprint("auth", __name__)
 
 remember_logins = False     # consider changing this to true
-
+password_length = 10
 # Defining functionality for "/data" endpoint
 @auth.route('/data', methods=["GET"], strict_slashes=False)
 def get_data():
@@ -54,7 +55,7 @@ def login():
 def register():
     name = request.json["firstName"]+" "+request.json["lastName"]
     email = request.json["email"]
-    password = "password123"
+    password = secrets.token_urlsafe(password_length)
     vjudge = request.json["vjudgeHandle"]
     role = request.json["platformRole"]
 
@@ -66,6 +67,7 @@ def register():
                     active = True, points = 0,
                     password = generate_password_hash(password, method='sha256'))
         print("User added successfully")
+        sendPasswordEmails([{"name":name,"password":password,"email":email}])
     # TODO what to return here?
     return {"email" : email,"password" : password}
 
@@ -74,10 +76,11 @@ def registerfile():
    
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
+    emails = []
     for i, row in df.iterrows():
         vjudge = row["vjudge"]
         email  = row["email"]
-        password = "password123"
+        password = secrets.token_urlsafe(password_length)
         name = row["name"]
         role = "Trainee"
         # print(name,email,password)
@@ -90,7 +93,8 @@ def registerfile():
                     active = True, points = 0,
                     password = generate_password_hash(password, method='sha256'))
             print("User added successfully")
-        
+            emails.append({"email":email,"name":name,"password":password})
+    sendPasswordEmails(emails)    
     # f = file.read()
     # print(f)
     # workbook = pd.DataFrame(f)
