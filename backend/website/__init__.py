@@ -6,6 +6,7 @@ from flask_login import LoginManager
 import mysql.connector
 import os
 from dotenv import load_dotenv
+import js2py
 
 load_dotenv()
 cors = CORS()
@@ -17,6 +18,7 @@ db = mysql.connector.connect(
     database=os.getenv('DB_DATABASE')
 )
 
+eval_result, urls = js2py.run_file('../frontend/src/backend_urls.js')
 def create_app():
     app = Flask(__name__)
     cors.init_app(app, resources={r"*": {"origins": "*"}})
@@ -31,6 +33,7 @@ def create_app():
 
     login_manager = LoginManager()
     login_manager.init_app(app)
+
 
     from .models import User
 

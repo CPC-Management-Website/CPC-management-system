@@ -1,6 +1,5 @@
 import json
 
-from app import create_app
 from flask import Blueprint, request
 from flask_login import current_user, login_required, login_user, logout_user
 from website import errors
@@ -9,6 +8,7 @@ import werkzeug
 import pandas as pd
 import os
 import secrets
+from .__init__ import urls
 
 from .models import User, permissions
 from .email_api import sendPasswordEmails
@@ -16,15 +16,20 @@ auth = Blueprint("auth", __name__)
 
 remember_logins = False     # consider changing this to true
 password_length = 10
+
+
+#eval_result, urls = js2py.run_file('../urls.js')
+
+
 # Defining functionality for "/data" endpoint
-@auth.route('/data', methods=["GET"], strict_slashes=False)
+@auth.route(urls.DATA, methods=["GET"], strict_slashes=False)
 def get_data():
     return {
 		"X":"dataaa"
 		}
 
 
-@auth.route("/login", methods=["POST"], strict_slashes=False)
+@auth.route(urls.LOGIN, methods=["POST"], strict_slashes=False)
 def login():
 
     email = request.json["email"]
@@ -51,7 +56,7 @@ def login():
     # TODO what to return here
     return {"email" : email,"password" : password}
 
-@auth.route("/userentry", methods=["POST"], strict_slashes=False)
+@auth.route(urls.USER_ENTRY, methods=["POST"], strict_slashes=False)
 def register():
     name = request.json["firstName"]+" "+request.json["lastName"]
     email = request.json["email"]
@@ -71,7 +76,7 @@ def register():
     # TODO what to return here?
     return {"email" : email,"password" : password}
 
-@auth.route("/userentryfile", methods=["POST"], strict_slashes=False)
+@auth.route(urls.USER_ENTRY_FILE, methods=["POST"], strict_slashes=False)
 def registerfile():
    
     file = request.files.get("excel-file")

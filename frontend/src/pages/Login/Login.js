@@ -5,9 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from '../../services/axios';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.js';
 import AuthContext from '../../context/AuthProvider';
+import LOGIN from '../../backend_urls'
 
-
-const LOGIN_URL = '/login'
 
 function Login(){
     const {setAuth} = useContext(AuthContext)
@@ -20,7 +19,7 @@ function Login(){
 
     const loginUser = async () => {
         try {
-            const response = await axios.post(LOGIN_URL, JSON.stringify({email, password}),
+            const response = await axios.post(LOGIN, JSON.stringify({email, password}),
             {
             headers: {'Content-Type': 'application/json'}
             }

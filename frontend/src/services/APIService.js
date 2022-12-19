@@ -1,11 +1,4 @@
-import axios from "./axios";
-
-const LOGIN_URL = '/login'
-
 export default class APIService{
-
-    
-
 
     static async enterUser(email, firstName, lastName, vjudgeHandle, platformRole){
         try {
