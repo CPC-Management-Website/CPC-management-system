@@ -10,7 +10,7 @@ function NavBar() {
     <>
       <nav className="navbar">
         <div className="nav-container">
-          <NavLink exact to="/homepage" className="nav-logo">
+          <NavLink end to="/homepage" className="nav-logo">
             ASUFE CPC 
             <i className="fas fa-code"></i>
           </NavLink>
@@ -18,10 +18,8 @@ function NavBar() {
           <ul className={click ? "nav-menu active" : "nav-menu"}>
             <li className="nav-item">
               <NavLink
-                exact
-                to="/homepage"
-                activeClassName="active"
-                className="nav-links"
+                end to="/homepage"
+                className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
                 Home
@@ -29,10 +27,8 @@ function NavBar() {
             </li>
             <li className="nav-item">
               <NavLink
-                exact
-                to="/profile"
-                activeClassName="active"
-                className="nav-links"
+                end to="/profile"
+                className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
                 Profile
@@ -40,10 +36,8 @@ function NavBar() {
             </li>
             <li className="nav-item">
               <NavLink
-                exact
-                to="/overview"
-                activeClassName="active"
-                className="nav-links"
+                end to="/overview"
+                className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
                 Overview
@@ -52,10 +46,8 @@ function NavBar() {
             <li className="nav-item">
               <NavLink
 
-                exact
-                to="/transcript"
-                activeClassName="active"
-                className="nav-links"
+                end to="/transcript"
+                className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
                 My Assessment History
@@ -65,10 +57,9 @@ function NavBar() {
             <li className="nav-item">
               <NavLink
 
-                exact
+                end
                 to="/resources"
-                activeClassName="active"
-                className="nav-links"
+                className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
                 Resources
@@ -77,10 +68,8 @@ function NavBar() {
             <li className="nav-item">
               <NavLink
 
-                exact
-                to="/userentry"
-                activeClassName="active"
-                className="nav-links"
+                end to="/userentry"
+                className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
               Add Users
@@ -89,10 +78,9 @@ function NavBar() {
             <li className="nav-item">
               <NavLink
 
-                exact
-                to="/mentees"
-                activeClassName="active"
-                className="nav-links"
+                end to="/mentees"
+                className={(navData) => (navData.isActive ? "active" : "nav-links")}
+
                 onClick={handleClick}
               >
               View Mentees
