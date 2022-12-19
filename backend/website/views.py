@@ -7,10 +7,10 @@ from .__init__ import urls
 
 views = Blueprint("views", __name__)
 
-#@views.route(urls.PROGRESS_PER_CONTEST, methods=["POST"], strict_slashes=False)
+@views.route(urls.PROGRESS_PER_CONTEST, methods=["POST"], strict_slashes=False)
 def get_progress_per_contest():
-    #contest_id = request.json["contestID"]
-    contest_id = 452160
+    
+    contest_id = request.json["contestID"]
 
     res = get_vjudge_data(contest_id = contest_id)
     filtered_res = {}
@@ -22,9 +22,3 @@ def get_progress_per_contest():
         print (x)
 
     return res
-
-
-
-
-if __name__ == "__main__":
-    get_progress_per_contest()
