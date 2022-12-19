@@ -7,27 +7,24 @@ from .__init__ import urls
 
 views = Blueprint("views", __name__)
 
-@views.route(urls.PROGRESS_PER_CONTEST, methods=["POST"], strict_slashes=False)
+#@views.route(urls.PROGRESS_PER_CONTEST, methods=["POST"], strict_slashes=False)
 def get_progress_per_contest():
-    contest_id = request.json["contestID"]
+    #contest_id = request.json["contestID"]
+    contest_id = 452160
 
-    res = get_vjudge_data(contest_id = contest_id, limit=10)
-    #print(res)
+    res = get_vjudge_data(contest_id = contest_id)
+    filtered_res = {}
+    for x in res:
+        filtered_res[(x['problemId'],x['userName'])] = x
+        #print(x)
 
-    # removing duplicates accepted for the same problem and user
-    print("here1")
-    mycursor = db.cursor()
-    query  = "INSERT INTO training.progress_per_contest_2 (`zone`) VALUES ('RED');"
-    #record = (user_id, contest_id, solved_problems, rank, zone)
-    mycursor.execute(query)
-    #mycursor.execute(query)
-    print("here2")
-    db.commit()
-    print("here")
-
-    
-    #ProgressPerContest.addProgressPerContest(26, 10, 3, 50, "GREEN")
+    for x in filtered_res:
+        print (x)
 
     return res
 
 
+
+
+if __name__ == "__main__":
+    get_progress_per_contest()

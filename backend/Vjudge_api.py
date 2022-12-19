@@ -171,17 +171,16 @@ def get_vjudge_data(username: str = '',
 
 
 def _main():
-    import json
-    from timeit import default_timer as timer
+    contest_id = 452160
 
-    # get the 1o most recent submissions from vjudge and measure the time
-    start = timer()
-    data = get_vjudge_data(limit=10)
-    print(f"response time: {timer() - start} s")
-    print(f"no. of entries: {len(data)}")
+    res = get_vjudge_data(contest_id = contest_id)
+    filtered_res = {}
+    for x in res:
+        filtered_res[(x['problemId'],x['userName'])] = x
+        #print(x)
 
-    # print output in json
-    print(json.dumps(data, indent=4, sort_keys=True))
+    for x in filtered_res:
+        print (x)
 
 
 if __name__ == "__main__":
