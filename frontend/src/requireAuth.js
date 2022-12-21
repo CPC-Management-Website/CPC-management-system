@@ -1,6 +1,5 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
 import useAuth from "./hooks/useAuth";
-import { UNAUTHORIZED } from "./frontend_urls";
 
 const RequireAuth = ({requiredPermissions}) => {
     const { auth } = useAuth();
@@ -9,10 +8,16 @@ const RequireAuth = ({requiredPermissions}) => {
     return (
 
 
-        auth?.permissions?.find(perm => requiredPermissions?.includes(perm))
-        ? <Outlet />
-        : auth?.email
-            ? <Navigate to= {UNAUTHORIZED} state={{ from: location }} replace />
+        // auth?.permissions?.find(perm => requiredPermissions?.includes(role))
+        // ? <Outlet />
+        // : auth?.user
+        //     ? <Navigate to="/unauthorized" state={{ from: location }} replace />
+        //     : <Navigate to="/login" state={{ from: location }} replace />
+
+
+        
+        auth?.email
+            ? <Outlet />
             : <Navigate to="/" state={{ from: location }} replace />
     );
 }
