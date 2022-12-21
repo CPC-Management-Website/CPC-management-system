@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from '../../services/axios';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.js';
 import AuthContext from '../../context/AuthProvider';
-import LOGIN from '../../backend_urls'
+import {LOGIN} from '../../backend_urls'
 import { HOMEPAGE } from '../../frontend_urls';
 
 
