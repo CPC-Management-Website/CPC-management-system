@@ -4,7 +4,7 @@ from Vjudge_api import get_vjudge_data
 from .models import ProgressPerContest
 from . import db
 from .__init__ import urls
-from models import User
+from .models import User
 
 views = Blueprint("views", __name__)
 
