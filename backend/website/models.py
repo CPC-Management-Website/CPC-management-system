@@ -86,6 +86,7 @@ class User(UserMixin):
         else:
             print("Email doesn't exist")
     
+    
 class permissions():
     read_weekly_status = False
     read_task =  False
