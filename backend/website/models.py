@@ -29,7 +29,7 @@ class User(UserMixin):
         self.active = record["active"]
         self.points = record["points"]
         self.password = record["password"]
-        
+
     @staticmethod    
     def exists(email):
         mycursor = db.cursor()
@@ -127,15 +127,32 @@ class ProgressPerContest():
 
     @staticmethod
     def addProgressPerContest(user_id, contest_id, solved_problems, rank, zone):
+
+
+
         print("here1")
-        mycursor = db.cursor()
-        query  = "INSERT INTO training.progress_per_contest_2 (`zone`) VALUES ('RED');"
-        #record = (user_id, contest_id, solved_problems, rank, zone)
-        mycursor.execute(query)
-        #mycursor.execute(query)
-        print("here2")
-        db.commit()
-        print("here")
+        # mycursor = db.cursor()
+
+        # query  = "INSERT INTO progress_per_contest \
+        #         (`user_id`, `contest_id`,\
+        #         `solved_problems`, `rank`, `zone`, \
+        #         VALUES (%s,%s,%s,%s,%s);"
+
+        # try:
+        #     print(user_id)
+        #     mycursor.execute(query,(user_id,contest_id,solved_problems,rank,zone,))
+        # except:
+        #     print("ERR")
+
+        # db.commit()
+        # print("here")
+
+        # mycursor = db.cursor(dictionary=True)
+        # query  = "SELECT `user_id`, `vjudge_handle`, \
+        #         `name`, `email`, `level`, `user_role`, \
+        #         `active`, `points`, `password` from user where email = %s;"
+        # mycursor.execute(query,(email,))
+        # record = mycursor.fetchone()
     
     def __init__(self) -> None:
         print("in init")
