@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react' 
+import React, {Component} from 'react' 
 import AddResource from '../components/AddResource'
 import ResourcesList from '../components/ResourcesList'
 import './Resources.css';
@@ -9,20 +9,27 @@ class Resources extends Component {
 
   constructor() {
     super();
-    this.state = JSON.parse(window.localStorage.getItem('state')) 
+    this.state = JSON.parse(window.localStorage.getItem('state')) || {
+    resources:[
+      {name: "Week #1 Session: "},
+      {name: "Week #2 Session: "},
+      {name: "Week #3 Session: "}
+    ],
+    }
   }
-  
   setState(state) {
     window.localStorage.setItem('state', JSON.stringify(state));
     super.setState(state);
   }
 
-  state={
-    resources:[
-    ],
-    current: ''
-  }
-
+  // state={
+  //   resources:[
+  //     {name: "Week #1 Session: "},
+  //     {name: "Week #2 Session: "},
+  //     {name: "Week #3 Session: "}
+  //   ],
+  //   current: ''
+  // }
 
   //updateResource (track the new typed resource)
   updateResource = (e) =>{
