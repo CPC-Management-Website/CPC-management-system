@@ -27,7 +27,7 @@ def get_progress_per_contest():
 
 #this method shall be called by email?
 #@views.route('/profile/edit/<email>', methods = ["POST, GET"])
-#@views.route(urls.PROFILE, methods = ["POST, GET"], strict_slashes=False)
+#@views.route(urls['PROFILE'], methods = ["POST, GET"], strict_slashes=False)
 def editProfile(email):
     if request.method == "POST":
 

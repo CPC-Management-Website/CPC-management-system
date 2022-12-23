@@ -6,7 +6,6 @@ from flask_login import LoginManager
 import mysql.connector
 import os
 from dotenv import load_dotenv
-import js2py
 import json
 
 load_dotenv()
@@ -20,8 +19,6 @@ db = mysql.connector.connect(
 )
 url_file = open('../frontend/src/server_urls.json')
 urls = json.load(url_file)
-
-#eval_result, urls = js2py.run_file('../frontend/src/backend_urls.js')
 def create_app():
     app = Flask(__name__)
     cors.init_app(app, resources={r"*": {"origins": "*"}})

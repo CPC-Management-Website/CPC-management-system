@@ -18,8 +18,6 @@ remember_logins = False     # consider changing this to true
 password_length = 10
 
 
-#eval_result, urls = js2py.run_file('../urls.js')
-
 
 # Defining functionality for "/data" endpoint
 @auth.route(urls['DATA'], methods=["GET"], strict_slashes=False)

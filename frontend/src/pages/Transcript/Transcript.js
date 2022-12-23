@@ -2,6 +2,7 @@ import ProgressList from "./ProgressList";
 import React, {useEffect, useState} from "react";
 import NavBar from "../NavBar/NavBar";
 import axios from '../../services/axios';
+import URLS from '../../server_urls.json'
 
 function Transcript() {
 
@@ -9,7 +10,7 @@ function Transcript() {
     const getProgressList = async() =>{
         const contestID = 433506
         try {
-            const response = await axios.post("/progresspercontest", JSON.stringify({contestID}),
+            const response = await axios.post(URLS.PROGRESS_PER_CONTEST, JSON.stringify({contestID}),
             {
             headers: {'Content-Type': 'application/json'}
             }
