@@ -12,6 +12,10 @@
     flex-direction: column;
 
 }
+.login-title{
+    display: flex;
+    justify-content: center;
+}
 .login-form {
     display: flex;
     flex-direction: column;
