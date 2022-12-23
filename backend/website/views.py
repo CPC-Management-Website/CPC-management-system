@@ -8,7 +8,7 @@ from .models import User
 
 views = Blueprint("views", __name__)
 
-@views.route(urls.PROGRESS_PER_CONTEST, methods=["POST"], strict_slashes=False)
+@views.route(urls['PROGRESS_PER_CONTEST'], methods=["POST"], strict_slashes=False)
 def get_progress_per_contest():
     
     contest_id = request.json["contestID"]

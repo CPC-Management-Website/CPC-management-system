@@ -1,4 +1,4 @@
-//import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+
 import React, { useState, useEffect }  from 'react';
 import "./Profile.css"
 import "../UserEntry/UserEntry.css"

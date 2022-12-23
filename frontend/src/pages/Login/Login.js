@@ -6,6 +6,7 @@ import ErrorMessage from '../ErrorMessage/ErrorMessage.js';
 import useAuth from '../../hooks/useAuth';
 import {LOGIN} from '../../backend_urls'
 import { HOMEPAGE } from '../../frontend_urls';
+import URLS from '../../server_urls.json'
 
 
 function Login(){
@@ -19,7 +20,7 @@ function Login(){
 
     const loginUser = async () => {
         try {
-            const response = await axios.post('/login', JSON.stringify({email, password}),
+            const response = await axios.post(URLS.LOGIN, JSON.stringify({email, password}),
             {
             headers: {'Content-Type': 'application/json'}
             }

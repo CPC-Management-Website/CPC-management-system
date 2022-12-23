@@ -22,14 +22,14 @@ password_length = 10
 
 
 # Defining functionality for "/data" endpoint
-@auth.route(urls.DATA, methods=["GET"], strict_slashes=False)
+@auth.route(urls['DATA'], methods=["GET"], strict_slashes=False)
 def get_data():
     return {
 		"X":"dataaa"
 		}
 
 
-@auth.route(urls.LOGIN, methods=["POST"], strict_slashes=False)
+@auth.route(urls['LOGIN'], methods=["POST"], strict_slashes=False)
 def login():
 
     email = request.json["email"]
@@ -55,7 +55,7 @@ def login():
     # TODO what to return here
     return {"email" : email,"password" : password, "permessions": perm}
 
-@auth.route(urls.USER_ENTRY, methods=["POST"], strict_slashes=False)
+@auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register():
     name = request.json["firstName"]+" "+request.json["lastName"]
     email = request.json["email"]
@@ -75,7 +75,7 @@ def register():
     # TODO what to return here?
     return {"email" : email,"password" : password}
 
-@auth.route(urls.USER_ENTRY_FILE, methods=["POST"], strict_slashes=False)
+@auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
 def registerfile():
    
     file = request.files.get("excel-file")
