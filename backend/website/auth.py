@@ -29,7 +29,6 @@ def get_data():
 
 @auth.route(urls['LOGIN'], methods=["POST"], strict_slashes=False)
 def login():
-
     email = request.json["email"]
     password = request.json["password"]
     
