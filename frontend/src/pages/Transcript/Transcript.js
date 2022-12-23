@@ -6,7 +6,6 @@ import URLS from '../../server_urls.json'
 
 function Transcript() {
 
-    
     const [progressList, setProgressList] = useState ([]);
     const getProgressList = async() =>{
         const contestID = 433506
