@@ -35,24 +35,23 @@ def login():
     email = request.json["email"]
     password = request.json["password"]
     
+    if(User.exists(email)==False):
+        return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
+
     user = User(email = email)
 
-    if user:
-        if check_password_hash(user.password, password):
-            print("Logged in!")
-            login_user(user,remember = remember_logins)
-            perm = permissions(user).getAllowedPermissions()
-            user_json = json.dumps(user.__dict__)
-            # permissions_json = json.dumps(perm.__dict__)
-            print(user_json)
-            print(perm)
-            # return redirect(url_for('views.home'))
-        else:
-            print("Password incorrect!")
-            return errors.incorrect_password(werkzeug.exceptions.BadRequest)
+    if check_password_hash(user.password, password):
+        print("Logged in!")
+        login_user(user,remember = remember_logins)
+        perm = permissions(user).getAllowedPermissions()
+        user_json = json.dumps(user.__dict__)
+        # permissions_json = json.dumps(perm.__dict__)
+        print(user_json)
+        print(perm)
+        # return redirect(url_for('views.home'))
     else:
-        print("Email does not exist")
-        return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
+        print("Password incorrect!")
+        return errors.incorrect_password(werkzeug.exceptions.BadRequest)
     # TODO what to return here
     return {"email" : email,"password" : password, "permessions": perm}
 
