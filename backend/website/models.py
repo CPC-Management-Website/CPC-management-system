@@ -89,18 +89,7 @@ class User(UserMixin):
     
     
 class permissions():
-    read_weekly_status = False
-    read_task =  False
-    create_task = False
-    update_task = False
-    read_resource = False
-    create_resource = False
-    read_trainees = False
-    create_trainees = False
-    update_trainees = False
-    delete_trainees = False
-    read_transcript = False
-    
+
     def __init__(self,user:User):
         def getRoleID(role):
             mycursor = db.cursor()
