@@ -115,6 +115,13 @@ class permissions():
         temp = dict(zip(mycursor.column_names, mycursor.fetchone()))
         for key in temp:
             setattr(self,key,temp[key])
+    
+    def getAllowedPermissions(self):
+        allowedPermissions = []
+        for attribute, value in self.__dict__.items():
+            if value == True:
+                allowedPermissions.append(attribute)
+        return allowedPermissions
 
 
 

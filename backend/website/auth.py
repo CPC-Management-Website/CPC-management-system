@@ -41,11 +41,11 @@ def login():
         if check_password_hash(user.password, password):
             print("Logged in!")
             login_user(user,remember = remember_logins)
-            perm = permissions(user)
+            perm = permissions(user).getAllowedPermissions()
             user_json = json.dumps(user.__dict__)
-            permissions_json = json.dumps(perm.__dict__)
+            # permissions_json = json.dumps(perm.__dict__)
             print(user_json)
-            print(permissions_json)
+            print(perm)
             # return redirect(url_for('views.home'))
         else:
             print("Password incorrect!")
@@ -54,7 +54,7 @@ def login():
         print("Email does not exist")
         return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
     # TODO what to return here
-    return {"email" : email,"password" : password}
+    return {"email" : email,"password" : password, "permessions": perm}
 
 @auth.route(urls.USER_ENTRY, methods=["POST"], strict_slashes=False)
 def register():
