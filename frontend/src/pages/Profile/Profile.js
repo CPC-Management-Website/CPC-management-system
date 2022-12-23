@@ -4,7 +4,6 @@ import "./Profile.css"
 import "../UserEntry/UserEntry.css"
 import APIService from '../../services/APIService';
 import NavBar from "../NavBar/NavBar";
-import '../Resources/Resources.css';
 
 function Profile() {
   const [edit, setEdit] = useState(false);
@@ -27,12 +26,8 @@ function Profile() {
 
   const handleSubmit = (e) => {
       e.preventDefault();
-      const res = enterProfile()
       setEdit(false);
-      setEmail('')
-      setName('') 
-      setVjudgeHandle('')
-      setPassword('')
+      const res = enterProfile()
       console.log(res)
   }
 
