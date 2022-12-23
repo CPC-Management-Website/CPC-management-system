@@ -7,7 +7,6 @@ import useAuth from '../../hooks/useAuth';
 import { HOMEPAGE } from '../../frontend_urls';
 import URLS from '../../server_urls.json'
 
-
 function Login(){
     const {setAuth} = useAuth();
     const [email, setEmail] = useState('');

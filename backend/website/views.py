@@ -36,7 +36,6 @@ def editProfile(email):
         vjudge_handle = request.json["vjudge_handle"]
         name = request.json["name"]
         password = request.json["password"]
-
         User.changePasswordAdmin(email, password)
         mycursor = db.cursor()
         query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s"

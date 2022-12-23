@@ -88,8 +88,6 @@ function UserEntry(){
 
         </div>
         </div>
-
     );
 }
-
 export default UserEntry;
