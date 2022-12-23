@@ -91,5 +91,4 @@ function UserEntry(){
 
     );
 }
-
 export default UserEntry;
