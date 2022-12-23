@@ -51,7 +51,7 @@ def login():
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
     # TODO what to return here
-    return {"email" : email,"password" : password, "permessions": perm}
+    return {"email" : email,"password" : password, "permissions": perm}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register():
