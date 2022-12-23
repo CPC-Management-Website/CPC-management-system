@@ -4,7 +4,6 @@ import ResourcesList from '../components/ResourcesList'
 import './Resources.css';
 import NavBar from "../NavBar/NavBar";
 
-
 class Resources extends Component {
 
   constructor() {
