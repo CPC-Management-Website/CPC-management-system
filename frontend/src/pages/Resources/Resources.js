@@ -6,6 +6,7 @@ import NavBar from "../NavBar/NavBar";
 
 class Resources extends Component {
 
+  
   constructor() {
     super();
     this.state = JSON.parse(window.localStorage.getItem('state')) || {
