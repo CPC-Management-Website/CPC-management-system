@@ -23,9 +23,9 @@ function Login(){
             headers: {'Content-Type': 'application/json'}
             }
             );
+            console.log(response)
             const permissions = response?.data?.permissions
             setAuth({email, password, permissions})
-            console.log(response)
             setSuccess(true)
             navigate(HOMEPAGE);
             
@@ -60,7 +60,7 @@ function Login(){
                     )
                 }</>
 
-                <h2>Login</h2>
+                <h2 className='login-title'>Login</h2>
                 <form className="login-form" onSubmit={handleSubmit}>
                     <label htmlFor="email">Email</label>
                     <input 
