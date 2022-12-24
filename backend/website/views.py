@@ -32,26 +32,25 @@ def get_progress_per_contest():
         ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
     return " "
 
-
-#this method shall be called by email?
-#@views.route('/profile/edit/<email>', methods = ["POST, GET"], strict_slashes=False)
-def editProfile(email):
-    if request.method == "POST":
-
-        #if post, won't update email?
-        #email = request.json["email"]
-        vjudge_handle = request.json["vjudge_handle"]
-        name = request.json["name"]
-        password = request.json["password"]
-        User.changePasswordAdmin(email, password)
-        mycursor = db.cursor()
-        query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s;"
-        mycursor.execute(query, (vjudge_handle, name, email,))
-        db.commit()
-        #how to redirect to profile after update?
-        #redirect ('/profile')
-
-    
+@views.route('/profile', methods = "GET", strict_slashes=False)
+def displayProfile():
+    email = request.json["email"]
     user = User(email)
-    #return user object to be displayed?
-    return user
+    #return user as json object
+    return user.json.dumps(user._dict_)
+
+
+@views.route('/profile/edit', methods = "POST", strict_slashes=False)
+def editProfile():
+
+    email = request.json["email"]
+    name = request.json["name"]
+    vjudge_handle = request.json["vjudgeHandle"]
+    password = request.json["password"]
+    User.changePasswordAdmin(email, password)
+    mycursor = db.cursor()
+    query = "UPDATE user SET vjudge_handle=%s, name=%s, password=%s WHERE email=%s;"
+    mycursor.execute(query, (vjudge_handle, name, password, email,))
+    db.commit()
+    #how to redirect to profile after update?
+    #redirect ('/profile')
