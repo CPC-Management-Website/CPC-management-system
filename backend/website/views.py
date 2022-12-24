@@ -32,7 +32,7 @@ def get_progress_per_contest():
         ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
     return " "
 
-@views.route('/PROFILE', methods = "GET", strict_slashes=False)
+@views.route(urls['PROFILE'], methods = ["GET"], strict_slashes=False)
 def displayProfile():
     email = request.json["email"]
     user = User(email)
@@ -40,7 +40,7 @@ def displayProfile():
     return user.json.dumps(user._dict_)
 
 
-@views.route('/PROFILE', methods = "POST", strict_slashes=False)
+@views.route(urls['PROFILE'], methods = ["POST"], strict_slashes=False)
 def editProfile():
 
     email = request.json["email"]
