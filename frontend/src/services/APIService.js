@@ -19,6 +19,25 @@ export default class APIService{
         }
     }
 
+    static async enterProfile(email, name, vjudgeHandle, password){
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/profile`, {
+                'method': 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(email, name, vjudgeHandle, password)
+            })
+            console.log(response)
+            response.json()
+                .then(function (data) {
+                })
+        } catch (error) {
+            console.log(error)
+            //return console.log(error)
+        }
+    }
+
     static async enterFile(excelFile){
         try {
             const data = new FormData();

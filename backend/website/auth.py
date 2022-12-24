@@ -18,45 +18,41 @@ remember_logins = False     # consider changing this to true
 password_length = 10
 
 
-#eval_result, urls = js2py.run_file('../urls.js')
-
 
 # Defining functionality for "/data" endpoint
-@auth.route(urls.DATA, methods=["GET"], strict_slashes=False)
+@auth.route(urls['DATA'], methods=["GET"], strict_slashes=False)
 def get_data():
     return {
 		"X":"dataaa"
 		}
 
 
-@auth.route(urls.LOGIN, methods=["POST"], strict_slashes=False)
+@auth.route(urls['LOGIN'], methods=["POST"], strict_slashes=False)
 def login():
-
     email = request.json["email"]
     password = request.json["password"]
     
+    if(User.exists(email)==False):
+        return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
+
     user = User(email = email)
 
-    if user:
-        if check_password_hash(user.password, password):
-            print("Logged in!")
-            login_user(user,remember = remember_logins)
-            perm = permissions(user)
-            user_json = json.dumps(user.__dict__)
-            permissions_json = json.dumps(perm.__dict__)
-            print(user_json)
-            print(permissions_json)
-            # return redirect(url_for('views.home'))
-        else:
-            print("Password incorrect!")
-            return errors.incorrect_password(werkzeug.exceptions.BadRequest)
+    if check_password_hash(user.password, password):
+        print("Logged in!")
+        login_user(user,remember = remember_logins)
+        perm = permissions(user).getAllowedPermissions()
+        user_json = json.dumps(user.__dict__)
+        # permissions_json = json.dumps(perm.__dict__)
+        print(user_json)
+        print(perm)
+        # return redirect(url_for('views.home'))
     else:
-        print("Email does not exist")
-        return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
+        print("Password incorrect!")
+        return errors.incorrect_password(werkzeug.exceptions.BadRequest)
     # TODO what to return here
-    return {"email" : email,"password" : password}
+    return {"email" : email,"password" : password, "permissions": perm}
 
-@auth.route(urls.USER_ENTRY, methods=["POST"], strict_slashes=False)
+@auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register():
     name = request.json["firstName"]+" "+request.json["lastName"]
     email = request.json["email"]
@@ -76,7 +72,7 @@ def register():
     # TODO what to return here?
     return {"email" : email,"password" : password}
 
-@auth.route(urls.USER_ENTRY_FILE, methods=["POST"], strict_slashes=False)
+@auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
 def registerfile():
    
     file = request.files.get("excel-file")

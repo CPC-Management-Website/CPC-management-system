@@ -1,0 +1,8 @@
+{
+    "LOGIN" : "/login",
+    "USER_ENTRY": "/userentry",
+    "USER_ENTRY_FILE" : "/userentryfile",
+    "DATA" : "/data",
+    "PROGRESS_PER_CONTEST" : "/progresspercontest",
+    "PROFILE" : "/profile"
+}

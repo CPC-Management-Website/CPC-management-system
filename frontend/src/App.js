@@ -1,14 +1,17 @@
 import './App.css';
 import Login from './pages/Login/Login.js'
 import UserEntry from './pages/UserEntry/UserEntry.js'
+import Resources from './pages/Resources/Resources.js'
+import Profile from './pages/Profile/Profile.js'
 import Home from './pages/Home/Home';
 import Unauthorized from './pages/Unauthorized/unauthorized'
 import React,{ useState, useEffect }  from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Transcript from './pages/Transcript/Transcript';
 import Layout from './Layout';
-import {HOMEPAGE, TRANSCRIPT, UNAUTHORIZED, USER_ENTRY} from './frontend_urls'
+import {HOMEPAGE, TRANSCRIPT, UNAUTHORIZED, USER_ENTRY, RESOURCES, PROFILE} from './frontend_urls'
 import RequireAuth from './requireAuth';
+import { VIEW_TRANSCRIPT, ADD_USERS, VIEW_RESOURCES} from './permissions';
 
 
 function App() {
@@ -44,17 +47,26 @@ function App() {
         <Route path={UNAUTHORIZED} element={<Unauthorized />} />
           
           
-        {/* protected routes */}
-        <Route element = {<RequireAuth allowedPermissions = {[]} />}>
-          <Route path={HOMEPAGE} element={<Home />} />
-
-        </Route>
-
+        {/* routes that can be accessed only if you're logged in*/}
         <Route element = {<RequireAuth />}>
-
-          <Route path= {USER_ENTRY} element={<UserEntry />} />
-          <Route path={TRANSCRIPT} element={<Transcript/>} />
+          <Route path={HOMEPAGE} element={<Home />} />
+          <Route path={PROFILE} element={<Profile/>} />
         </Route>
+
+        {/* routes that can be accessed with specific permissions*/}
+        <Route element = {<RequireAuth requiredPermissions = {[ADD_USERS]} />}>
+          <Route path= {USER_ENTRY} element={<UserEntry />} />
+        </Route>
+
+        <Route element = {<RequireAuth requiredPermissions = {[VIEW_RESOURCES]} />}>
+          <Route path= {RESOURCES} element={<Resources />} />
+        </Route> 
+
+        <Route element = {<RequireAuth requiredPermissions = {[VIEW_TRANSCRIPT]} />}>
+          <Route path={TRANSCRIPT} element={<Transcript/>} />
+        </Route> 
+        
+        
 
       </Route>
     </Routes>

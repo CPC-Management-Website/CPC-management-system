@@ -4,9 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from '../../services/axios';
 import ErrorMessage from '../ErrorMessage/ErrorMessage.js';
 import useAuth from '../../hooks/useAuth';
-import {LOGIN} from '../../backend_urls'
 import { HOMEPAGE } from '../../frontend_urls';
-
+import URLS from '../../server_urls.json'
 
 function Login(){
     const {setAuth} = useAuth();
@@ -19,14 +18,14 @@ function Login(){
 
     const loginUser = async () => {
         try {
-            const response = await axios.post('/login', JSON.stringify({email, password}),
+            const response = await axios.post(URLS.LOGIN, JSON.stringify({email, password}),
             {
             headers: {'Content-Type': 'application/json'}
             }
             );
+            console.log(response)
             const permissions = response?.data?.permissions
             setAuth({email, password, permissions})
-            console.log(response)
             setSuccess(true)
             navigate(HOMEPAGE);
             
@@ -61,7 +60,7 @@ function Login(){
                     )
                 }</>
 
-                <h2>Login</h2>
+                <h2 className='login-title'>Login</h2>
                 <form className="login-form" onSubmit={handleSubmit}>
                     <label htmlFor="email">Email</label>
                     <input 

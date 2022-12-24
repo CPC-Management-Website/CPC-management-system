@@ -1,6 +1,5 @@
 .navbar {
   background-color: #2e2e2e;
-  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +14,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 80px;
+  height: fit-content;
   max-width: 1500px;
 }
 
@@ -68,7 +67,6 @@
 
 .nav-item .active {
   color: #ffdd40;
-  border: 1px solid #ffdd40;
 }
 
 .nav-icon {

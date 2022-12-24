@@ -4,25 +4,33 @@ from Vjudge_api import get_vjudge_data
 from .models import ProgressPerContest
 from . import db
 from .__init__ import urls
-from models import User
+from .models import User
 
 views = Blueprint("views", __name__)
 
-@views.route(urls.PROGRESS_PER_CONTEST, methods=["POST"], strict_slashes=False)
+@views.route(urls['PROGRESS_PER_CONTEST'], methods=["POST"], strict_slashes=False)
 def get_progress_per_contest():
-    
+    print("here")
     contest_id = request.json["contestID"]
-
-    res = get_vjudge_data(contest_id = contest_id)
-    filtered_res = {}
-    for x in res:
-        filtered_res[(x['problemId'],x['userName'])] = x
-        #print(x)
-
-    for x in filtered_res:
-        print (x)
-
-    return res
+    print(contest_id)
+    problemCount = ProgressPerContest.getProblemCount(contest_id=contest_id)
+    print('#Problems:',problemCount)
+    trainees = User.getVjudge_Handles()
+    for trainee in trainees:
+        id = trainee["user_id"]
+        vjudge = trainee["vjudge_handle"]
+        print(id, vjudge)
+        res = get_vjudge_data(contest_id = contest_id,username=vjudge,result=1)
+        filtered_res = {}
+        for x in res:
+            filtered_res[(x['problemId'],x['userName'])] = x
+            #print(x)
+        numSolved = len(filtered_res)
+        print("Solved:",numSolved)
+        zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved)
+        print(zone)
+        ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
+    return " "
 
 
 #this method shall be called by email?
@@ -35,7 +43,6 @@ def editProfile(email):
         vjudge_handle = request.json["vjudge_handle"]
         name = request.json["name"]
         password = request.json["password"]
-
         User.changePasswordAdmin(email, password)
         mycursor = db.cursor()
         query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s;"
