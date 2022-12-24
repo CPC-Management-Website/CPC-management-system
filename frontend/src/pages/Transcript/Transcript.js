@@ -8,7 +8,7 @@ function Transcript() {
 
     const [progressList, setProgressList] = useState ([]);
     const getProgressList = async() =>{
-        const contestID = 433506
+        const contestID = 523643
         try {
             const response = await axios.post(URLS.PROGRESS_PER_CONTEST, JSON.stringify({contestID}),
             {
@@ -37,6 +37,7 @@ function Transcript() {
     }
 
     useEffect ( () => {
+        console.log("called")
         getProgressList()
     },[]);
 

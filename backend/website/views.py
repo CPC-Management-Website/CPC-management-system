@@ -11,26 +11,25 @@ views = Blueprint("views", __name__)
 @views.route(urls['PROGRESS_PER_CONTEST'], methods=["POST"], strict_slashes=False)
 def get_progress_per_contest():
     print("here")
-    # contest_id = request.json["contestID"]
-    # contest_id = "523643"
-    # print(contest_id)
-    # problemCount = ProgressPerContest.getProblemCount(contest_id=contest_id)
-    # print('#Problems:',problemCount)
-    # trainees = User.getVjudge_Handles()
-    # for trainee in trainees:
-    #     id = trainee["user_id"]
-    #     vjudge = trainee["vjudge_handle"]
-    #     print(id, vjudge)
-    #     res = get_vjudge_data(contest_id = contest_id,username=vjudge,result=1)
-    #     filtered_res = {}
-    #     for x in res:
-    #         filtered_res[(x['problemId'],x['userName'])] = x
-    #         #print(x)
-    #     numSolved = len(filtered_res)
-    #     print("Solved:",numSolved)
-    #     zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved)
-    #     print(zone)
-    #     ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
+    contest_id = request.json["contestID"]
+    print(contest_id)
+    problemCount = ProgressPerContest.getProblemCount(contest_id=contest_id)
+    print('#Problems:',problemCount)
+    trainees = User.getVjudge_Handles()
+    for trainee in trainees:
+        id = trainee["user_id"]
+        vjudge = trainee["vjudge_handle"]
+        print(id, vjudge)
+        res = get_vjudge_data(contest_id = contest_id,username=vjudge,result=1)
+        filtered_res = {}
+        for x in res:
+            filtered_res[(x['problemId'],x['userName'])] = x
+            #print(x)
+        numSolved = len(filtered_res)
+        print("Solved:",numSolved)
+        zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved)
+        print(zone)
+        ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
     return " "
 
 
