@@ -26,8 +26,7 @@ def get_progress_per_contest():
 
 
 #this method shall be called by email?
-#@views.route('/profile/edit/<email>', methods = ["POST, GET"])
-#@views.route(urls.PROFILE, methods = ["POST, GET"], strict_slashes=False)
+#@views.route('/profile/edit/<email>', methods = ["POST, GET"], strict_slashes=False)
 def editProfile(email):
     if request.method == "POST":
 
@@ -39,14 +38,13 @@ def editProfile(email):
 
         User.changePasswordAdmin(email, password)
         mycursor = db.cursor()
-        query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s"
-        mycursor.execute(query, (vjudge_handle, name, email))
+        query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s;"
+        mycursor.execute(query, (vjudge_handle, name, email,))
         db.commit()
         #how to redirect to profile after update?
-        #return redirect ('/profile')
+        #redirect ('/profile')
 
-    mycursor = db.cursor()
+    
     user = User(email)
-
     #return user object to be displayed?
     return user
