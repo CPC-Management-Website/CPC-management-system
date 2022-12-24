@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
+import useAuth from '../../hooks/useAuth'
+import { ADD_USERS, VIEW_RESOURCES, VIEW_TRAINEES } from "../../permissions";
 
 
 function NavBar() {
+  const { auth } = useAuth();
   const [click, setClick] = useState(false);
 
   const handleClick = () => setClick(!click);
@@ -37,15 +40,6 @@ function NavBar() {
             </li>
             <li className="nav-item">
               <NavLink
-                end to="/overview"
-                className={(navData) => (navData.isActive ? "active" : "nav-links")}
-                onClick={handleClick}
-              >
-                Overview
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
 
                 end to="/transcript"
                 className={(navData) => (navData.isActive ? "active" : "nav-links")}
@@ -54,7 +48,6 @@ function NavBar() {
                 My Assessment History
               </NavLink>
             </li>
-
             <li className="nav-item">
               <NavLink
 
@@ -66,27 +59,51 @@ function NavBar() {
                 Resources
               </NavLink>
             </li>
+            <>{
+              auth?.permissions?.find(perm => perm === ADD_USERS)
+              ?
+              <li className="nav-item">
+                <NavLink
+
+                  end to="/userentry"
+                  className={(navData) => (navData.isActive ? "active" : "nav-links")}
+                  onClick={handleClick}
+                >
+                Add Users
+                </NavLink>
+              </li>   
+              : <></>         
+            }
+            </>
+
             <li className="nav-item">
               <NavLink
 
-                end to="/userentry"
+                end
+                to="/contest"
                 className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
-              Add Users
+                Add Contest
               </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
+            </li>            
+            <>{
+              auth?.permissions?.find(perm => perm === VIEW_TRAINEES)
+              ?
+              <li className="nav-item">
+                <NavLink
 
-                end to="/mentees"
-                className={(navData) => (navData.isActive ? "active" : "nav-links")}
+                  end to="/mentees"
+                  className={(navData) => (navData.isActive ? "active" : "nav-links")}
 
-                onClick={handleClick}
-              >
-              View Mentees
-              </NavLink>
-            </li>
+                  onClick={handleClick}
+                >
+                View Mentees
+                </NavLink>
+              </li>
+              :
+              <></>
+            }</>
 
           </ul>
           <div className="nav-icon" onClick={handleClick}>
