@@ -1,6 +1,5 @@
 import React, { useState, useEffect }  from 'react';
 import "./Profile.css"
-import "../UserEntry/UserEntry.css"
 import APIService from '../../services/APIService';
 import NavBar from "../NavBar/NavBar";
 
@@ -40,23 +39,23 @@ function Profile() {
           <div md="4" className="gradient-custom auth-form-container">
           <h1><img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="Avatar" className="my-5" style={{alignItems: 'center', width: '300px' }} fluid /></h1>
               
-              <form className="userEntry-form" onSubmit={handleSubmit}>
+              <form className="profile-form" onSubmit={handleSubmit}>
                   
-                  <label htmlFor="Name">Your Name</label>
+                  <label htmlFor="Name">Name</label>
                   <input value={name} onChange={(e) => setName(e.target.value)}type="name" placeholder="Sara Hussein" id="name" name="name" disabled = {!edit}/>
                 
-                  <label htmlFor="Email">Your Email</label>
+                  <label htmlFor="Email">Email</label>
                   <input value={email} onChange={(e) => setEmail(e.target.value)}type="email" placeholder="useremail@gmail.com" id="email" name="email" disabled = {!edit} />
                 
                   <label htmlFor="Vjudge Handle">Vjudge Handle</label>
                   <input value={vjudgeHandle} onChange={(e) => setVjudgeHandle(e.target.value)}type="string" placeholder="Vjudge Handle" id="vjudgeHandle" name="vjudgeHandle" disabled = {!edit} />
                   
                                
-                  <label htmlFor="ID">Your ID</label>
+                  <label htmlFor="ID">ID</label>
                   <input value={ID} onChange={(e) => setID(e.target.value)}type="ID" placeholder="12234" id="ID" name="ID" disabled = {1}/>
                 
                              
-                  <label htmlFor="Password">Your Password</label>
+                  <label htmlFor="Password">Password</label>
                   <input value={password} onChange={(e) => setPassword(e.target.value)}type="password" placeholder="*****" id="password" name="password" disabled = {!edit}/>
 
                  {edit ? (
