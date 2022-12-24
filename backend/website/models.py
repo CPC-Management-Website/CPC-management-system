@@ -86,6 +86,19 @@ class User(UserMixin):
                 # print(mycursor.rowcount)
         else:
             print("Email doesn't exist")
+
+    @staticmethod
+    def getVjudge_Handles():
+        mycursor = db.cursor()
+        print("debugging")
+        query  = "SELECT `user_id`, `vjudge_handle` from user;"
+        mycursor.execute(query)
+        columns = mycursor.column_names
+        result = []
+        for x in mycursor:
+            result.append(dict(zip(columns,x)))
+        # print (result)
+        return result
     
     
 class permissions():
@@ -132,35 +145,35 @@ class ProgressPerContest():
     # solved_problems = 0
     # rank = 0
     # zone = "red"
+    @staticmethod
+    def getProblemCount(contest_id):
+        # db.reconnect()
+        mycursor = db.cursor(dictionary=True)
+        query  = "SELECT `total_problems` from contest where contest_id = %s;"
+        mycursor.execute(query,(contest_id,))
+        record = mycursor.fetchone()
+        return record['total_problems']
+    
+    @staticmethod
+    def getZone(problemCount,solved):
+        if solved < problemCount*0.25:
+            return 'Red'
+        if solved < problemCount*0.5:
+            return 'Yellow'
+        if solved < problemCount*0.75:
+            return 'Green'
+        return 'Blue'
 
     @staticmethod
-    def addProgressPerContest(user_id, contest_id, solved_problems, rank, zone):
+    def addProgressPerContest(user_id, contest_id, solved_problems,zone):
 
-
-
-        print("here1")
-        # mycursor = db.cursor()
-
-        # query  = "INSERT INTO progress_per_contest \
-        #         (`user_id`, `contest_id`,\
-        #         `solved_problems`, `rank`, `zone`, \
-        #         VALUES (%s,%s,%s,%s,%s);"
-
-        # try:
-        #     print(user_id)
-        #     mycursor.execute(query,(user_id,contest_id,solved_problems,rank,zone,))
-        # except:
-        #     print("ERR")
-
-        # db.commit()
-        # print("here")
-
-        # mycursor = db.cursor(dictionary=True)
-        # query  = "SELECT `user_id`, `vjudge_handle`, \
-        #         `name`, `email`, `level`, `user_role`, \
-        #         `active`, `points`, `password` from user where email = %s;"
-        # mycursor.execute(query,(email,))
-        # record = mycursor.fetchone()
+        mycursor = db.cursor()
+        query  = "INSERT INTO progress_per_contest \
+                (`user_id`, `contest_id`,\
+                `solved_problems`, `rank`, `zone`) \
+                VALUES (%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(user_id,int(contest_id),solved_problems,0,zone,))
+        db.commit()
     
     def __init__(self) -> None:
         print("in init")
