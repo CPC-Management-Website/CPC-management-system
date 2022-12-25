@@ -1,9 +1,10 @@
 import React, { useState }  from 'react';
 import "./UserEntry.css"
-import APIService from '../../services/APIService';
 import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
 import { HOMEPAGE } from '../../frontend_urls';
+import axios from '../../hooks/axios';
+import URLS from '../../server_urls.json'
 
 function UserEntry(){
     const [email, setEmail] = useState('');
@@ -14,32 +15,46 @@ function UserEntry(){
     const [selectedFile, setSelectedFile] = useState('');
 
     const navigate = useNavigate();
-    const enterUser = () =>{
-        APIService.enterUser({email, firstName, lastName, vjudgeHandle, platformRole})
-        .catch(error => console.log('error',error))
+
+    const enterUser = async() => {
+        try {
+            const response = await axios.post(URLS.USER_ENTRY, JSON.stringify({email, firstName, lastName, vjudgeHandle, platformRole}),
+                {
+                    headers: {'Content-Type': 'application/json'},
+                });
+            console.log(response)
+            navigate(HOMEPAGE);
+        } catch (error) {
+            console.log(error)
+            //return console.log(error)
+        }
     }
-    const enterFile = () =>{
-        APIService.enterFile(selectedFile)
-        .catch(error => console.log('error',error))
-    }
+    const enterFile = async () =>{
+        try {
+            const data = new FormData();
+            data.append('excel-file', selectedFile, 'file.xlsx');
+            const response = await axios.post(URLS.USER_ENTRY_FILE, data);  
+            console.log(response) 
+        } catch (error) {
+            console.log(error)
+        }
+    }  
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const res = enterUser()
+        enterUser()
         setEmail('')
         setFirstName('')
         setLastName('')
         setVjudgeHandle('')
         setPlatformRole('')
-        console.log(res)
-        navigate(HOMEPAGE);
+        
     }
 
     const handleSubmitFile = (e) => {
         e.preventDefault();
-        const res = enterFile()
+        enterFile()
         setSelectedFile()
-        console.log(res)
     }
 
     return (

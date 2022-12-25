@@ -1,7 +1,7 @@
 import ProgressList from "./ProgressList";
 import React, {useEffect, useState} from "react";
 import NavBar from "../NavBar/NavBar";
-import axios from '../../services/axios';
+import axios from "../../hooks/axios";
 import URLS from '../../server_urls.json'
 
 function Transcript() {

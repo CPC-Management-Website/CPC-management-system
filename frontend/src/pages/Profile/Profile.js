@@ -1,7 +1,8 @@
 import React, { useState, useEffect }  from 'react';
 import "./Profile.css"
-import APIService from '../../services/APIService';
 import NavBar from "../NavBar/NavBar";
+import axios from '../../hooks/axios';
+import URLS from '../../server_urls.json'
 
 function Profile() {
   const [edit, setEdit] = useState(false);
@@ -17,10 +18,19 @@ function Profile() {
     setEdit(true);
   };
 
-  const enterProfile = () =>{
-      APIService.enterProfile({email, name, vjudgeHandle, password})
-      .catch(error => console.log('error',error))
-  }
+
+  const enterProfile = async() =>{
+    try {
+        const response = axios.post(URLS.PROFILE, JSON.stringify({email, name, vjudgeHandle, password}),
+        {
+            headers: {'Content-Type': 'application/json'},
+        });
+        console.log(response)
+    } catch (error) {
+        console.log(error)
+        //return console.log(error)
+    }
+}
 
   const handleSubmit = (e) => {
       e.preventDefault();
