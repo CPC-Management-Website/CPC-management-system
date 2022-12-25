@@ -8,4 +8,81 @@
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
 }
+.ContestDetailsPage{
+    background-image: linear-gradient(80deg, #ffb81e, #b02b1a,  #4b82c4);
+    min-height: 100vh;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+.auth-form-container{
+    background-color: rgba(245, 245, 220, 0.338);
+    display: flex;
+    flex-direction: column;
 
+}
+.ContestDetails-form {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.ContestDetailsVertical-container {
+    display: flex;
+    flex-direction: column;
+    
+}
+.ContestDetailsHorizontal-container{
+    display: flex;
+    flex-direction: row;
+    margin: 5px 0;
+}
+input {
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border: none;
+    margin-left: 1.5rem;
+    border-radius: 10px;
+}
+  
+label {
+    margin: 0rem 0;
+    padding: 0rem;
+    border: none;
+    border-radius: 10px;
+    align-self: flex-start;
+    margin-left: 1.5rem;
+
+}
+  
+button {
+    border: none;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-left: 1.5rem;
+
+    cursor: pointer;
+    color: #7439db;
+}
+select {
+    margin: 0.5rem 0;
+    padding: 16px 20px;
+    border: none;
+    margin-left: 1.5rem;
+    border-radius: 10px;
+}
+.link-btn {
+    background: none;
+    color: white;
+    text-decoration: underline;
+}
+@media screen and (min-width: 600px) {
+    .auth-form-container {
+      padding: 5rem;
+      border: 1px solid white;
+      border-radius: 10px;
+      margin: 0.5rem;
+    }
+}
