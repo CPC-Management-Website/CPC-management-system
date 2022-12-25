@@ -99,6 +99,18 @@ class User(UserMixin):
             result.append(dict(zip(columns,x)))
         # print (result)
         return result
+
+    @staticmethod
+    def getAllUsers():
+        mycursor = db.cursor(dictionary=True)
+        query  = "SELECT `vjudge_handle`, `name`,\
+                 `email`, `user_role` from user;"
+        mycursor.execute(query)
+        records = mycursor.fetchall()
+        users = []
+        for record in records:
+            users.append(record)
+        return users
     
     
 class permissions():
