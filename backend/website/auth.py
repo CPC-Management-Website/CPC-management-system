@@ -10,7 +10,7 @@ import os
 import secrets
 from .__init__ import urls
 
-from .models import User, permissions
+from .models import User, Permissions
 from .email_api import sendPasswordEmails
 auth = Blueprint("auth", __name__)
 
@@ -40,7 +40,7 @@ def login():
     if check_password_hash(user.password, password):
         print("Logged in!")
         login_user(user,remember = remember_logins)
-        perm = permissions(user).getAllowedPermissions()
+        perm = Permissions(user).getAllowedPermissions()
         user_json = json.dumps(user.__dict__)
         # permissions_json = json.dumps(perm.__dict__)
         print(user_json)

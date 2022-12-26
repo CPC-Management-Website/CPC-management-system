@@ -8,7 +8,7 @@ class User(UserMixin):
     name = None
     email = None
     level = None
-    role = None
+    role_id = None
     active = None
     points = None
     password = None
@@ -25,7 +25,7 @@ class User(UserMixin):
         self.name = record["name"]
         self.email = record["email"]
         self.level = record["level"]
-        self.role = record["user_role"]
+        self.role_id = record["user_role"]
         self.active = record["active"]
         self.points = record["points"]
         self.password = record["password"]
@@ -45,12 +45,13 @@ class User(UserMixin):
     @staticmethod
     def addUser(vjudge_handle,name,email,level,role,active,points,password):
         mycursor = db.cursor()
+        roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
                 (`vjudge_handle`, `name`,\
                 `email`, `level`, `user_role`, \
                 `active`, `points`, `password`)\
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query,(vjudge_handle,name,email,level,role,active,points,password,))
+        mycursor.execute(query,(vjudge_handle,name,email,level,roleID,active,points,password,))
         db.commit()
 
 
@@ -102,10 +103,11 @@ class User(UserMixin):
 
     @staticmethod
     def getAllUsers(role):
+        roleID = Permissions.getRoleID(role)
         mycursor = db.cursor(dictionary=True)
         query  = "SELECT `user_id`, `vjudge_handle`, `name`,\
                  `email` from user WHERE (user_role = %s);"
-        mycursor.execute(query,(role,))
+        mycursor.execute(query,(roleID,))
         records = mycursor.fetchall()
         users = []
         for record in records:
@@ -113,17 +115,10 @@ class User(UserMixin):
         return users
     
     
-class permissions():
+class Permissions():
 
     def __init__(self,user:User):
-        def getRoleID(role):
-            mycursor = db.cursor()
-            stmt = "SELECT role_id from role where user_role = %s;"
-            mycursor.execute(stmt,(role,))
-            ID =  mycursor.fetchone()[0]
-            return ID
-
-        ID = getRoleID(user.role)
+        ID = user.role_id
         mycursor = db.cursor()
         query = "SELECT * from permission where role_id = %s;"
         mycursor.execute(query,(ID,))
@@ -138,6 +133,24 @@ class permissions():
                 allowedPermissions.append(attribute)
         return allowedPermissions
 
+    @staticmethod
+    def getRoleID(role):
+        mycursor = db.cursor()
+        stmt = "SELECT role_id from role where user_role = %s;"
+        mycursor.execute(stmt,(role,))
+        ID =  mycursor.fetchone()[0]
+        return ID
+
+    @staticmethod
+    def getAllRoles():
+        mycursor = db.cursor(dictionary=True)
+        query  = "SELECT `role_id`, `user_role` from role;"
+        mycursor.execute(query)
+        records = mycursor.fetchall()
+        roles = []
+        for record in records:
+            roles.append(record)
+        return roles
 
 
 class ProgressPerContest():
