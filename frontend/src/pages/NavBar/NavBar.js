@@ -93,7 +93,7 @@ function NavBar() {
               <li className="nav-item">
                 <NavLink
 
-                  end to="/mentees"
+                  end to="/users"
                   className={(navData) => (navData.isActive ? "active" : "nav-links")}
 
                   onClick={handleClick}

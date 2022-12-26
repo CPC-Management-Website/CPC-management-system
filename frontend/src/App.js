@@ -9,10 +9,11 @@ import React,{ useState, useEffect }  from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Transcript from './pages/Transcript/Transcript';
 import Layout from './Layout';
-import {HOMEPAGE, TRANSCRIPT, UNAUTHORIZED, USER_ENTRY, RESOURCES, PROFILE, CONTEST} from './frontend_urls'
+import {HOMEPAGE, TRANSCRIPT, UNAUTHORIZED, USER_ENTRY, RESOURCES, PROFILE, CONTEST, ALL_USERS} from './frontend_urls'
 import RequireAuth from './requireAuth';
 import { VIEW_TRANSCRIPT, ADD_USERS, VIEW_RESOURCES} from './permissions';
 import ContestDetails from './pages/ContestDetails/ContestDetails';
+import AllUsers from './pages/AllUsers/AllUsers';
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
         </Route> 
 
         <Route path={CONTEST} element={<ContestDetails/>} />
+        <Route path={ALL_USERS} element={<AllUsers/>} />
         
         
 
