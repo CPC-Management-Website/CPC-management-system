@@ -12,7 +12,8 @@ function Resource (props){
   //deleteResource
     const deleteResource = (e) => {
         e.preventDefault();
-        props.setResources(props.resources.filter((e1) => e1.id != props.resources.id))
+        console.log("in delete")
+        props.setResources(props.resources.filter((e1) => e1.id != props.resource.id))
     }    
     //editResource
     const editResource = (e) =>{
