@@ -103,7 +103,7 @@ class User(UserMixin):
     @staticmethod
     def getAllUsers(role):
         mycursor = db.cursor(dictionary=True)
-        query  = "SELECT `vjudge_handle`, `name`,\
+        query  = "SELECT `user_id`, `vjudge_handle`, `name`,\
                  `email` from user WHERE (user_role = %s);"
         mycursor.execute(query,(role,))
         records = mycursor.fetchall()
