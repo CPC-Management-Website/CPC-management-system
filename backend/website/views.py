@@ -54,6 +54,7 @@ def editProfile():
     db.commit()
     #how to redirect to profile after update?
     #redirect ('/profile')
+    return {"hereeee": "here"}
 
 @views.route(urls['USERS'], methods = ["GET"], strict_slashes=False)
 def getUsers():

@@ -2,9 +2,12 @@ import React, { useState, useEffect }  from 'react';
 import "./Profile.css"
 import NavBar from "../NavBar/NavBar";
 import axios from '../../hooks/axios';
+import useAuth from '../../hooks/useAuth';
 import URLS from '../../server_urls.json'
 
 function Profile() {
+
+  const { auth } = useAuth();
   const [edit, setEdit] = useState(false);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -32,6 +35,20 @@ function Profile() {
     }
 }
 
+    const displayProfile = async() =>{
+    try {
+        const response = axios.get(URLS.PROFILE,
+        {
+            headers: {'Content-Type': 'application/json'},
+        });
+        console.log(response)
+     //   const val = response?.data?.email
+    } catch (error) {
+        console.log(error)
+        //return console.log(error)
+    }
+}
+
   const handleSubmit = (e) => {
       e.preventDefault();
       setEdit(false);
@@ -40,6 +57,12 @@ function Profile() {
   }
 
   useEffect(() => {}, [edit]);
+
+  useEffect ( () => {
+    console.log("called")
+    setEmail(auth?.email)
+    displayProfile()
+},[]);
 
 
   return (
