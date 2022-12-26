@@ -25,7 +25,7 @@ pip install -r requirements.txt
 
 ### Initializing backend server
 
-Open a terminal in the project's root directory and then run the following commands:
+Open a new terminal in the project's root directory and then run the following commands:
 
 ``` 
 cd backend
@@ -36,7 +36,7 @@ python app.py
 
 ### Initializing frontend server
 
-Open a terminal in the project's root directory and then run the following commands:
+Open <ins>**another**</ins> new terminal in the project's root directory and then run the following commands:
 
 ``` 
 cd frontend
