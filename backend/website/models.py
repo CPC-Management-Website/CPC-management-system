@@ -56,7 +56,7 @@ class User(UserMixin):
 
 
     @staticmethod
-    def changePasswordAdmin(email,newPassword):       
+    def updatePassword(email,newPassword):       
         def isSamePassword(email,newPassword):
             mycursor = db.cursor(dictionary=True)
             query = "SELECT password FROM user where email=%s;"
@@ -101,11 +101,11 @@ class User(UserMixin):
         return result
 
     @staticmethod
-    def getAllUsers():
+    def getAllUsers(role):
         mycursor = db.cursor(dictionary=True)
         query  = "SELECT `vjudge_handle`, `name`,\
-                 `email`, `user_role` from user;"
-        mycursor.execute(query)
+                 `email` from user WHERE (user_role = %s);"
+        mycursor.execute(query,(role,))
         records = mycursor.fetchall()
         users = []
         for record in records:
