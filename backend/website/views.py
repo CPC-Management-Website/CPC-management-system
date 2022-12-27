@@ -2,9 +2,12 @@ from flask import Blueprint
 from flask import request
 from Vjudge_api import get_vjudge_data
 from .models import ProgressPerContest
+from website import errors
+import werkzeug
 from . import db
 from .__init__ import urls
 from .models import User
+import json
 
 views = Blueprint("views", __name__)
 
@@ -34,10 +37,15 @@ def get_progress_per_contest():
 
 @views.route(urls['PROFILE'], methods = ["GET"], strict_slashes=False)
 def displayProfile():
-    email = request.json["email"]
-    user = User(email)
-    #return user as json object
-    return user.json.dumps(user._dict_)
+    email = request.args.get("email")
+    # if(User.exists(email)==False):
+    #     return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
+    print (email)
+    user = User(email = email)
+
+#     #return user as json object
+#    return user.json.dumps(user._dict_)
+    return json.dumps(user.__dict__)
 
 
 @views.route(urls['PROFILE'], methods = ["POST"], strict_slashes=False)

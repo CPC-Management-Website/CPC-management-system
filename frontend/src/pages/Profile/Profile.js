@@ -35,19 +35,49 @@ function Profile() {
     }
 }
 
-    const displayProfile = async() =>{
+// // const params = new URLSearchParams([['email', email]])
+let params = {
+   email: email
+  }
+const displayProfile = async() =>{
     try {
-        const response = axios.get(URLS.PROFILE,
-        {
-            headers: {'Content-Type': 'application/json'},
-        });
+        const response = await axios.get(URLS.PROFILE, {params});
         console.log(response)
-     //   const val = response?.data?.email
+ 
+        setName(response.name)
+        setEmail(response.email)
+        setVjudgeHandle(response.vjudgeHandle)
+        setPassword(response.password)
+        setID(response.user_id)
     } catch (error) {
         console.log(error)
         //return console.log(error)
     }
 }
+
+//     const displayProfile = async() =>{
+//     try {
+//         const response = await axios.get(URLS.PROFILE, {    
+//             params: {
+//              "email": "user2@gmail.com"
+//             // "email" : JSON.stringify(email)
+//             }
+//         },);
+//         console.log(response)
+//         setName(response.name)
+//         setEmail(response.email)
+//         setVjudgeHandle(response.vjudgeHandle)
+//         setPassword(response.password)
+//         setID(response.user_id)
+
+//      //   const val = response?.data?.email
+//     } catch (error) {
+//         console.log(error)
+//         //return console.log(error)
+//     }
+// }
+
+
 
   const handleSubmit = (e) => {
       e.preventDefault();
