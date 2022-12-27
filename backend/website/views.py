@@ -45,6 +45,9 @@ def displayProfile():
 
 #     #return user as json object
 #    return user.json.dumps(user._dict_)
+    ret = json.dumps(user.__dict__)
+    # console.log ("heeellooooo")
+    print (ret)
     return json.dumps(user.__dict__)
 
 

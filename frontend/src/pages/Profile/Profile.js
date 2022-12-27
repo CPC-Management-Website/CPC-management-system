@@ -35,47 +35,47 @@ function Profile() {
     }
 }
 
-// // const params = new URLSearchParams([['email', email]])
-let params = {
-   email: email
-  }
-const displayProfile = async() =>{
-    try {
-        const response = await axios.get(URLS.PROFILE, {params});
-        console.log(response)
- 
-        setName(response.name)
-        setEmail(response.email)
-        setVjudgeHandle(response.vjudgeHandle)
-        setPassword(response.password)
-        setID(response.user_id)
-    } catch (error) {
-        console.log(error)
-        //return console.log(error)
-    }
-}
-
-//     const displayProfile = async() =>{
+//  const params = new URLSearchParams([['email', email]])
+// let params = {
+//    "email": email
+//   }
+// const displayProfile = async() =>{
 //     try {
-//         const response = await axios.get(URLS.PROFILE, {    
-//             params: {
-//              "email": "user2@gmail.com"
-//             // "email" : JSON.stringify(email)
-//             }
-//         },);
+//         const response = await axios.get(URLS.PROFILE, {params: params});
 //         console.log(response)
+ 
 //         setName(response.name)
 //         setEmail(response.email)
 //         setVjudgeHandle(response.vjudgeHandle)
 //         setPassword(response.password)
 //         setID(response.user_id)
-
-//      //   const val = response?.data?.email
 //     } catch (error) {
 //         console.log(error)
 //         //return console.log(error)
 //     }
 // }
+
+    const displayProfile = async() =>{
+    try {
+        const response = await axios.get(URLS.PROFILE, {    
+            params: {
+             "email": "user2@gmail.com"
+            // "email" : JSON.stringify(email)
+            }
+        },);
+        console.log(response)
+        setName(response.data.name)
+        setEmail(response.data.email)
+        setVjudgeHandle(response.data.vjudgeHandle)
+        setPassword(auth?.password)
+        setID(response.data.user_id)
+
+     //   const val = response?.data?.email
+    } catch (error) {
+        console.log(error)
+        //return console.log(error)
+    }
+}
 
 
 
@@ -90,6 +90,7 @@ const displayProfile = async() =>{
 
   useEffect ( () => {
     console.log("called")
+    console.log(auth?.email)
     setEmail(auth?.email)
     displayProfile()
 },[]);
