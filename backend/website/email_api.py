@@ -26,6 +26,14 @@ def getMessage(name,recepient,password):
     message.set_content(body)
     return message.as_string()
 
+def getResetMessage(recepient,password):
+    message = email.message.EmailMessage()
+    message.add_header("Subject", "ASUFE CPC Account Password Reset")
+    message.add_header("To",recepient)
+    body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
+    message.set_content(body)
+    return message.as_string()
+
 def sendPasswordEmails(emails : list[dict[str, str]]):
     server = initEmail()
     for em in emails:
@@ -35,5 +43,11 @@ def sendPasswordEmails(emails : list[dict[str, str]]):
         message = getMessage(name,recepient,password)
         server.sendmail(sender_email, recepient, message)
     # message = getMessage(name,password)
+
+def sendPasswordResetEmail(recepient,password):
+    server = initEmail()
+    message = getResetMessage(recepient,password)
+    server.sendmail(sender_email, recepient, message)
+
 
 # sendPasswordEmails(emails = [{"name":"Mohamed Ayman","password":"yourpassword","email":"mohameddalash01@gmail.com"}])

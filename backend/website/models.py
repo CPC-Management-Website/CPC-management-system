@@ -1,6 +1,10 @@
 from . import db
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
+from .email_api import sendPasswordResetEmail
+import secrets
+
+password_length = 10
 
 class User(UserMixin):
     id = None
@@ -113,6 +117,12 @@ class User(UserMixin):
         for record in records:
             users.append(record)
         return users
+
+    @staticmethod
+    def resetPassword(email):
+        password = secrets.token_urlsafe(password_length)
+        User.updatePassword(email,password)
+        sendPasswordResetEmail(email,password)
     
     
 class Permissions():
