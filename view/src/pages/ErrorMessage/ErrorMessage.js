@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import style from "./style.module.css"
 import css from "classnames";
 
@@ -7,8 +6,6 @@ import css from "classnames";
 // Message: A text message to explain the error or warning to the user
 // Children: The elements containing the content to be displayed
 function ErrorMessage({ children, type, message }) {
-
-  //message? setIsShow(false) : setIsShow(true)
 
   const renderElAlert = function () {
     return React.cloneElement(children);

@@ -4,7 +4,7 @@ import React from 'react';
 
 function ContestDetails(){
     return(
-<div>
+    <div>
         <NavBar/>
 
         <div className='ContestDetailsPage'>

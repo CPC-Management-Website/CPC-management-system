@@ -26,7 +26,7 @@ function AllUsers(){
         try{
             const response = await axios.get(URLS.USERS, {    
                 params: {
-                    "role": "trainee"
+                    "role": "Trainee"
                 }
             },
             {
@@ -44,7 +44,7 @@ function AllUsers(){
         try{
             const response = await axios.get(URLS.USERS, {    
                 params: {
-                    "role": "mentor"
+                    "role": "Mentor"
                 }
             },)
             setMentors(response.data)
@@ -58,7 +58,7 @@ function AllUsers(){
         try{
             const response = await axios.get(URLS.USERS, {    
                 params: {
-                    "role": "trainee"
+                    "role": "Admin"
                 }
             },)
             setAdmins(response.data)
@@ -68,26 +68,12 @@ function AllUsers(){
             console.log(err)
         }
     }
-    const getMentorHeads = async () =>{
-        try{
-            const response = await axios.get(URLS.USERS, {    
-                params: {
-                    "role": "trainee"
-                }
-            },)
-            setMentorHeads(response.data)
-            console.log(response.data)
 
-        }catch(err){
-            console.log(err)
-        }
-    }            
 
     useEffect ( () => {     // runs once when the browser is refreshed
-        // getTrainees()
+        getTrainees()
         // getMentors()
         // getAdmins()
-        // getMentorHeads()
     },[]);
 
     return(

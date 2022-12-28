@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 import useAuth from '../../hooks/useAuth'
 import { ADD_USERS, VIEW_RESOURCES, VIEW_TRAINEES } from "../../permissions";
+import {ALL_USERS, CONTEST, HOMEPAGE, PROFILE, RESOURCES, TRANSCRIPT, USER_ENTRY} from '../../frontend_urls'
 
 
 function NavBar() {
@@ -14,7 +15,7 @@ function NavBar() {
     <>
       <nav className="navbar">
         <div className="nav-container">
-          <NavLink end to="/homepage" className="nav-logo">
+          <NavLink end to={HOMEPAGE} className="nav-logo">
             ASUFE CPC 
             <i className="fas fa-code"></i>
           </NavLink>
@@ -22,7 +23,7 @@ function NavBar() {
           <ul className={click ? "nav-menu active" : "nav-menu"}>
             <li className="nav-item">
               <NavLink
-                end to="/homepage"
+                end to={HOMEPAGE} 
                 className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
@@ -31,7 +32,7 @@ function NavBar() {
             </li>
             <li className="nav-item">
               <NavLink
-                end to="/profile"
+                end to={PROFILE}
                 className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
@@ -41,7 +42,7 @@ function NavBar() {
             <li className="nav-item">
               <NavLink
 
-                end to="/transcript"
+                end to={TRANSCRIPT}
                 className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
@@ -52,7 +53,7 @@ function NavBar() {
               <NavLink
 
                 end
-                to="/resources"
+                to={RESOURCES}
                 className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
@@ -65,7 +66,7 @@ function NavBar() {
               <li className="nav-item">
                 <NavLink
 
-                  end to="/userentry"
+                  end to={USER_ENTRY}
                   className={(navData) => (navData.isActive ? "active" : "nav-links")}
                   onClick={handleClick}
                 >
@@ -80,7 +81,7 @@ function NavBar() {
               <NavLink
 
                 end
-                to="/contest"
+                to={CONTEST}
                 className={(navData) => (navData.isActive ? "active" : "nav-links")}
                 onClick={handleClick}
               >
@@ -93,7 +94,7 @@ function NavBar() {
               <li className="nav-item">
                 <NavLink
 
-                  end to="/users"
+                  end to={ALL_USERS}
                   className={(navData) => (navData.isActive ? "active" : "nav-links")}
 
                   onClick={handleClick}

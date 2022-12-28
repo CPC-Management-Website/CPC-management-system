@@ -76,4 +76,6 @@ def getUsers():
     print('in method')
     role = request.args.get("role")
     print(role)
-    return {"hellow": "heloo"}
+    users = User.getAllUsers(role)
+
+    return json.dumps(users)

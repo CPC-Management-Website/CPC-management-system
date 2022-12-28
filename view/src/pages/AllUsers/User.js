@@ -6,7 +6,7 @@ function User(props){
         console.log("in reset pass")
     }
     const deleteUser = () =>{
-        props.setUsers(props.users.filter((e1) => e1.id != props.user.id))
+        props.setUsers(props.users.filter((e1) => e1.user_id != props.user.user_id))
     }
     return(
         <div className="user">
