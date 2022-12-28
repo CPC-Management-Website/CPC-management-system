@@ -1,0 +1,30 @@
+.section{
+    margin: 10px;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    padding: 8px;
+}
+.user{
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    align-content: center;
+}
+.titles{
+    font-size: 20px;
+    margin-left: 10px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+}
+.userName{
+    width: 20%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+}
+.btns{
+    width: 80%;
+    display: flex;
+    justify-content: flex-end;
+}

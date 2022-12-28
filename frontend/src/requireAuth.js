@@ -16,7 +16,7 @@ const RequireAuth = ({requiredPermissions}) => {
             : <Navigate to="/" state={{ from: location }} replace />
         :auth?.email
             ? <Outlet />
-            : <Navigate to="/unauthorized" state={{ from: location }} replace />
+            : <Navigate to="/" state={{ from: location }} replace />
 
     );
 }

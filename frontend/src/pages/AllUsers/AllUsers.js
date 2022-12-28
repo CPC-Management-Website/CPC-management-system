@@ -3,6 +3,7 @@ import axios from '../../hooks/axios';
 import URLS from '../../server_urls.json'
 import NavBar from '../NavBar/NavBar';
 import User from './User';
+import "./AllUsers.css"
 
 function AllUsers(){
     const [trainees, setTrainees] = useState ([
@@ -21,7 +22,6 @@ function AllUsers(){
         {name: "Sama 2", id : 8165}
     ]);
     const [mentorHeads, setMentorHeads] = useState([]);
-    const role = 'trainee'
     const getTrainees = async () =>{
         try{
             const response = await axios.get(URLS.USERS, {    
@@ -44,7 +44,7 @@ function AllUsers(){
         try{
             const response = await axios.get(URLS.USERS, {    
                 params: {
-                    "role": "trainee"
+                    "role": "mentor"
                 }
             },)
             setMentors(response.data)
@@ -93,19 +93,42 @@ function AllUsers(){
     return(
         <div>
             <NavBar />
-            <section className = "Admins Section">
-                <div>Admins</div>
+            <div className='titles'>Admins</div>
+            <section className = "section">
                 {
                     admins.map((user) => (
                         <User 
                         user = {user}
-                        admins = {admins}
-                        setAdmins = {setAdmins}
+                        users = {admins}
+                        setUsers = {setAdmins}
                         />
                     ))
                 }
             </section>
-            ALL USERS COMPONENT
+            <div className='titles'>Trainees</div>
+            <section className = "section">
+                {
+                    trainees.map((user) => (
+                        <User 
+                        user = {user}
+                        users = {trainees}
+                        setUsers = {setTrainees}
+                        />
+                    ))
+                }
+            </section>  
+            <div className='titles'>Mentors</div>
+            <section className = "section">
+                {
+                    mentors.map((user) => (
+                        <User 
+                        user = {user}
+                        users = {mentors}
+                        setUsers = {setMentors}
+                        />
+                    ))
+                }
+            </section>                        
         </div>
     )
 }

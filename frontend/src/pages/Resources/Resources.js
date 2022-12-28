@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react' 
-import AddResource from '../components/AddResource'
-import ResourcesList from '../components/ResourcesList'
+import AddResource from './AddResourceForm'
+import ResourcesList from './ResourcesList'
 import './Resources.css';
 import NavBar from "../NavBar/NavBar";
 
