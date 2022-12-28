@@ -17,7 +17,7 @@ db = mysql.connector.connect(
     passwd=os.getenv('DB_PASSWD'),
     database=os.getenv('DB_DATABASE')
 )
-url_file = open('../frontend/src/server_urls.json')
+url_file = open('../view/src/server_urls.json')
 urls = json.load(url_file)
 def create_app():
     app = Flask(__name__)
@@ -35,7 +35,7 @@ def create_app():
     login_manager.init_app(app)
 
 
-    from .models import User
+    from model.models import User
 
     @login_manager.user_loader
     def load_user(email):

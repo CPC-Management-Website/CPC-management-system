@@ -28,18 +28,18 @@ pip install -r requirements.txt
 Open a new terminal in the project's root directory and then run the following commands:
 
 ``` 
-cd backend
+cd controller
 ```
 ``` 
 python app.py
 ```
 
-### Initializing frontend server
+### Initializing view server
 
 Open <ins>**another**</ins> new terminal in the project's root directory and then run the following commands:
 
 ``` 
-cd frontend
+cd view
 ```
 ``` 
 npm start
@@ -47,4 +47,4 @@ npm start
 
 ### Accessing the website
 
-After initializing both the frontend and backend servers, navigate to [localhost:3000](http://localhost:3000/) in your browser. 
+After initializing both the view and backend servers, navigate to [localhost:3000](http://localhost:3000/) in your browser. 

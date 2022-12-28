@@ -1,12 +1,16 @@
 from flask import Blueprint
 from flask import request
-from Vjudge_api import get_vjudge_data
-from .models import ProgressPerContest
+import sys
+sys.path.append("..") 
+
+from vjudge_api import get_vjudge_data
+from model.models import ProgressPerContest
 from website import errors
 import werkzeug
 from . import db
 from .__init__ import urls
-from .models import User
+
+from model.models import User
 import json
 
 views = Blueprint("views", __name__)

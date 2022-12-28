@@ -10,7 +10,7 @@ import os
 import secrets
 from .__init__ import urls
 
-from .models import User, Permissions
+from model.models import User, Permissions
 from .email_api import sendPasswordEmails
 auth = Blueprint("auth", __name__)
 

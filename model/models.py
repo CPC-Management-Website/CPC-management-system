@@ -1,7 +1,9 @@
-from . import db
+import sys
+sys.path.append("..") 
+from controller.website import db
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
-from .email_api import sendPasswordResetEmail
+from controller.website.email_api import sendPasswordResetEmail
 import secrets
 
 password_length = 10
