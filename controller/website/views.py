@@ -62,11 +62,8 @@ def editProfile():
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]
     password = request.json["password"]
-    User.updatePassword(email, password)
-    mycursor = db.cursor()
-    query = "UPDATE user SET vjudge_handle=%s, name=%s, password=%s WHERE email=%s;"
-    mycursor.execute(query, (vjudge_handle, name, password, email,))
-    db.commit()
+    
+    User.updateData(email,name, vjudge_handle, password)
     #how to redirect to profile after update?
     #redirect ('/profile')
     return {"hereeee": "here"}

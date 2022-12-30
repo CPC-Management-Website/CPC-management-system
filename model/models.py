@@ -126,6 +126,14 @@ class User(UserMixin):
         User.updatePassword(email,password)
         sendPasswordResetEmail(email,password)
     
+    @staticmethod
+    def updateData(email, name, vjudge_handle, password):
+        User.updatePassword(email, password)
+        mycursor = db.cursor()
+        query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s;"
+        mycursor.execute(query, (vjudge_handle, name, email,))
+        db.commit()
+    
     
 class Permissions():
 
