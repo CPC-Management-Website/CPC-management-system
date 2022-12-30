@@ -8,9 +8,9 @@ function Transcript() {
 
     const [progressList, setProgressList] = useState ([]);
     const getProgressList = async() =>{
-        const contestID = 523643
+        const email = "mohameddalash01@gmail.com"
         try {
-            const response = await axios.post(URLS.PROGRESS_PER_CONTEST, JSON.stringify({contestID}),
+            const response = await axios.post(URLS.TRANSCRIPT, JSON.stringify({email}),
             {
             headers: {'Content-Type': 'application/json'}
             }

@@ -76,3 +76,9 @@ def getUsers():
     users = User.getAllUsers(role)
 
     return json.dumps(users)
+
+@views.route(urls['TRANSCRIPT'], methods = ["POST"], strict_slashes=False)
+def displayTranscript():
+    email = request.json["email"]
+    print(email)
+    return ProgressPerContest.getUserProgress(email)

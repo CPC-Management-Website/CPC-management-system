@@ -36,6 +36,14 @@ class User(UserMixin):
         self.points = record["points"]
         self.password = record["password"]
 
+    @staticmethod
+    def getUserID(email):
+        mycursor = db.cursor()
+        query = "SELECT user_id FROM user where email=%s;"
+        mycursor.execute(query,(email,))
+        ID =  mycursor.fetchone()[0]
+        return ID
+
     @staticmethod    
     def exists(email):
         mycursor = db.cursor()
@@ -211,3 +219,25 @@ class ProgressPerContest():
     
     def __init__(self) -> None:
         print("in init")
+    
+    @staticmethod
+    def getContest(contestID):
+        mycursor = db.cursor(dictionary=True)
+        query  = "SELECT `contest_id`, `week_number`, `topic`, `total_problems`,\
+             `total_participants`, `minimum_problems` from contest where contest_id = %s;"
+        mycursor.execute(query,(contestID,))
+        record = mycursor.fetchone()
+        return record
+
+    @staticmethod
+    def getUserProgress(email):
+        ID = User.getUserID(email)
+        mycursor = db.cursor(dictionary=True)
+        query  = "SELECT `contest_id`, `solved_problems`, `rank`, `zone`\
+             from progress_per_contest where user_id = %s;"
+        mycursor.execute(query,(ID,))
+        records = mycursor.fetchall()
+        contests = []
+        for record in records:
+            contests.append(ProgressPerContest.getContest(record["contest_id"]))
+        return {"progress": records, "contests" : contests}
