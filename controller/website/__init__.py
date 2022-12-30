@@ -17,6 +17,7 @@ db = mysql.connector.connect(
     passwd=os.getenv('DB_PASSWD'),
     database=os.getenv('DB_DATABASE')
 )
+db.autocommit = True
 url_file = open('../view/src/server_urls.json')
 urls = json.load(url_file)
 def create_app():
