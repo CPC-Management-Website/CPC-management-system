@@ -61,7 +61,8 @@ def register():
     role = request.json["platformRole"]
 
     if User.exists(email):
-        print("user already registered")
+        print("email already registered")
+        return errors.email_already_registered(werkzeug.exceptions.BadRequest)
     else:
         User.addUser(vjudge_handle = vjudge,name = name,
                     email = email, level = 1,role = role,
@@ -78,6 +79,7 @@ def registerfile():
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
     emails = []
+    already_registered = []
     for i, row in df.iterrows():
         vjudge = row["vjudge"]
         email  = row["email"]
@@ -88,6 +90,7 @@ def registerfile():
         if User.exists(email):
             print(email)
             print("user already registered")
+            already_registered.append(email)
         else:
             User.addUser(vjudge_handle = vjudge,name = name,
                     email = email, level = 1,role = role,
@@ -103,4 +106,6 @@ def registerfile():
 
     
     # TODO what to return here?
+    if len(already_registered)>0:
+        return errors.email_already_registered_bulk(already_registered,werkzeug.exceptions.BadRequest)
     return " " #{"email" : email,"password" : password} 
