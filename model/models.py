@@ -144,6 +144,12 @@ class User(UserMixin):
         mycursor.execute(query, (vjudge_handle, name, email,))
         db.commit()
     
+    @staticmethod
+    def deleteUser(email):
+        mycursor = db.cursor()
+        query = "DELETE FROM user WHERE (`email` = %s);"
+        mycursor.execute(query,(email,))
+        db.commit()
     
 class Permissions():
 
