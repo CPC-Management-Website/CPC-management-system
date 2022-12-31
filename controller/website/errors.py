@@ -23,3 +23,11 @@ def email_already_registered_bulk(already_registered,e):
         message+=email+"\n"
     print(message)
     return {"Error":message}, 405
+
+@errors.errorhandler(werkzeug.exceptions.BadRequest)
+def contest_already_registered(e):
+    return {"Error":'This contest ID is already registered'}, 406
+
+@errors.errorhandler(werkzeug.exceptions.BadRequest)
+def invalid_date_format(e):
+    return {"Error":'Invalid date format'}, 407

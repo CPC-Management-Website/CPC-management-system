@@ -5,6 +5,8 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from controller.website.email_api import sendPasswordResetEmail
 import secrets
+import datetime
+from vjudge_api import get_vjudge_data
 
 password_length = 10
 
@@ -241,3 +243,57 @@ class ProgressPerContest():
         for record in records:
             contests.append(ProgressPerContest.getContest(record["contest_id"]))
         return {"progress": records, "contests" : contests}
+
+    @staticmethod
+    def contestExists(contest_ID):
+        mycursor = db.cursor()
+        query = "SELECT * FROM contest where contest_id=%s;"
+        mycursor.execute(query,(contest_ID,))
+        mycursor.fetchone()
+        if mycursor.rowcount ==1:
+            return True
+        return False
+
+    @staticmethod
+    def addContest(contest_id, numProblems, start_date, end_date, topic, week_number):
+        if(ProgressPerContest.contestExists(contest_id)):
+            return "Contest already registered"
+        dateFormat = "%d/%m/%Y"
+        try:
+            start_date = datetime.datetime.strptime(start_date, dateFormat)
+            end_date = datetime.datetime.strptime(end_date, dateFormat)
+        except:
+            return "Incorrect date format"
+        mycursor = db.cursor()
+        query  = "INSERT INTO contest \
+                (`contest_id`, `total_problems`,\
+                `start_date`, `end_data`, `topic`,\
+                `week_number`, `minimum_problems`, `total_participants`) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(contest_id, numProblems, start_date,
+                 end_date, topic, week_number,numProblems, 0))
+        db.commit()
+        return "Success"
+
+    @staticmethod
+    def addProgress(contest_id):
+        print("here")
+        print(contest_id)
+        problemCount = ProgressPerContest.getProblemCount(contest_id=contest_id)
+        print('#Problems:',problemCount)
+        trainees = User.getVjudge_Handles()
+        for trainee in trainees:
+            id = trainee["user_id"]
+            vjudge = trainee["vjudge_handle"]
+            print(id, vjudge)
+            res = get_vjudge_data(contest_id = contest_id,username=vjudge,result=1)
+            filtered_res = {}
+            for x in res:
+                filtered_res[(x['problemId'],x['userName'])] = x
+                #print(x)
+            numSolved = len(filtered_res)
+            print("Solved:",numSolved)
+            zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved)
+            print(zone)
+            ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
+        return " "

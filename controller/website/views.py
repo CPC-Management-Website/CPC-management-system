@@ -3,7 +3,6 @@ from flask import request
 import sys
 sys.path.append("..") 
 
-from vjudge_api import get_vjudge_data
 from model.models import ProgressPerContest
 from website import errors
 import werkzeug
@@ -14,30 +13,6 @@ from model.models import User
 import json
 
 views = Blueprint("views", __name__)
-
-@views.route(urls['PROGRESS_PER_CONTEST'], methods=["POST"], strict_slashes=False)
-def get_progress_per_contest():
-    print("here")
-    contest_id = request.json["contestID"]
-    print(contest_id)
-    problemCount = ProgressPerContest.getProblemCount(contest_id=contest_id)
-    print('#Problems:',problemCount)
-    trainees = User.getVjudge_Handles()
-    for trainee in trainees:
-        id = trainee["user_id"]
-        vjudge = trainee["vjudge_handle"]
-        print(id, vjudge)
-        res = get_vjudge_data(contest_id = contest_id,username=vjudge,result=1)
-        filtered_res = {}
-        for x in res:
-            filtered_res[(x['problemId'],x['userName'])] = x
-            #print(x)
-        numSolved = len(filtered_res)
-        print("Solved:",numSolved)
-        zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved)
-        print(zone)
-        ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
-    return " "
 
 @views.route(urls['PROFILE'], methods = ["GET"], strict_slashes=False)
 def displayProfile():
@@ -92,5 +67,11 @@ def addContest():
     endDate = request.json["endDate"]
     topic = request.json["topic"]
     weekNum = request.json["weekNum"]
-
+    status = ProgressPerContest.addContest(contestID, numOfProblems, startDate, endDate, topic, weekNum)
+    print(status)
+    if status == 'Contest already registered':
+        return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
+    elif status == 'Incorrect date format':
+        return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
+    ProgressPerContest.addProgress(contestID)
     return {"add contest": "in add contest"}
