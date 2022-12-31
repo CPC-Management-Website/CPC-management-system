@@ -3,13 +3,13 @@ function ProgressPerContest (props){
     return (
         <div className="progressPerContest">
             <div className="contestDetails">
-                {props.contestItem.topic}
-                week number : {props.contestItem.week_number}
+                <p>{props.contestItem.topic}</p>
+                <p>week number : {props.contestItem.week_number}</p>
 
             </div>
             <div className="progress">
-                solved problems: {props.progressItem.solved_problems}
-                zone: {props.progressItem.zone}
+                <p>solved problems: {props.progressItem.solved_problems}</p>
+                <p>zone: {props.progressItem.zone}</p>
             </div>
         </div>
     );

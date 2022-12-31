@@ -60,9 +60,9 @@ function Transcript() {
             <NavBar/>
             <h2 className="heading">Transcript</h2>
             <div className="traineeDetails">
-                <h3>{trainee?.name}</h3>
-                <p>{trainee?.vjudge_handle}</p>
-                <p>{trainee?.email}</p>
+                <p className="name">Name: {trainee?.name}</p>
+                <p>Vjudge handle: {trainee?.vjudge_handle}</p>
+                <p>email: {trainee?.email}</p>
                 
             </div>
 
