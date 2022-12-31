@@ -11,7 +11,7 @@ import Transcript from './pages/Transcript/Transcript';
 import Layout from './Layout';
 import {HOMEPAGE, TRANSCRIPT, UNAUTHORIZED, USER_ENTRY, RESOURCES, PROFILE, CONTEST, ALL_USERS} from './frontend_urls'
 import RequireAuth from './requireAuth';
-import { VIEW_TRANSCRIPT, ADD_USERS, VIEW_RESOURCES} from './permissions';
+import { VIEW_TRANSCRIPT, ADD_USERS, VIEW_RESOURCES, ADD_CONTESTS, VIEW_TRAINEES, VIEW_USERS} from './permissions';
 import ContestDetails from './pages/ContestDetails/ContestDetails';
 import AllUsers from './pages/AllUsers/AllUsers';
 
@@ -64,12 +64,19 @@ function App() {
           <Route path= {RESOURCES} element={<Resources />} />
         </Route> 
 
-        <Route element = {<RequireAuth requiredPermissions = {[VIEW_TRANSCRIPT]} />}>
+        <Route element = {<RequireAuth requiredPermissions = {[VIEW_TRANSCRIPT, VIEW_TRAINEES]} />}>
           <Route path={TRANSCRIPT} element={<Transcript/>} />
         </Route> 
 
-        <Route path={CONTEST} element={<ContestDetails/>} />
-        <Route path={ALL_USERS} element={<AllUsers/>} />
+        <Route element = {<RequireAuth requiredPermissions = {[ADD_CONTESTS]} />}>
+          <Route path={CONTEST} element={<ContestDetails/>} />
+        </Route>
+
+        <Route element = {<RequireAuth requiredPermissions = {[VIEW_TRAINEES, VIEW_USERS]} />}>
+          <Route path={ALL_USERS} element={<AllUsers/>} />
+        </Route>        
+        
+        
         
         
 
