@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from controller.website.email_api import sendPasswordResetEmail
 import secrets
 import datetime
-from vjudge_api import get_vjudge_data
+from .vjudge_api import get_vjudge_data
 
 password_length = 10
 
