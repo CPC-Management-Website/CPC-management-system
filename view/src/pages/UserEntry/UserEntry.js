@@ -17,8 +17,6 @@ function UserEntry(){
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
-    const navigate = useNavigate();
-
     const enterUser = async() => {
         try {
             const response = await axios.post(URLS.USER_ENTRY, JSON.stringify({email, firstName, lastName, vjudgeHandle, platformRole}),

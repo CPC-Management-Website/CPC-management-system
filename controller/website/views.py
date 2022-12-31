@@ -82,3 +82,15 @@ def displayTranscript():
     email = request.json["email"]
     print(email)
     return ProgressPerContest.getUserProgress(email)
+
+
+@views.route(urls['CONTEST'], methods = ["POST"], strict_slashes = False)
+def addContest():
+    contestID = request.json["contestID"]
+    numOfProblems = request.json["numOfProblems"]
+    startDate = request.json["startDate"]
+    endDate = request.json["endDate"]
+    topic = request.json["topic"]
+    weekNum = request.json["weekNum"]
+
+    return {"add contest": "in add contest"}

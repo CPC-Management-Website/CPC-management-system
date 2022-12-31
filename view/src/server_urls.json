@@ -6,5 +6,6 @@
     "PROGRESS_PER_CONTEST" : "/progresspercontest",
     "PROFILE" : "/profile",
     "USERS" : "/users",
-    "TRANSCRIPT" : "/transcript"
+    "TRANSCRIPT" : "/transcript",
+    "CONTEST" : "/contest"
 }
