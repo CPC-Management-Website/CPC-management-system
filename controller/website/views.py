@@ -17,17 +17,10 @@ views = Blueprint("views", __name__)
 @views.route(urls['PROFILE'], methods = ["GET"], strict_slashes=False)
 def displayProfile():
     email = request.args.get("email")
-    # if(User.exists(email)==False):
-    #     return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
-    print (email)
-    user = User(email = email)
 
-#     #return user as json object
-#    return user.json.dumps(user._dict_)
-    ret = json.dumps(user.__dict__)
-    # console.log ("heeellooooo")
-    print (ret)
-    return json.dumps(user.__dict__)
+    user = User(email=email)
+    print (email)
+    return {"email" : user.email, "vjudge_handle" : user.vjudge_handle, "name" : user.name}
 
 
 @views.route(urls['PROFILE'], methods = ["POST"], strict_slashes=False)
@@ -50,11 +43,11 @@ def getUsers():
     print(role)
     users = User.getAllUsers(role)
 
-    return json.dumps(users)
+    return {json.dumps(users)}
 
-@views.route(urls['TRANSCRIPT'], methods = ["POST"], strict_slashes=False)
+@views.route(urls['TRANSCRIPT'], methods = ["GET"], strict_slashes=False)
 def displayTranscript():
-    email = request.json["email"]
+    email = request.args.get("email")
     print(email)
     return ProgressPerContest.getUserProgress(email)
 
@@ -74,4 +67,3 @@ def addContest():
     elif status == 'Incorrect date format':
         return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
     ProgressPerContest.addProgress(contestID)
-    return {"add contest": "in add contest"}

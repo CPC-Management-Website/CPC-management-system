@@ -12,17 +12,6 @@ html{
   width: 60%;
   margin:auto;
 }
-.heading{
-  color: #3f4c9c;
-  font-weight: 400;
-  text-transform: uppercase;
-  word-spacing: 3px;
-  text-align: center;
-  font-size: 40px;
-  margin-bottom: 40px;
-  font-family: 'Acme', sans-serif;
-  letter-spacing: 2px;
-}
 
 .inputresource{
   border:1px solid #3f4c9c;

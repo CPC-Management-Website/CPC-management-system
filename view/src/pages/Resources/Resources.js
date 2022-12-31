@@ -30,7 +30,7 @@ function Resources (){
     <div>
       <NavBar/>
       <div className="Resources">
-        <h2 className="heading"><span className="fas fa-bahai awsome"></span> Manage Your Resources</h2>
+        <h2 className="heading">Manage Your Resources</h2>
 
         <AddResource 
           resources = {resources}

@@ -7,5 +7,6 @@
     "PROFILE" : "/profile",
     "USERS" : "/users",
     "TRANSCRIPT" : "/transcript",
-    "CONTEST" : "/contest"
+    "CONTEST" : "/contest",
+    "USER" : "/user"
 }

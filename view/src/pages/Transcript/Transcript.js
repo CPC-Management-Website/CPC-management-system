@@ -3,57 +3,70 @@ import React, {useEffect, useState} from "react";
 import NavBar from "../NavBar/NavBar";
 import axios from "../../hooks/axios";
 import URLS from '../../server_urls.json'
+import useAuth from "../../hooks/useAuth";
+import { json } from "react-router-dom";
+import './Transcript.css';
 
 function Transcript() {
 
     const [progressList, setProgressList] = useState ([]);
+    const [contestList, setContestList] = useState ([]);
+    const [trainee, setTrainee] = useState()
+    const {auth} = useAuth()
+
     const getProgressList = async() =>{
-        const email = "mohameddalash01@gmail.com"
+        const params = new URLSearchParams([['email' , auth.email]])
         try {
-            const response = await axios.post(URLS.TRANSCRIPT, JSON.stringify({email}),
+            const response = await axios.get(URLS.TRANSCRIPT,{params},
             {
             headers: {'Content-Type': 'application/json'}
             }
             );
             console.log(response)
+            setProgressList(response.data.progress)
+            setContestList(response.data.contests)
             
         } catch (err) {
             console.log(err)
             
         }
-        // do get request to backend
-        /*
-        RESPONSE FORMAT
 
-        Contest week no.
-        Contest topic
-        no. of problems in contest
-        no. of problems solved by trainee
-        Trainee's zone in contest
+    }
+    const getTrainee = async () =>{
+        const params = new URLSearchParams([['email' , auth.email]])
+        try{
+            const response = await axios.get(URLS.PROFILE, {params},
+            {
+                headers: {'Content-Type': 'application/json'}
+            }
+            )
+            setTrainee(response.data)
+            console.log(response)
+            getProgressList()
 
-        */
-        // call setProgressList
+        }catch(err){
+            console.log(err)
+        }        
 
     }
 
     useEffect ( () => {
-        console.log("called")
-        getProgressList()
+        getTrainee()
     },[]);
 
 
     return (
         <div>
-            {/* <NavBar/> */}
-            <header>
-                <div>Transcript</div>
-                <div>
-                    <div>Trainee's name</div>
-                    <div>Mentor's name</div>
-                </div>
-            </header>
+            <NavBar/>
+            <h2 className="heading">Transcript</h2>
+            <div className="traineeDetails">
+                <h3>{trainee?.name}</h3>
+                <p>{trainee?.vjudge_handle}</p>
+                <p>{trainee?.email}</p>
+                
+            </div>
 
-            {/* <ProgressList progressList = {progressList}/ > */}
+            <ProgressList progressList = {progressList} contestList = {contestList}/ >
         </div>
     );
 
