@@ -17,10 +17,17 @@ views = Blueprint("views", __name__)
 @views.route(urls['PROFILE'], methods = ["GET"], strict_slashes=False)
 def displayProfile():
     email = request.args.get("email")
-
-    user = User(email=email)
+    # if(User.exists(email)==False):
+    #     return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
     print (email)
-    return {"email" : user.email, "vjudge_handle" : user.vjudge_handle, "name" : user.name}
+    user = User(email = email)
+
+#     #return user as json object
+#    return user.json.dumps(user._dict_)
+    ret = json.dumps(user.__dict__)
+    # console.log ("heeellooooo")
+    print (ret)
+    return json.dumps(user.__dict__)
 
 
 @views.route(urls['PROFILE'], methods = ["POST"], strict_slashes=False)
@@ -43,11 +50,25 @@ def getUsers():
     print(role)
     users = User.getAllUsers(role)
 
-    return {json.dumps(users)}
+    return json.dumps(users)
 
-@views.route(urls['TRANSCRIPT'], methods = ["GET"], strict_slashes=False)
-def displayTranscript():
+@views.route(urls['USERS'], methods = ["PATCH"], strict_slashes=False)
+def restUserPassword():
+    email = request.json["email"]
+    User.resetPassword(email)
+    print("Reset password for ",email)
+    return "Success"
+
+@views.route(urls['USERS'], methods = ["DELETE"], strict_slashes=False)
+def deletUser():
     email = request.args.get("email")
+    User.deleteUser(email)
+    print("Deleted user",email)
+    return "Success"
+
+@views.route(urls['TRANSCRIPT'], methods = ["POST"], strict_slashes=False)
+def displayTranscript():
+    email = request.json["email"]
     print(email)
     return ProgressPerContest.getUserProgress(email)
 
@@ -67,3 +88,4 @@ def addContest():
     elif status == 'Incorrect date format':
         return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
     ProgressPerContest.addProgress(contestID)
+    return {"add contest": "in add contest"}
