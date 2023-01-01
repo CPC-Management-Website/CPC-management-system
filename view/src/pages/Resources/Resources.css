@@ -80,3 +80,9 @@ html{
 .resourcename{
  color: #54545d;
 }
+
+.resource-Horizontal-container{
+  display: flex;
+  flex-direction: row;
+  margin: 5px 0;
+}

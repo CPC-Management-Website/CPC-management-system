@@ -42,9 +42,11 @@ function Resource (props){
             ) :
             (
                 <div className="resourcename">
+                    <div className="resource-Horizontal-container" >
                     <span>{props.resource.name}</span>
                     <button className="btn editbtn" onClick={toggleState}>Edit</button>
                     <button className="btn deletebtn" onClick={deleteResource}>Delete</button>
+                </div>
                 </div>
             )
         }</>
