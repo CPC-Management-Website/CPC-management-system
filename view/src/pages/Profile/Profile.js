@@ -24,7 +24,7 @@ function Profile() {
 
   const enterProfile = async() =>{
     try {
-        const response = axios.post(URLS.PROFILE, JSON.stringify({email, name, vjudgeHandle, password}),
+        const response = await axios.post(URLS.PROFILE, JSON.stringify({email, name, vjudgeHandle, password}),
         {
             headers: {'Content-Type': 'application/json'},
         });
@@ -34,41 +34,16 @@ function Profile() {
         //return console.log(error)
     }
 }
-
-//  const params = new URLSearchParams([['email', email]])
-// let params = {
-//    "email": email
-//   }
-// const displayProfile = async() =>{
-//     try {
-//         const response = await axios.get(URLS.PROFILE, {params: params});
-//         console.log(response)
- 
-//         setName(response.name)
-//         setEmail(response.email)
-//         setVjudgeHandle(response.vjudgeHandle)
-//         setPassword(response.password)
-//         setID(response.user_id)
-//     } catch (error) {
-//         console.log(error)
-//         //return console.log(error)
-//     }
-// }
-
     const displayProfile = async() =>{
+        const params = new URLSearchParams([['email' , auth.email]])
     try {
-        const response = await axios.get(URLS.PROFILE, {    
-            params: {
-             "email": "user2@gmail.com"
-            // "email" : JSON.stringify(email)
-            }
-        },);
+        const response = await axios.get(URLS.PROFILE, {params});
         console.log(response)
         setName(response.data.name)
         setEmail(response.data.email)
-        setVjudgeHandle(response.data.vjudgeHandle)
+        setVjudgeHandle(response.data.vjudge_handle)
         setPassword(auth?.password)
-        setID(response.data.user_id)
+        setID(response.data.id)
 
      //   const val = response?.data?.email
     } catch (error) {
@@ -90,8 +65,6 @@ function Profile() {
 
   useEffect ( () => {
     console.log("called")
-    console.log(auth?.email)
-    setEmail(auth?.email)
     displayProfile()
 },[]);
 
