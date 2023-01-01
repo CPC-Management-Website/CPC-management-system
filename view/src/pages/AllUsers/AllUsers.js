@@ -4,8 +4,11 @@ import URLS from '../../server_urls.json'
 import NavBar from '../NavBar/NavBar';
 import User from './User';
 import "./AllUsers.css"
+import useAuth from '../../hooks/useAuth';
+import { VIEW_ADMINS, VIEW_MENTORS, VIEW_TRAINEES } from '../../permissions';
 
 function AllUsers(){
+    const {auth} = useAuth()
     const [trainees, setTrainees] = useState ([]);
     const [mentors, setMentors] = useState ([]);
     const [admins, setAdmins] = useState([]);
@@ -22,7 +25,11 @@ function AllUsers(){
                 )
             setTrainees(response.data)
             console.log(response)
-            getMentors()
+
+            if (auth?.permissions?.find(perm => perm === VIEW_MENTORS)){
+                getMentors()
+            }
+
 
         }catch(err){
             console.log(err)
@@ -37,7 +44,10 @@ function AllUsers(){
             },)
             setMentors(response.data)
             console.log(response)
-            getAdmins()
+            if (auth?.permissions?.find(perm => perm === VIEW_ADMINS)){
+                getAdmins()
+            }            
+            
 
         }catch(err){
             console.log(err)
@@ -66,34 +76,33 @@ function AllUsers(){
     return(
         <div>
             <NavBar />
-            <div className='titles'>Admins</div>
+            <>{
+            auth?.permissions?.find(perm => perm === VIEW_ADMINS)
+            ?
             <section className = "section">
+                <div className='titles'>Admins</div>
                 {
-                    admins.map((user) => (
-                        <User 
-                        user = {user}
-                        users = {admins}
-                        setUsers = {setAdmins}
-                        role = {"admin"}
-                        />
-                    ))
+                admins.map((user) => (
+                <User 
+                    user = {user}
+                    users = {admins}
+                    setUsers = {setAdmins}
+                    role = {"admin"}
+                />
+                ))
                 }
             </section>
-            <div className='titles'>Trainees</div>
+                    :
+                    <></>
+            }
+            </>
+
+
+            <>{
+            auth?.permissions?.find(perm => perm === VIEW_MENTORS)
+            ?
             <section className = "section">
-                {
-                    trainees.map((user) => (
-                        <User 
-                        user = {user}
-                        users = {trainees}
-                        setUsers = {setTrainees}
-                        role = {"trainee"}
-                        />
-                    ))
-                }
-            </section>  
-            <div className='titles'>Mentors</div>
-            <section className = "section">
+                <div className='titles'>Mentors</div>
                 {
                     mentors.map((user) => (
                         <User 
@@ -104,9 +113,35 @@ function AllUsers(){
                         />
                     ))
                 }
-            </section>                        
+            </section>
+                    :
+                    <></>
+            }
+            </>
+
+
+            <>{
+            auth?.permissions?.find(perm => perm === VIEW_TRAINEES)
+            ?
+            <section className = "section">
+                <div className='titles'>Trainees</div>
+                {
+                    trainees.map((user) => (
+                        <User 
+                        user = {user}
+                        users = {trainees}
+                        setUsers = {setTrainees}
+                        role = {"trainee"}
+                        />
+                    ))
+                }
+            </section>
+                    :
+                    <></>
+            }
+            </>         
         </div>
-    )
+    );
 }
 
 export default AllUsers

@@ -12,7 +12,7 @@ export const UPDATE_USERS = "update_users"
 export const DELETE_USERS = "delete_users"
 
 export const VIEW_MY_TRANSCRIPT = "read_my_transcript"
-export const VIEW_ALL_TRANSCRIPTS = "read_all_transcript"
+export const VIEW_ALL_TRANSCRIPTS = "read_all_transcripts"
 
 export const ADD_CONTESTS = "add_contests"
 
