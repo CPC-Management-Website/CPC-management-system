@@ -86,3 +86,8 @@ html{
   flex-direction: row;
   margin: 5px 0;
 }
+.resource_span{
+  width: 600px;
+  height: 50px;
+  background:   #ededed7a;
+}

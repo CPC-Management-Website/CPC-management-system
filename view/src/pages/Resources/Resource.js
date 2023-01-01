@@ -47,6 +47,7 @@ function Resource (props){
                 <div className="resourcename">
                     <div className="resource-Horizontal-container" >
                     <span>{props.resource.name}</span>
+                    <span className= "resource_span"/>
                     <>
                     {
                         auth?.permissions?.find(perm => perm === UPDATE_RESOURCES)
