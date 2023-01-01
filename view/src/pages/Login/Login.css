@@ -1,5 +1,5 @@
 .loginPage{
-    background-image: linear-gradient(80deg, #ffb81e, #b02b1a,  #4b82c4);
+    background-image: linear-gradient(80deg, #d5d5d5, #e7e7e7,  #ededed);
     min-height: 100vh;
     align-items: center;
     display: flex;
@@ -12,10 +12,30 @@
     flex-direction: column;
 
 }
+.login-page-horizontal-container {
+    display: flex;
+    padding: 100px;
+    padding-top: 30px; 
+    flex-direction: row;
+    margin: 0 auto;
+}
+span {
+    width: 50px;
+    height: 50px;
+    background:   #ededed7a;
+  }
+
 .login-title{
     display: flex;
     justify-content: center;
 }
+h1{
+    color: #3c3692;
+    width: 260px;
+    justify-self: center;
+    justify-content: center;
+}
+
 .login-form {
     display: flex;
     flex-direction: column;

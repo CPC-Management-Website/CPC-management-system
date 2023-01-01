@@ -6,6 +6,7 @@ import ErrorMessage from '../ErrorMessage/ErrorMessage.js';
 import useAuth from '../../hooks/useAuth';
 import { HOMEPAGE } from '../../frontend_urls';
 import URLS from '../../server_urls.json'
+import { ReactComponent as Logo } from './login.svg';
 
 function Login(){
     const {setAuth} = useAuth();
@@ -50,6 +51,11 @@ function Login(){
 
     return (
         <div className='loginPage'>
+            <div className="welcome-page-horizontal-container" >
+            <Logo width = "500" height = "500"/>
+            <span></span>
+            <span></span>
+            <span></span>
             <div className="auth-form-container">
                 <>{
                     success?(
@@ -59,7 +65,7 @@ function Login(){
                         <ErrorMessage type="error" message={errMsg}/>
                     )
                 }</>
-
+                <h1 className='welcome-title'>Welcome to ASUFE CPC</h1>
                 <h2 className='login-title'>Login</h2>
                 <form className="login-form" onSubmit={handleSubmit}>
                     <label htmlFor="email">Email</label>
@@ -85,7 +91,7 @@ function Login(){
                     <button type="submit">Log In</button>
                 </form>
             </div>
-
+        </div>
         </div>
     );
 }
