@@ -53,9 +53,7 @@ function Login(){
         <div className='loginPage'>
             <div className="welcome-page-horizontal-container" >
             <Logo width = "500" height = "500"/>
-            <span></span>
-            <span></span>
-            <span></span>
+            <span className = "login_span"></span>
             <div className="auth-form-container">
                 <>{
                     success?(

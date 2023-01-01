@@ -19,8 +19,8 @@
     flex-direction: row;
     margin: 0 auto;
 }
-span {
-    width: 50px;
+.login_span {
+    width: 150px;
     height: 50px;
     background:   #ededed7a;
   }

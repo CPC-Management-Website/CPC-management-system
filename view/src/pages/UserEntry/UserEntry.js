@@ -97,7 +97,6 @@ function UserEntry(){
                             <input value={firstName} onChange={(e) => setFirstName(e.target.value)} type="string" placeholder="First Name" id="firstName" name="firstName"  required/>
                          </div>  
                         <span className='name_span'/> 
-                        <span className='name_span'/>
                         <div className="userEntryVertical-container"> 
                             <label htmlFor="Last Name">Last Name*</label>
                             <input value={lastName} onChange={(e) => setLastName(e.target.value)}type="string" placeholder="Last Name" id="lastName" name="lastName" required />
