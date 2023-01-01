@@ -87,7 +87,7 @@ function UserEntry(){
                        errMsg==""?(<></>) :(<ErrorMessage type="error" message={errMsg}/>)
                     )
                 }</>
-                <h2>Add New User</h2>
+                <h2>Add New Users</h2>
                 <form className="userEntry-form" onSubmit={handleSubmit}>
                     <label htmlFor="Email">User Email*</label>
                     <input value={email} onChange={(e) => setEmail(e.target.value)}type="email" placeholder="useremail@gmail.com" id="email" name="email" required/>
@@ -96,6 +96,8 @@ function UserEntry(){
                             <label htmlFor="First Name">First Name*</label>
                             <input value={firstName} onChange={(e) => setFirstName(e.target.value)} type="string" placeholder="First Name" id="firstName" name="firstName"  required/>
                          </div>  
+                        <span className='name_span'/> 
+                        <span className='name_span'/>
                         <div className="userEntryVertical-container"> 
                             <label htmlFor="Last Name">Last Name*</label>
                             <input value={lastName} onChange={(e) => setLastName(e.target.value)}type="string" placeholder="Last Name" id="lastName" name="lastName" required />
