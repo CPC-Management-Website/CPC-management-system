@@ -123,9 +123,9 @@ function Profile() {
                   <input value={password} onChange={(e) => setPassword(e.target.value)}type="password" placeholder="*****" id="password" name="password" disabled = {!edit}/>
 
                  {edit ? (
-                 <h1><button style={{color: 'salmon'}} type="submit">Save</button></h1>
+                 <h1><button type="submit">Save</button></h1>
                   ) : (
-                    <h1><button style={{color: 'salmon'}} onClick={(e) => editUser(e)}>Edit</button></h1>
+                    <h1><button onClick={(e) => editUser(e)}>Edit</button></h1>
                    )}
               </form>            
           </div>

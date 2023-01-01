@@ -1,5 +1,5 @@
 .userEntryPage{
-    background-image: linear-gradient(80deg, #ffb81e, #b02b1a,  #4b82c4);
+    background-image: linear-gradient(80deg, #d5d5d5, #e7e7e7,  #ededed);
     min-height: 100vh;
     align-items: center;
     display: flex;
@@ -63,8 +63,13 @@ select {
     border: none;
     margin-left: 1.5rem;
     border-radius: 10px;
+    background-color: rgb(239, 239, 239);
+
 }
 
+.userEntry-file{
+    background-color: white;
+}
 .link-btn {
     background: none;
     color: white;
