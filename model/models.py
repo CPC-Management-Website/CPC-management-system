@@ -237,6 +237,15 @@ class ProgressPerContest():
         record = mycursor.fetchone()
         return record
 
+
+    @staticmethod
+    def getAllContests():
+        mycursor = db.cursor(dictionary=True)
+        query  = "SELECT * from contest;"
+        mycursor.execute(query)
+        contests = mycursor.fetchall()
+        return contests
+
     @staticmethod
     def getUserProgress(email):
         ID = User.getUserID(email)
@@ -245,9 +254,7 @@ class ProgressPerContest():
              from progress_per_contest where user_id = %s;"
         mycursor.execute(query,(ID,))
         records = mycursor.fetchall()
-        contests = []
-        for record in records:
-            contests.append(ProgressPerContest.getContest(record["contest_id"]))
+        contests = ProgressPerContest.getAllContests()
         return {"progress": records, "contests" : contests}
 
     @staticmethod
