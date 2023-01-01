@@ -66,9 +66,9 @@ def deletUser():
     print("Deleted user",email)
     return "Success"
 
-@views.route(urls['TRANSCRIPT'], methods = ["POST"], strict_slashes=False)
+@views.route(urls['TRANSCRIPT'], methods = ["GET"], strict_slashes=False)
 def displayTranscript():
-    email = request.json["email"]
+    email = request.args.get("email")
     print(email)
     return ProgressPerContest.getUserProgress(email)
 

@@ -8,30 +8,10 @@ import { json } from "react-router-dom";
 import './Transcript.css';
 
 function Transcript() {
-
-    const [progressList, setProgressList] = useState ([]);
-    const [contestList, setContestList] = useState ([]);
     const [trainee, setTrainee] = useState()
     const {auth} = useAuth()
 
-    const getProgressList = async() =>{
-        const params = new URLSearchParams([['email' , auth.email]])
-        try {
-            const response = await axios.get(URLS.TRANSCRIPT,{params},
-            {
-            headers: {'Content-Type': 'application/json'}
-            }
-            );
-            console.log(response)
-            setProgressList(response.data.progress)
-            setContestList(response.data.contests)
-            
-        } catch (err) {
-            console.log(err)
-            
-        }
-
-    }
+    
     const getTrainee = async () =>{
         const params = new URLSearchParams([['email' , auth.email]])
         try{
@@ -42,7 +22,6 @@ function Transcript() {
             )
             setTrainee(response.data)
             console.log(response)
-            getProgressList()
 
         }catch(err){
             console.log(err)
@@ -66,7 +45,7 @@ function Transcript() {
                 
             </div>
 
-            <ProgressList progressList = {progressList} contestList = {contestList}/ >
+            <ProgressList email = {auth.email}/ >
         </div>
     );
 
