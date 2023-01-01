@@ -4,9 +4,11 @@ import axios from '../../hooks/axios';
 import URLS from '../../server_urls.json'
 import ProgressList from "../../sharedComponents/ProgressList";
 import React, { useState, useEffect }  from 'react';
+import useAuth from '../../hooks/useAuth';
+import { DELETE_USERS, UPDATE_USERS, VIEW_ADMINS, VIEW_ALL_TRANSCRIPTS, VIEW_MENTORS, VIEW_TRAINEES } from '../../permissions';
 
 function User(props){
-
+    const {auth} = useAuth()
     const [isShown, setIsShown] = useState(false);
 
     const resetPass = async () =>{
@@ -56,18 +58,32 @@ function User(props){
             <div className="user">
             <>{
                 
-                props.role === "trainee"?
-                    (<span onClick={handleClick} className="userName">{props.user.name}</span>)
+                props.role === "trainee" && auth?.permissions?.find(perm => perm === VIEW_ALL_TRANSCRIPTS)?
+                    <span onClick={handleClick} className="userName">{props.user.name}</span>
                     :
-                    (
-                        <span className="userName">{props.user.name}</span>
-                        )
+                    
+                    <span className="userName">{props.user.name}</span>
 
                 
                     }</>
             <div className="btns">
-                <button className="resetbtn" onClick={resetPass}>Reset Password</button>
-                <button className="deletebtn" onClick={deleteUser}>Delete</button>
+                <>
+                {
+                    auth?.permissions?.find(perm => perm === UPDATE_USERS)
+                    ? <button className="resetbtn" onClick={resetPass}>Reset Password</button>
+                    :
+                    <></>
+                }
+                </>
+
+                <>
+                {
+                    auth?.permissions?.find(perm => perm === DELETE_USERS)
+                    ?<button className="deletebtn" onClick={deleteUser}>Delete</button>
+                    :
+                    <></>
+                }
+                </>                
             </div>
                 
             </div>
