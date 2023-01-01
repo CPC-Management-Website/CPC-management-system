@@ -118,6 +118,7 @@ function UserEntry(){
                 </form>
                 <form className="userEntry-file" onSubmit={handleSubmitFile}>
                     <input
+                        className="upload_file_input"
                         type="file"
                         //value={selectedFile}
                         accept=".xls,.xlsx"
