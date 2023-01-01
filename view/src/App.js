@@ -9,37 +9,15 @@ import React,{ useState, useEffect }  from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Transcript from './pages/Transcript/Transcript';
 import Layout from './Layout';
-import {HOMEPAGE, TRANSCRIPT, UNAUTHORIZED, USER_ENTRY, RESOURCES, PROFILE, CONTEST, ALL_USERS} from './frontend_urls'
+import {HOMEPAGE, TRANSCRIPT, UNAUTHORIZED, USER_ENTRY, RESOURCES, PROFILE, CONTEST, USERS} from './frontend_urls'
 import RequireAuth from './requireAuth';
-import { VIEW_TRANSCRIPT, ADD_USERS, VIEW_RESOURCES, ADD_CONTESTS, VIEW_TRAINEES, VIEW_USERS} from './permissions';
+import { VIEW_MY_TRANSCRIPT, ADD_USERS, VIEW_RESOURCES, ADD_CONTESTS, VIEW_TRAINEES, VIEW_ADMINS, VIEW_MENTORS} from './permissions';
 import ContestDetails from './pages/ContestDetails/ContestDetails';
 import AllUsers from './pages/AllUsers/AllUsers';
 
 
 function App() {
 
-  const [data, setdata] = useState({
-    x : ""
-  });
-
-  useEffect(() => {
-    // Fetching the API endpoint from the flask server
-    fetch("http://127.0.0.1:5000/data",{
-      'methods':'GET',
-      headers : {
-        'Content-Type':'application/json'
-      }
-    })
-    .then(function (res){
-      res.json()
-      .then(function (data) {
-        setdata({
-          x : data.X
-        });
-        console.log(data)
-      });
-    });
-  }, []);
   return (
     <Routes>
       <Route path = "/" element = {<Layout />}>
@@ -64,7 +42,7 @@ function App() {
           <Route path= {RESOURCES} element={<Resources />} />
         </Route> 
 
-        <Route element = {<RequireAuth requiredPermissions = {[VIEW_TRANSCRIPT, VIEW_TRAINEES]} />}>
+        <Route element = {<RequireAuth requiredPermissions = {[VIEW_MY_TRANSCRIPT]} />}>
           <Route path={TRANSCRIPT} element={<Transcript/>} />
         </Route> 
 
@@ -72,8 +50,8 @@ function App() {
           <Route path={CONTEST} element={<ContestDetails/>} />
         </Route>
 
-        <Route element = {<RequireAuth requiredPermissions = {[VIEW_TRAINEES, VIEW_USERS]} />}>
-          <Route path={ALL_USERS} element={<AllUsers/>} />
+        <Route element = {<RequireAuth requiredPermissions = {[VIEW_TRAINEES, VIEW_ADMINS, VIEW_MENTORS]} />}>
+          <Route path={USERS} element={<AllUsers/>} />
         </Route>        
         
         

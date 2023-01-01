@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./NavBar.css";
 import useAuth from '../../hooks/useAuth'
-import { ADD_CONTESTS, ADD_USERS, VIEW_RESOURCES, VIEW_TRAINEES, VIEW_TRANSCRIPT, VIEW_USERS } from "../../permissions";
-import {ALL_USERS, CONTEST, HOMEPAGE, PROFILE, RESOURCES, TRANSCRIPT, USER_ENTRY} from '../../frontend_urls'
+import { ADD_CONTESTS, ADD_USERS, VIEW_RESOURCES, VIEW_TRAINEES, VIEW_MY_TRANSCRIPT, VIEW_ADMINS, VIEW_MENTORS } from "../../permissions";
+import {USERS, CONTEST, HOMEPAGE, PROFILE, RESOURCES, TRANSCRIPT, USER_ENTRY} from '../../frontend_urls'
 
 
 function NavBar() {
@@ -17,7 +17,6 @@ function NavBar() {
         <div className="nav-container">
           <NavLink end to={HOMEPAGE} className="nav-logo">
             ASUFE CPC 
-            <i className="fas fa-code"></i>
           </NavLink>
 
           <ul className={click ? "nav-menu active" : "nav-menu"}>
@@ -40,7 +39,7 @@ function NavBar() {
               </NavLink>
             </li>
             <>{
-              auth?.permissions?.find(perm => perm === VIEW_TRANSCRIPT)
+              auth?.permissions?.find(perm => perm === VIEW_MY_TRANSCRIPT)
               ?
             <li className="nav-item">
               <NavLink
@@ -56,7 +55,12 @@ function NavBar() {
             <></>
             }
             </>
-            <li className="nav-item">
+
+
+            <>{
+              auth?.permissions?.find(perm => perm === VIEW_RESOURCES)
+              ?
+              <li className="nav-item">
               <NavLink
 
                 end
@@ -67,6 +71,12 @@ function NavBar() {
                 Resources
               </NavLink>
             </li>
+            :
+            <></>
+            }
+            </>
+
+
             <>{
               auth?.permissions?.find(perm => perm === ADD_USERS)
               ?
@@ -102,17 +112,23 @@ function NavBar() {
             </>
 
             <>{
-              auth?.permissions?.find(perm => perm === VIEW_USERS || perm === VIEW_TRAINEES)
+              auth?.permissions?.find(perm => perm === VIEW_ADMINS || perm === VIEW_MENTORS || perm === VIEW_TRAINEES)
               ?
               <li className="nav-item">
                 <NavLink
 
-                  end to={ALL_USERS}
+                  end to={USERS}
                   className={(navData) => (navData.isActive ? "active" : "nav-links")}
 
                   onClick={handleClick}
                 >
-                View Mentees
+                  <>{
+                    auth?.permissions?.find(perm => perm === VIEW_ADMINS)
+                    ? <span>Users</span>
+                    :<span>Mentees</span>
+                  }
+                  </>
+                
                 </NavLink>
               </li>
               :
