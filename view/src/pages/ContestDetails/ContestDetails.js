@@ -48,42 +48,45 @@ function ContestDetails(){
 
         <div className='ContestDetailsPage'>
             <div className="auth-form-container">
-                <h2>Add Contest Details</h2>
+        {/* <div md="4" className="gradient-custom auth-form-container">               */}
+                <h2 >Add Contest Details</h2>
                 <form className="ContestDetails-form" onSubmit={handleSubmit}>
                     
                    <div className="ContestDetails-container" >
-                   <div className="userEntryVertical-container" >
-                      < div className="ContestDetails-container" >
+                   <div className="ContestDetailsVertical-container" >
+                      < div className="ContestDetailsVertical-container" >
                             <label htmlFor="Contest ID">Contest ID*</label>
                             <input value = {contestID} type="string" placeholder="Contest ID" onChange={(e) => setContestID(e.target.value)} id="Contest ID" name="Contest ID" />
                         </div>
-                         <div className="ContestDetails-container" >
+                         <div className="ContestDetailsVertical-container" >
                             <label htmlFor="Number of Problems">Number of Problems*</label>
                             <input type="number" value = {numOfProblems} placeholder="Number of Problems" onChange={(e) => setNumOfProblems(e.target.value)} id="Number of Problems" name="Number of Problems" />
                          </div>
-                         <div className="ContestDetails-container"> 
+                         <div className="userEntryHorizontal-container" >
+                         <div className="ContestDetailsVertical-container"> 
                             <label htmlFor="Start Date">Start Date*</label>
                             <input type="string"  value = {startDate} placeholder="DD/MM/YYYY" onChange={(e) => setStartDate(e.target.value)} id="Start Date" name="Start Date"/>
                         </div>  
-                        <div className="ContestDetails-container"> 
+                        <div className="ContestDetailsVertical-container"> 
                             <label htmlFor="End Date">End Date*</label>
                             <input type="string" value = {endDate} placeholder="DD/MM/YYYY" onChange={(e) => setEndDate(e.target.value)} id="End Date" name="End Date"/>
                         </div>
-                        <div className="ContestDetails-container"> 
+                        </div>
+                        <div className="ContestDetailsVertical-container"> 
                             <label htmlFor="Topic">Topic*</label>
                             <input id="outlined-multiline-flexible" value = {topic} label="Topic" onChange={(e) => setTopic(e.target.value)} placeholder="Topic"/>
                         </div>
-                        <div className="ContestDetails-container"> 
+                        <div className="ContestDetailsVertical-container"> 
                             <label htmlFor="Week Number">Week Number*</label>
                             <input type="number" value = {weekNum} placeholder="Week Number"onChange={(e) => setWeekNum(e.target.value)}  id="Week Number" name="Week Number"/>
                         </div>    
                     </div>
                     </div>
-                    <button style={{color: 'salmon'}}type="submit">Submit</button>
+                    <button type="submit">Submit</button>
                 </form>
             </div>
         </div>
-        </div>
+     </div>
     );
 }
 export default ContestDetails;
