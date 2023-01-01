@@ -73,9 +73,6 @@ select {
 
 }
 
-.userEntry-file{
-    background-color: white;
-}
 .link-btn {
     background: none;
     color: white;
@@ -88,4 +85,13 @@ select {
       border-radius: 10px;
       margin: 0.5rem;
     }
+}
+
+.upload_file_input{
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border: none;
+    margin-left: 1.5rem;
+    border-radius: 10px;
+    background-color: white
 }
