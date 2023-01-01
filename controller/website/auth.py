@@ -18,15 +18,6 @@ remember_logins = False     # consider changing this to true
 password_length = 10
 
 
-
-# Defining functionality for "/data" endpoint
-@auth.route(urls['DATA'], methods=["GET"], strict_slashes=False)
-def get_data():
-    return {
-		"X":"dataaa"
-		}
-
-
 @auth.route(urls['LOGIN'], methods=["POST"], strict_slashes=False)
 def login():
     email = request.json["email"]
@@ -42,14 +33,10 @@ def login():
         login_user(user,remember = remember_logins)
         perm = Permissions(user).getAllowedPermissions()
         user_json = json.dumps(user.__dict__)
-        # permissions_json = json.dumps(perm.__dict__)
-        print(user_json)
-        print(perm)
-        # return redirect(url_for('views.home'))
+
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    # TODO what to return here
     return {"email" : email,"password" : password, "permissions": perm}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
@@ -70,7 +57,6 @@ def register():
                     password = generate_password_hash(password, method='sha256'))
         print("User added successfully")
         sendPasswordEmails([{"name":name,"password":password,"email":email}])
-    # TODO what to return here?
     return {"email" : email,"password" : password}
 
 @auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
@@ -99,13 +85,7 @@ def registerfile():
             print("User added successfully")
             emails.append({"email":email,"name":name,"password":password})
     sendPasswordEmails(emails)    
-    # f = file.read()
-    # print(f)
-    # workbook = pd.DataFrame(f)
-    # workbook.head()
 
-    
-    # TODO what to return here?
     if len(already_registered)>0:
         return errors.email_already_registered_bulk(already_registered,werkzeug.exceptions.BadRequest)
-    return " " #{"email" : email,"password" : password} 
+    return " "

@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from 'react';
+import useAuth from '../../hooks/useAuth';
+import { UPDATE_RESOURCES, DELETE_RESOURCES } from '../../permissions';
 
 function Resource (props){
+    const {auth} = useAuth()
     const [newName, setNewName] = useState(props.resource.name)
     const [edit, setEdit] = useState(false)
     
@@ -44,9 +47,23 @@ function Resource (props){
                 <div className="resourcename">
                     <div className="resource-Horizontal-container" >
                     <span>{props.resource.name}</span>
-                    <span className= "resource_span"/>
-                    <button className="btn editbtn" onClick={toggleState}>Edit</button>
-                    <button className="btn deletebtn" onClick={deleteResource}>Delete</button>
+                    <>
+                    {
+                        auth?.permissions?.find(perm => perm === UPDATE_RESOURCES)
+                        ?<button className="btn editbtn" onClick={toggleState}>Edit</button>
+                        :
+                        <></>
+                    }
+                    </>
+                    <>
+                    {
+                        auth?.permissions?.find(perm => perm === DELETE_RESOURCES)
+                        ?<button className="btn deletebtn" onClick={deleteResource}>Delete</button>
+                        :
+                        <></>
+                    }
+                    </>                    
+                    
                 </div>
                 </div>
             )
