@@ -22,11 +22,6 @@ def displayProfile():
     print (email)
     user = User(email = email)
 
-#     #return user as json object
-#    return user.json.dumps(user._dict_)
-    ret = json.dumps(user.__dict__)
-    # console.log ("heeellooooo")
-    print (ret)
     return json.dumps(user.__dict__)
 
 
@@ -39,13 +34,11 @@ def editProfile():
     password = request.json["password"]
     
     User.updateData(email,name, vjudge_handle, password)
-    #how to redirect to profile after update?
-    #redirect ('/profile')
+
     return {"hereeee": "here"}
 
 @views.route(urls['USERS'], methods = ["GET"], strict_slashes=False)
 def getUsers():
-    print('in method')
     role = request.args.get("role")
     print(role)
     users = User.getAllUsers(role)
