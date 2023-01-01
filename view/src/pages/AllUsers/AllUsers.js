@@ -6,22 +6,9 @@ import User from './User';
 import "./AllUsers.css"
 
 function AllUsers(){
-    const [trainees, setTrainees] = useState ([
-        {name: "Hanya", id : 4567},
-        {name: "Sara", id : 4167},
-        {name: "Mohamed", id : 8765}
-    ]);
-    const [mentors, setMentors] = useState ([
-        {name: "Sama", id : 122},
-        {name: "Basmalla", id : 3211},
-        {name: "Mohamed 2", id : 9765}
-    ]);
-    const [admins, setAdmins] = useState([
-        {name: "Hanya 2", id : 653},
-        {name: "Sara 2", id : 8641},
-        {name: "Sama 2", id : 8165}
-    ]);
-    const [mentorHeads, setMentorHeads] = useState([]);
+    const [trainees, setTrainees] = useState ([]);
+    const [mentors, setMentors] = useState ([]);
+    const [admins, setAdmins] = useState([]);
     const getTrainees = async () =>{
         try{
             const response = await axios.get(URLS.USERS, {    
@@ -35,6 +22,7 @@ function AllUsers(){
                 )
             setTrainees(response.data)
             console.log(response)
+            getMentors()
 
         }catch(err){
             console.log(err)
@@ -49,6 +37,7 @@ function AllUsers(){
             },)
             setMentors(response.data)
             console.log(response)
+            getAdmins()
 
         }catch(err){
             console.log(err)
@@ -72,8 +61,6 @@ function AllUsers(){
 
     useEffect ( () => {     // runs once when the browser is refreshed
         getTrainees()
-        // getMentors()
-        // getAdmins()
     },[]);
 
     return(
@@ -87,6 +74,7 @@ function AllUsers(){
                         user = {user}
                         users = {admins}
                         setUsers = {setAdmins}
+                        role = {"admin"}
                         />
                     ))
                 }
@@ -99,6 +87,7 @@ function AllUsers(){
                         user = {user}
                         users = {trainees}
                         setUsers = {setTrainees}
+                        role = {"trainee"}
                         />
                     ))
                 }
@@ -111,6 +100,7 @@ function AllUsers(){
                         user = {user}
                         users = {mentors}
                         setUsers = {setMentors}
+                        role = {"mentor"}
                         />
                     ))
                 }

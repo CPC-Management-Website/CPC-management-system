@@ -2,7 +2,12 @@ import "./AllUsers.css"
 import axios from '../../hooks/axios';
 // import User from './User';
 import URLS from '../../server_urls.json'
+import ProgressList from "../../sharedComponents/ProgressList";
+import React, { useState, useEffect }  from 'react';
+
 function User(props){
+
+    const [isShown, setIsShown] = useState(false);
 
     const resetPass = async () =>{
         console.log("in reset pass")
@@ -37,13 +42,39 @@ function User(props){
             console.log(err)
         }
     }
+    const handleClick = (e) =>{
+        console.log('clicked')
+        setIsShown(!isShown)
+        
+    }
+    useEffect ( () => {     // runs once when the browser is refreshed
+        console.log(props.role)
+    },[]);
+
     return(
-        <div className="user">
-            <span className="userName">{props.user.name}</span>
+        <div className="page">
+            <div className="user">
+            <>{
+                
+                props.role === "trainee"?
+                    (<span onClick={handleClick} className="userName">{props.user.name}</span>)
+                    :
+                    (
+                        <span className="userName">{props.user.name}</span>
+                        )
+
+                
+                    }</>
             <div className="btns">
                 <button className="resetbtn" onClick={resetPass}>Reset Password</button>
                 <button className="deletebtn" onClick={deleteUser}>Delete</button>
             </div>
+                
+            </div>
+            {isShown && (
+                <ProgressList email = {props.user.email}/> 
+            )}
+            
         </div>
     );
 

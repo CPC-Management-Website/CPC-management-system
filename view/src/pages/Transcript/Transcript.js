@@ -1,4 +1,4 @@
-import ProgressList from "./ProgressList";
+import ProgressList from "../../sharedComponents/ProgressList";
 import React, {useEffect, useState} from "react";
 import NavBar from "../NavBar/NavBar";
 import axios from "../../hooks/axios";

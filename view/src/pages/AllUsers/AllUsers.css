@@ -4,6 +4,9 @@
     border-radius: 8px;
     padding: 8px;
 }
+ProgressList{
+    display: block;
+}
 .user{
     display: flex;
     flex-direction: row;
@@ -22,6 +25,10 @@
     display: flex;
     flex-wrap: wrap;
     align-content: center;
+    cursor: pointer;
+}
+.userName:hover{
+    background-color: #e3dada;
 }
 .btns{
     width: 80%;

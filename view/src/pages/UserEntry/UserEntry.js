@@ -27,7 +27,6 @@ function UserEntry(){
             setSuccess(true)
             setErrMsg('Form Submitted Successfully');
            // alert("Form Submitted Successfully")
-           // navigate(HOMEPAGE);
         } catch (error) {
             if (!error?.response) {
                 setErrMsg('Internal Server Error');

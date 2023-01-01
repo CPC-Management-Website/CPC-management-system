@@ -1,7 +1,7 @@
 import ProgressPerContest from "./ProgressPerContest";
 import React, {useEffect, useState} from "react";
-import axios from "../../hooks/axios";
-import URLS from '../../server_urls.json'
+import axios from "../hooks/axios";
+import URLS from '../server_urls.json'
 
 function render(contestList, progressList){
 
