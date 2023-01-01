@@ -3,8 +3,11 @@ import AddResource from './AddResourceForm'
 import ResourcesList from './ResourcesList'
 import './Resources.css';
 import NavBar from "../NavBar/NavBar";
+import useAuth from '../../hooks/useAuth';
+import { ADD_RESOURCES } from '../../permissions';
 
 function Resources (){
+  const {auth} = useAuth()
   const initialResources = [
     {name: "Week #1 Session: "},
     {name: "Week #2 Session: "},
@@ -31,11 +34,16 @@ function Resources (){
       <NavBar/>
       <div className="Resources">
         <h2 className="heading">Resources</h2>
-
-        <AddResource 
-          resources = {resources}
-          setResources = {setResources}
-          />
+        <>{
+          auth?.permissions?.find(perm => perm === ADD_RESOURCES)
+          ?
+          <AddResource 
+            resources = {resources}
+            setResources = {setResources}
+            />
+          : <></>
+        }
+        </>
             
         <div className="current">
           <p className="currentp">Your Current Resources: </p>
