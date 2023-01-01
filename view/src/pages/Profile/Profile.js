@@ -74,7 +74,7 @@ function Profile() {
       <NavBar/>
 
           <div md="4" className="gradient-custom auth-form-container">
-              
+              <h2> Edit Profile</h2>
               <form className="profile-form" onSubmit={handleSubmit}>
                   
                   <label htmlFor="Name">Name</label>
