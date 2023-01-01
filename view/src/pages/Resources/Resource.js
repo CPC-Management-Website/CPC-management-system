@@ -2,9 +2,10 @@ import React, {useState, useEffect} from 'react';
 
 function Resource (props){
     const [newName, setNewName] = useState(props.resource.name)
+    const [edit, setEdit] = useState(false)
     
     const toggleState= (e) =>{
-        props.setEdit(!props.edit)
+        setEdit(!edit)
     }
     const nameChangeHandler = (e) =>{
         setNewName(e.target.value)
@@ -33,7 +34,7 @@ function Resource (props){
     }    
     return( 
         <>{
-            props.edit?(
+            edit?(
                 <form onSubmit={editResource} className="updateForm">
                 <input type="text" value={newName} onChange = {nameChangeHandler} className="inputUpdate" />
                 <button className="btn updatebtn">Update</button>
