@@ -74,7 +74,6 @@ function Profile() {
       <NavBar/>
 
           <div md="4" className="gradient-custom auth-form-container">
-          <h1><img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="Avatar" className="my-5" style={{alignItems: 'center', width: '300px' }} fluid /></h1>
               
               <form className="profile-form" onSubmit={handleSubmit}>
                   
