@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from controller.website.email_api import sendPasswordResetEmail
 import secrets
 import datetime
-from .vjudge_api import get_vjudge_data
+from .vjudge_api import getProgress
 
 password_length = 10
 
@@ -225,6 +225,16 @@ class ProgressPerContest():
         mycursor.execute(query,(user_id,int(contest_id),solved_problems,0,zone,))
         db.commit()
     
+    @staticmethod
+    def addProgressPerContestBulk(progressList):
+        mycursor = db.cursor()
+        query  = "INSERT INTO progress_per_contest \
+                (`user_id`, `contest_id`,\
+                `solved_problems`, `rank`, `zone`) \
+                VALUES (%s,%s,%s,%s,%s);"
+        mycursor.executemany(query,progressList)
+        db.commit()
+    
     def __init__(self) -> None:
         print("in init")
     
@@ -295,18 +305,18 @@ class ProgressPerContest():
         problemCount = ProgressPerContest.getProblemCount(contest_id=contest_id)
         print('#Problems:',problemCount)
         trainees = User.getVjudge_Handles()
+        res = getProgress(contest_id=contest_id)
+        print(dict(res))
+        progressList = []
         for trainee in trainees:
             id = trainee["user_id"]
             vjudge = trainee["vjudge_handle"]
-            print(id, vjudge)
-            res = get_vjudge_data(contest_id = contest_id,username=vjudge,result=1)
-            filtered_res = {}
-            for x in res:
-                filtered_res[(x['problemId'],x['userName'])] = x
-                #print(x)
-            numSolved = len(filtered_res)
+            print(id, vjudge)         
+            numSolved = res[vjudge]
             print("Solved:",numSolved)
             zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved)
             print(zone)
-            ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
+            progressList.append((id,contest_id,numSolved,0,zone)) #the zero here is a temporary number for user rank in contest
+            # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
+        ProgressPerContest.addProgressPerContestBulk(progressList = progressList)
         return " "

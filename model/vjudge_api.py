@@ -1,5 +1,6 @@
 
 import requests
+from collections import defaultdict
 
 # header for requesting data
 _headers = {
@@ -169,6 +170,18 @@ def get_vjudge_data(username: str = '',
 
     return res[:limit]
 
+def getProgress(contest_id):
+    res = get_vjudge_data(contest_id=contest_id,result=1)
+    num_solved = defaultdict(lambda: 0)
+    solved_problems = defaultdict(lambda:set())
+
+    for result in res:
+        solved_problems[result["userName"]].add(result["problemId"])
+
+    for userName, problems in solved_problems.items():
+        num_solved[userName]=len(problems)
+
+    return num_solved
 
 def _main():
     contest_id = 452160
