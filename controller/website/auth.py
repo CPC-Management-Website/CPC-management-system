@@ -45,19 +45,24 @@ def register():
     email = request.json["email"]
     password = secrets.token_urlsafe(password_length)
     vjudge = request.json["vjudgeHandle"]
-    role = request.json["platformRole"]
+    roleID = request.json["platformRole"]
 
     if User.exists(email):
         print("email already registered")
         return errors.email_already_registered(werkzeug.exceptions.BadRequest)
     else:
         User.addUser(vjudge_handle = vjudge,name = name,
-                    email = email, level = 1,role = role,
+                    email = email, level = 1,roleID = roleID,
                     active = True, points = 0,
                     password = generate_password_hash(password, method='sha256'))
         print("User added successfully")
         sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
+
+@auth.route(urls['USER_ENTRY'], methods=["GET"], strict_slashes=False)
+def getRoles():
+    roles = Permissions.getAllRoles()
+    return json.dumps(roles)
 
 @auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
 def registerfile():

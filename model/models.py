@@ -59,9 +59,9 @@ class User(UserMixin):
         # return bool(mycursor.rowcount)
 
     @staticmethod
-    def addUser(vjudge_handle,name,email,level,role,active,points,password):
+    def addUser(vjudge_handle,name,email,level,roleID,active,points,password):
         mycursor = db.cursor()
-        roleID = Permissions.getRoleID(role)
+        # roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
                 (`vjudge_handle`, `name`,\
                 `email`, `level`, `user_role`, \

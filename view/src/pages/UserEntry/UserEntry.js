@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import "./UserEntry.css"
 import { useNavigate } from "react-router-dom";
 import NavBar from "../NavBar/NavBar";
@@ -12,10 +12,11 @@ function UserEntry(){
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [vjudgeHandle, setVjudgeHandle] = useState('');
-    const [platformRole, setPlatformRole] = useState('Trainee');
+    const [platformRole, setPlatformRole] = useState(2); //2 is the id for Trainee role
     const [selectedFile, setSelectedFile] = useState('');
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
+    const [roles, setRoles] = useState ([]);
 
     const enterUser = async() => {
         try {
@@ -63,8 +64,7 @@ function UserEntry(){
         setFirstName('')
         setLastName('')
         setVjudgeHandle('')
-        setPlatformRole('Trainee')
-        
+        setPlatformRole(2)  //reset the dropdown selection to the role with id = 2 (Trainee)
     }
 
     const handleSubmitFile = (e) => {
@@ -72,6 +72,19 @@ function UserEntry(){
         enterFile()
         setSelectedFile()
     }
+
+    const getRoles = async() =>{
+        try {
+            const response = await axios.get(URLS.USER_ENTRY);
+            setRoles(response.data.map(({role_id, user_role}) => ({ platformRole: user_role, role_id: role_id })))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    useEffect ( () => {
+        getRoles();
+    },[]);
 
     return (
         <div>
@@ -107,10 +120,13 @@ function UserEntry(){
                     
                     <label htmlFor="Platform Role">Platform Role*</label>
                     <select value={platformRole} onChange={(e) => setPlatformRole(e.target.value)}type="string" placeholder="Platform Role" id="platformRole" name="platformRole">
-                        <option>Trainee</option>
-                        <option>Mentor</option>
-                        <option>Mentor Head</option>
-                        <option>Admin</option>
+                        {
+                            roles.map(({platformRole, role_id}) => (
+                                <option value = {role_id}>
+                                    {platformRole}
+                                </option>
+                            ))
+                        }
                     </select>
                     
                     <button type="submit">Add User</button>
