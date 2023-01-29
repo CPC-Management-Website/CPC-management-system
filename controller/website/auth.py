@@ -66,17 +66,21 @@ def getRoles():
 
 @auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
 def registerfile():
-   
+    roles = Permissions.getAllRoles()
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
     emails = []
     already_registered = []
-    for i, row in df.iterrows():
+    for index, row in df.iterrows():
+        index+=2
         vjudge = row["vjudge"]
         email  = row["email"]
         password = secrets.token_urlsafe(password_length)
         name = row["name"]
-        role = "Trainee"
+        roleName = row["role"]
+        res = [role for role in roles if role['user_role'] == roleName]
+        roleID = res[0]["role_id"]
+        level = row["level"]
         # print(name,email,password)
         if User.exists(email):
             print(email)
@@ -84,10 +88,10 @@ def registerfile():
             already_registered.append(email)
         else:
             User.addUser(vjudge_handle = vjudge,name = name,
-                    email = email, level = 1,role = role,
+                    email = email, level = level,roleID = roleID,
                     active = True, points = 0,
                     password = generate_password_hash(password, method='sha256'))
-            print("User added successfully")
+            print(email, " added successfully")
             emails.append({"email":email,"name":name,"password":password})
     sendPasswordEmails(emails)    
 

@@ -52,7 +52,6 @@ class User(UserMixin):
         query = "SELECT * FROM user where email=%s;"
         mycursor.execute(query,(email,))
         mycursor.fetchone()
-        print(mycursor.rowcount)
         if mycursor.rowcount ==1:
             return True
         return False
