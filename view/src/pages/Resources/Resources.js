@@ -5,22 +5,30 @@ import './Resources.css';
 import NavBar from "../NavBar/NavBar";
 import useAuth from '../../hooks/useAuth';
 import { ADD_RESOURCES } from '../../permissions';
+import axios from '../../hooks/axios';
+import URLS from '../../server_urls.json'
 
 function Resources (){
   const {auth} = useAuth()
-  const initialResources = [
-    {name: "Week #1 Session: "},
-    {name: "Week #2 Session: "},
-    {name: "Week #3 Session: "}
-  ];
+  // const initialResources = [
+  //   {name: "Week #1 Session: "},
+  //   {name: "Week #2 Session: "},
+  //   {name: "Week #3 Session: "}
+  // ];
 
     
     //States
   const [resources, setResources] = useState ([]);
   
 
-  const getResources = () =>{
-    setResources([])
+  const getResources = async() =>{
+    // setResources([])
+      try {
+        const response = await axios.get(URLS.RESOURCES);
+        setResources(response.data.map(({resource_id,topic,level,link}) => ({ resource_id:resource_id, topic: topic, level: level, link: link})))
+    } catch (error) {
+        console.log(error)
+    }
   }
 
   useEffect ( () => {     // runs once when the browser is refreshed

@@ -9,7 +9,7 @@ import werkzeug
 from . import db
 from .__init__ import urls
 
-from model.models import User
+from model.models import User, Resources
 import json
 
 views = Blueprint("views", __name__)
@@ -82,3 +82,31 @@ def addContest():
         return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
     ProgressPerContest.addProgress(contestID)
     return {"add contest": "in add contest"}
+
+@views.route(urls["RESOURCES"], methods = ["POST"], strict_slashes = False)
+def addResource():
+    resourceTopic = request.json["resourceTopic"]
+    resourceLink = request.json["resourceLink"]
+    resourceLevel = request.json["resourceLevel"]
+    Resources.addResource(topic=resourceTopic, link=resourceLink, level=resourceLevel)
+    return ""
+
+@views.route(urls["RESOURCES"], methods = ["GET"], strict_slashes = False)
+def getResources():
+    resources = Resources.getAllResources()
+    return json.dumps(resources)
+
+@views.route(urls['RESOURCES'], methods = ["PATCH"], strict_slashes=False)
+def editResource():
+    id = request.json["resource_id"]
+    topic = request.json["newTopic"]
+    level = request.json["newLevel"]
+    link = request.json["newLink"]
+    Resources.updateResource(id=id,topic=topic,level=level,link=link)
+    return "Success"
+
+@views.route(urls['RESOURCES'], methods = ["DELETE"], strict_slashes=False)
+def deleteResource():
+    id = request.args.get("resource_id")
+    Resources.deleteResource(id=id)
+    return "Success"

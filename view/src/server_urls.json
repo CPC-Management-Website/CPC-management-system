@@ -8,5 +8,6 @@
     "USERS" : "/users",
     "TRANSCRIPT" : "/transcript",
     "CONTEST" : "/contest",
-    "USER" : "/user"
+    "USER" : "/user",
+    "RESOURCES" : "/resources"
 }

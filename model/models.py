@@ -319,3 +319,39 @@ class ProgressPerContest():
             # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
         ProgressPerContest.addProgressPerContestBulk(progressList = progressList)
         return " "
+
+class Resources():
+    
+    @staticmethod
+    def addResource(topic,link,level):
+        mycursor = db.cursor()
+        query  = "INSERT INTO resource \
+                (`topic`, `link`,`level`) \
+                VALUES (%s,%s,%s);"
+        mycursor.execute(query,(topic,link,int(level),))
+        db.commit()
+
+    @staticmethod
+    def getAllResources():
+        mycursor = db.cursor(dictionary=True)
+        query  = "SELECT * from resource;"
+        mycursor.execute(query)
+        records = mycursor.fetchall()
+        resources = []
+        for record in records:
+            resources.append(record)
+        return resources
+    
+    @staticmethod
+    def updateResource(id, topic, level, link):
+        mycursor = db.cursor()
+        query = "UPDATE resource SET topic=%s, level=%s, link=%s WHERE resource_id=%s;"
+        mycursor.execute(query, (topic,int(level),link,int(id),))
+        db.commit()
+    
+    @staticmethod
+    def deleteResource(id):
+        mycursor = db.cursor()
+        query = "DELETE FROM resource WHERE (`resource_id` = %s);"
+        mycursor.execute(query,(int(id),))
+        db.commit()
