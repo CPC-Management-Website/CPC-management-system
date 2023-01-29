@@ -17,10 +17,11 @@ function UserEntry(){
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
     const [roles, setRoles] = useState ([]);
+    const [level, setLevel] = useState("")
 
     const enterUser = async() => {
         try {
-            const response = await axios.post(URLS.USER_ENTRY, JSON.stringify({email, firstName, lastName, vjudgeHandle, platformRole}),
+            const response = await axios.post(URLS.USER_ENTRY, JSON.stringify({email, firstName, lastName, vjudgeHandle, platformRole, level}),
                 {
                     headers: {'Content-Type': 'application/json'},
                 });
@@ -65,6 +66,7 @@ function UserEntry(){
         setLastName('')
         setVjudgeHandle('')
         setPlatformRole(2)  //reset the dropdown selection to the role with id = 2 (Trainee)
+        setLevel('')
     }
 
     const handleSubmitFile = (e) => {
@@ -128,7 +130,10 @@ function UserEntry(){
                             ))
                         }
                     </select>
-                    
+                    <div className="userEntryVertical-container"> 
+                        <label htmlFor="Level">Level*</label>
+                        <input type="number" required value = {level} placeholder="Level" min={1} max={2} onChange={(e) => setLevel(e.target.value)}  id="Level" name="Level" />
+                    </div>    
                     <button type="submit">Add User</button>
                 </form>
                 <form className="userEntry-file" onSubmit={handleSubmitFile}>

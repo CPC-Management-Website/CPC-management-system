@@ -46,13 +46,14 @@ def register():
     password = secrets.token_urlsafe(password_length)
     vjudge = request.json["vjudgeHandle"]
     roleID = request.json["platformRole"]
+    level = request.json["level"]
 
     if User.exists(email):
         print("email already registered")
         return errors.email_already_registered(werkzeug.exceptions.BadRequest)
     else:
         User.addUser(vjudge_handle = vjudge,name = name,
-                    email = email, level = 1,roleID = roleID,
+                    email = email, level = level,roleID = roleID,
                     active = True, points = 0,
                     password = generate_password_hash(password, method='sha256'))
         print("User added successfully")
