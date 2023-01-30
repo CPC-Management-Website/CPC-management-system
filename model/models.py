@@ -17,7 +17,7 @@ class User(UserMixin):
     email = None
     level = None
     role_id = None
-    active = None
+    enrolled = None
     points = None
     password = None
 
@@ -25,7 +25,7 @@ class User(UserMixin):
         mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `user_id`, `vjudge_handle`, \
                 `name`, `email`, `level`, `user_role`, \
-                `active`, `points`, `password` from user where email = %s;"
+                `enrolled`, `points`, `password` from user where email = %s;"
         mycursor.execute(query,(email,))
         record = mycursor.fetchone()
         self.id = record["user_id"]
@@ -34,7 +34,7 @@ class User(UserMixin):
         self.email = record["email"]
         self.level = record["level"]
         self.role_id = record["user_role"]
-        self.active = record["active"]
+        self.enrolled = record["enrolled"]
         self.points = record["points"]
         self.password = record["password"]
 
@@ -58,15 +58,15 @@ class User(UserMixin):
         # return bool(mycursor.rowcount)
 
     @staticmethod
-    def addUser(vjudge_handle,name,email,level,roleID,active,points,password):
+    def addUser(vjudge_handle,name,email,level,roleID,enrolled,points,password):
         mycursor = g.db.cursor()
         # roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
                 (`vjudge_handle`, `name`,\
                 `email`, `level`, `user_role`, \
-                `active`, `points`, `password`)\
+                `enrolled`, `points`, `password`)\
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query,(vjudge_handle,name,email,level,roleID,active,points,password,))
+        mycursor.execute(query,(vjudge_handle,name,email,level,roleID,enrolled,points,password,))
         g.db.commit()
 
 
@@ -289,7 +289,7 @@ class ProgressPerContest():
         mycursor = g.db.cursor()
         query  = "INSERT INTO contest \
                 (`contest_id`, `total_problems`,\
-                `start_date`, `end_data`, `topic`,\
+                `start_date`, `end_date`, `topic`,\
                 `week_number`, `minimum_problems`, `total_participants`) \
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
         mycursor.execute(query,(contest_id, numProblems, start_date,
