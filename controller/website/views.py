@@ -6,7 +6,6 @@ sys.path.append("..")
 from model.models import ProgressPerContest
 from website import errors
 import werkzeug
-from . import db
 from .__init__ import urls
 
 from model.models import User, Resources

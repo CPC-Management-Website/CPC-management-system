@@ -1,12 +1,12 @@
 import sys
 sys.path.append("..") 
-from controller.website import db
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from controller.website.email_api import sendPasswordResetEmail
 import secrets
 import datetime
 from .vjudge_api import getProgress
+from flask import g
 
 password_length = 10
 
@@ -22,7 +22,7 @@ class User(UserMixin):
     password = None
 
     def __init__(self, email):
-        mycursor = db.cursor(dictionary=True)
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `user_id`, `vjudge_handle`, \
                 `name`, `email`, `level`, `user_role`, \
                 `active`, `points`, `password` from user where email = %s;"
@@ -40,7 +40,7 @@ class User(UserMixin):
 
     @staticmethod
     def getUserID(email):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "SELECT user_id FROM user where email=%s;"
         mycursor.execute(query,(email,))
         ID =  mycursor.fetchone()[0]
@@ -48,7 +48,7 @@ class User(UserMixin):
 
     @staticmethod    
     def exists(email):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "SELECT * FROM user where email=%s;"
         mycursor.execute(query,(email,))
         mycursor.fetchone()
@@ -59,7 +59,7 @@ class User(UserMixin):
 
     @staticmethod
     def addUser(vjudge_handle,name,email,level,roleID,active,points,password):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         # roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
                 (`vjudge_handle`, `name`,\
@@ -67,14 +67,14 @@ class User(UserMixin):
                 `active`, `points`, `password`)\
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
         mycursor.execute(query,(vjudge_handle,name,email,level,roleID,active,points,password,))
-        db.commit()
+        g.db.commit()
 
 
 
     @staticmethod
     def updatePassword(email,newPassword):       
         def isSamePassword(email,newPassword):
-            mycursor = db.cursor(dictionary=True)
+            mycursor = g.db.cursor(dictionary=True)
             query = "SELECT password FROM user where email=%s;"
             mycursor.execute(query,(email,))
             record = mycursor.fetchone()
@@ -89,12 +89,12 @@ class User(UserMixin):
             if(isSamePassword(email,newPassword)):
                 print("Password for",email,"is the same")
             else:
-                mycursor = db.cursor()
+                mycursor = g.db.cursor()
                 newPassword = generate_password_hash(newPassword, method='sha256')
                 query = "UPDATE user SET password = %s WHERE (email = %s);"
                 mycursor.execute(query,(newPassword,email,))
                 # if(mycursor.rowcount)
-                db.commit()
+                g.db.commit()
                 if(mycursor.rowcount!=0):
                     print("Password for",email,"updated successfully")
                 else:
@@ -105,7 +105,7 @@ class User(UserMixin):
 
     @staticmethod
     def getVjudge_Handles():
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         print("debugging")
         query  = "SELECT `user_id`, `vjudge_handle` from user;"
         mycursor.execute(query)
@@ -119,7 +119,7 @@ class User(UserMixin):
     @staticmethod
     def getAllUsers(role):
         roleID = Permissions.getRoleID(role)
-        mycursor = db.cursor(dictionary=True)
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `user_id`, `vjudge_handle`, `name`,\
                  `email` from user WHERE (user_role = %s);"
         mycursor.execute(query,(roleID,))
@@ -138,23 +138,23 @@ class User(UserMixin):
     @staticmethod
     def updateData(email, name, vjudge_handle, password):
         User.updatePassword(email, password)
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s;"
         mycursor.execute(query, (vjudge_handle, name, email,))
-        db.commit()
+        g.db.commit()
     
     @staticmethod
     def deleteUser(email):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "DELETE FROM user WHERE (`email` = %s);"
         mycursor.execute(query,(email,))
-        db.commit()
+        g.db.commit()
     
 class Permissions():
 
     def __init__(self,user:User):
         ID = user.role_id
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "SELECT * from permission where role_id = %s;"
         mycursor.execute(query,(ID,))
         temp = dict(zip(mycursor.column_names, mycursor.fetchone()))
@@ -170,7 +170,7 @@ class Permissions():
 
     @staticmethod
     def getRoleID(role):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         stmt = "SELECT role_id from role where user_role = %s;"
         mycursor.execute(stmt,(role,))
         ID =  mycursor.fetchone()[0]
@@ -178,7 +178,7 @@ class Permissions():
 
     @staticmethod
     def getAllRoles():
-        mycursor = db.cursor(dictionary=True)
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `role_id`, `user_role` from role;"
         mycursor.execute(query)
         records = mycursor.fetchall()
@@ -196,8 +196,8 @@ class ProgressPerContest():
     # zone = "red"
     @staticmethod
     def getProblemCount(contest_id):
-        # db.reconnect()
-        mycursor = db.cursor(dictionary=True)
+        # g.db.reconnect()
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `total_problems` from contest where contest_id = %s;"
         mycursor.execute(query,(contest_id,))
         record = mycursor.fetchone()
@@ -216,30 +216,30 @@ class ProgressPerContest():
     @staticmethod
     def addProgressPerContest(user_id, contest_id, solved_problems,zone):
 
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query  = "INSERT INTO progress_per_contest \
                 (`user_id`, `contest_id`,\
                 `solved_problems`, `rank`, `zone`) \
                 VALUES (%s,%s,%s,%s,%s);"
         mycursor.execute(query,(user_id,int(contest_id),solved_problems,0,zone,))
-        db.commit()
+        g.db.commit()
     
     @staticmethod
     def addProgressPerContestBulk(progressList):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query  = "INSERT INTO progress_per_contest \
                 (`user_id`, `contest_id`,\
                 `solved_problems`, `rank`, `zone`) \
                 VALUES (%s,%s,%s,%s,%s);"
         mycursor.executemany(query,progressList)
-        db.commit()
+        g.db.commit()
     
     def __init__(self) -> None:
         print("in init")
     
     @staticmethod
     def getContest(contestID):
-        mycursor = db.cursor(dictionary=True)
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `contest_id`, `week_number`, `topic`, `total_problems`,\
              `total_participants`, `minimum_problems` from contest where contest_id = %s;"
         mycursor.execute(query,(contestID,))
@@ -249,7 +249,7 @@ class ProgressPerContest():
 
     @staticmethod
     def getAllContests():
-        mycursor = db.cursor(dictionary=True)
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT * from contest;"
         mycursor.execute(query)
         contests = mycursor.fetchall()
@@ -258,7 +258,7 @@ class ProgressPerContest():
     @staticmethod
     def getUserProgress(email):
         ID = User.getUserID(email)
-        mycursor = db.cursor(dictionary=True)
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `contest_id`, `solved_problems`, `rank`, `zone`\
              from progress_per_contest where user_id = %s;"
         mycursor.execute(query,(ID,))
@@ -268,7 +268,7 @@ class ProgressPerContest():
 
     @staticmethod
     def contestExists(contest_ID):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "SELECT * FROM contest where contest_id=%s;"
         mycursor.execute(query,(contest_ID,))
         mycursor.fetchone()
@@ -286,7 +286,7 @@ class ProgressPerContest():
             end_date = datetime.datetime.strptime(end_date, dateFormat)
         except:
             return "Incorrect date format"
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query  = "INSERT INTO contest \
                 (`contest_id`, `total_problems`,\
                 `start_date`, `end_data`, `topic`,\
@@ -294,7 +294,7 @@ class ProgressPerContest():
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
         mycursor.execute(query,(contest_id, numProblems, start_date,
                  end_date, topic, week_number,numProblems, 0))
-        db.commit()
+        g.db.commit()
         return "Success"
 
     @staticmethod
@@ -324,16 +324,16 @@ class Resources():
     
     @staticmethod
     def addResource(topic,link,level):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query  = "INSERT INTO resource \
                 (`topic`, `link`,`level`) \
                 VALUES (%s,%s,%s);"
         mycursor.execute(query,(topic,link,int(level),))
-        db.commit()
+        g.db.commit()
 
     @staticmethod
     def getAllResources():
-        mycursor = db.cursor(dictionary=True)
+        mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT * from resource;"
         mycursor.execute(query)
         records = mycursor.fetchall()
@@ -344,14 +344,14 @@ class Resources():
     
     @staticmethod
     def updateResource(id, topic, level, link):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "UPDATE resource SET topic=%s, level=%s, link=%s WHERE resource_id=%s;"
         mycursor.execute(query, (topic,int(level),link,int(id),))
-        db.commit()
+        g.db.commit()
     
     @staticmethod
     def deleteResource(id):
-        mycursor = db.cursor()
+        mycursor = g.db.cursor()
         query = "DELETE FROM resource WHERE (`resource_id` = %s);"
         mycursor.execute(query,(int(id),))
-        db.commit()
+        g.db.commit()
