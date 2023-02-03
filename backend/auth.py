@@ -2,20 +2,21 @@ import json
 
 from flask import Blueprint, request
 from flask_login import current_user, login_required, login_user, logout_user
-from website import errors
+import errors
 from werkzeug.security import check_password_hash, generate_password_hash
 import werkzeug
 import pandas as pd
 import os
 import secrets
-from .__init__ import urls
+from urls import urls
+from models import User, Permissions
+from APIs.email_api import sendPasswordEmails
 
-from model.models import User, Permissions
-from .email_api import sendPasswordEmails
 auth = Blueprint("auth", __name__)
 
 remember_logins = False     # consider changing this to true
 password_length = 10
+
 
 
 @auth.route(urls['LOGIN'], methods=["POST"], strict_slashes=False)

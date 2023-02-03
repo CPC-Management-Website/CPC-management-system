@@ -1,11 +1,9 @@
-import sys
-sys.path.append("..") 
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
-from controller.website.email_api import sendPasswordResetEmail
+from APIs.email_api import sendPasswordResetEmail
 import secrets
 import datetime
-from .vjudge_api import getProgress
+from APIs.vjudge_api import getProgress
 from flask import g
 
 password_length = 10
@@ -120,8 +118,18 @@ class User(UserMixin):
     def getAllUsers(role):
         roleID = Permissions.getRoleID(role)
         mycursor = g.db.cursor(dictionary=True)
-        query  = "SELECT `user_id`, `vjudge_handle`, `name`,\
-                 `email` from user WHERE (user_role = %s);"
+        query  = "SELECT distinct\
+                u.user_id,\
+                u.vjudge_handle,\
+                u.name,\
+                u.email,\
+                u.level,\
+                u.enrolled,\
+                u.mentor_id,\
+                m.name as mentor_name\
+                from (user u) \
+                left join user m on (u.mentor_id = m.user_id)\
+                WHERE (u.user_role = %s);"
         mycursor.execute(query,(roleID,))
         records = mycursor.fetchall()
         users = []

@@ -1,13 +1,9 @@
-from cmath import log
-from flask import Flask
+from flask import Flask, g
 from flask_cors import CORS
-from os import path
 from flask_login import LoginManager
 import mysql.connector.pooling
 import os
 from dotenv import load_dotenv
-import json
-from flask import g
 
 load_dotenv()
 cors = CORS()
@@ -27,16 +23,15 @@ def create_connection_pool():
     )
     return connection_pool
 
-url_file = open('../view/src/server_urls.json')
-urls = json.load(url_file)
+
 def create_app():
     app = Flask(__name__)
     cors.init_app(app, resources={r"*": {"origins": "*"}})
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-    from .views import views
-    from .auth import auth
-    from .errors import errors
+    from views import views
+    from auth import auth
+    from errors import errors
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
     app.register_blueprint(errors, url_prefix = "/")
@@ -45,7 +40,7 @@ def create_app():
     login_manager.init_app(app)
 
 
-    from model.models import User
+    from models import User
 
     @login_manager.user_loader
     def load_user(email):
@@ -62,3 +57,7 @@ def create_app():
         
     return app
 
+app = create_app()
+
+if __name__ == "__main__":
+    app.run(debug=True)

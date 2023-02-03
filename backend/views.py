@@ -1,15 +1,16 @@
 from flask import Blueprint
 from flask import request
-import sys
-sys.path.append("..") 
-
-from model.models import ProgressPerContest
-from website import errors
-import werkzeug
-from .__init__ import urls
-
-from model.models import User, Resources
+from urls import urls
 import json
+# import sys
+# # sys.path.append("..") 
+
+from models import ProgressPerContest
+import errors
+import werkzeug
+
+from models import User, Resources
+
 
 views = Blueprint("views", __name__)
 
