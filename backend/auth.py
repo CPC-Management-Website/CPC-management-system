@@ -24,7 +24,7 @@ def login():
     email = request.json["email"]
     password = request.json["password"]
     
-    if(User.exists(email)==False):
+    if(User.email_exists(email)==False):
         return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
 
     user = User(email = email)
@@ -49,7 +49,7 @@ def register():
     roleID = request.json["platformRole"]
     level = request.json["level"]
 
-    if User.exists(email):
+    if User.email_exists(email):
         print("email already registered")
         return errors.email_already_registered(werkzeug.exceptions.BadRequest)
     else:
@@ -84,7 +84,7 @@ def registerfile():
         roleID = res[0]["role_id"]
         level = row["level"]
         # print(name,email,password)
-        if User.exists(email):
+        if User.email_exists(email):
             print(email)
             print("user already registered")
             already_registered.append(email)

@@ -28,12 +28,13 @@ def displayProfile():
 @views.route(urls['PROFILE'], methods = ["POST"], strict_slashes=False)
 def editProfile():
 
+    id = request.json["userID"]
     email = request.json["email"]
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]
     password = request.json["password"]
     
-    User.updateData(email,name, vjudge_handle, password)
+    User.updateData(id,email,name, vjudge_handle, password)
 
     return {"hereeee": "here"}
 

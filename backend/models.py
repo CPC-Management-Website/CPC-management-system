@@ -45,10 +45,21 @@ class User(UserMixin):
         return ID
 
     @staticmethod    
-    def exists(email):
+    def email_exists(email):
         mycursor = g.db.cursor()
         query = "SELECT * FROM user where email=%s;"
         mycursor.execute(query,(email,))
+        mycursor.fetchone()
+        if mycursor.rowcount ==1:
+            return True
+        return False
+        # return bool(mycursor.rowcount)
+    
+    @staticmethod    
+    def id_exists(id):
+        mycursor = g.db.cursor()
+        query = "SELECT * FROM user where user_id=%s;"
+        mycursor.execute(query,(id,))
         mycursor.fetchone()
         if mycursor.rowcount ==1:
             return True
@@ -70,11 +81,11 @@ class User(UserMixin):
 
 
     @staticmethod
-    def updatePassword(email,newPassword):       
-        def isSamePassword(email,newPassword):
+    def updatePassword(id,newPassword):       
+        def isSamePassword(id,newPassword):
             mycursor = g.db.cursor(dictionary=True)
-            query = "SELECT password FROM user where email=%s;"
-            mycursor.execute(query,(email,))
+            query = "SELECT password FROM user where user_id=%s;"
+            mycursor.execute(query,(id,))
             record = mycursor.fetchone()
             # print(record)
             # print(newPassword)
@@ -83,18 +94,18 @@ class User(UserMixin):
             else:
                 return False
 
-        if(User.exists(email)):
-            if(isSamePassword(email,newPassword)):
-                print("Password for",email,"is the same")
+        if(User.id_exists(id)):
+            if(isSamePassword(id,newPassword)):
+                print("Password for",id,"is the same")
             else:
                 mycursor = g.db.cursor()
                 newPassword = generate_password_hash(newPassword, method='sha256')
-                query = "UPDATE user SET password = %s WHERE (email = %s);"
-                mycursor.execute(query,(newPassword,email,))
+                query = "UPDATE user SET password = %s WHERE (user_id = %s);"
+                mycursor.execute(query,(newPassword,id,))
                 # if(mycursor.rowcount)
                 g.db.commit()
                 if(mycursor.rowcount!=0):
-                    print("Password for",email,"updated successfully")
+                    print("Password for",id,"updated successfully")
                 else:
                     print("Error Updating Password")      
                 # print(mycursor.rowcount)
@@ -144,11 +155,11 @@ class User(UserMixin):
         sendPasswordResetEmail(email,password)
     
     @staticmethod
-    def updateData(email, name, vjudge_handle, password):
-        User.updatePassword(email, password)
+    def updateData(id,email, name, vjudge_handle, password):
+        User.updatePassword(id, password)
         mycursor = g.db.cursor()
-        query = "UPDATE user SET vjudge_handle=%s, name=%s WHERE email=%s;"
-        mycursor.execute(query, (vjudge_handle, name, email,))
+        query = "UPDATE user SET email = %s, vjudge_handle=%s, name=%s WHERE user_id=%s;"
+        mycursor.execute(query, (email, vjudge_handle, name, id,))
         g.db.commit()
     
     @staticmethod
