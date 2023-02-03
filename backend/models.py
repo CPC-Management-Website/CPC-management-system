@@ -163,6 +163,13 @@ class User(UserMixin):
         g.db.commit()
     
     @staticmethod
+    def updateDataAdmin(id, name, vjudge_handle, email, level, mentorID, enrolled):
+        mycursor = g.db.cursor()
+        query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s, level=%s, mentor_id=%s, enrolled=%s WHERE user_id=%s;"
+        mycursor.execute(query, (name,vjudge_handle,email,level,mentorID,enrolled,id,))
+        g.db.commit()
+    
+    @staticmethod
     def deleteUser(email):
         mycursor = g.db.cursor()
         query = "DELETE FROM user WHERE (`email` = %s);"

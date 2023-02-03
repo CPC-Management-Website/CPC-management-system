@@ -38,6 +38,21 @@ def editProfile():
 
     return {"hereeee": "here"}
 
+@views.route(urls['PROFILE_ADMIN'], methods = ["POST"], strict_slashes=False)
+def editProfileAdmin():
+
+    id = request.json["userID"]
+    name = request.json["name"]
+    vjudge_handle = request.json["vjudgeHandle"]
+    email = request.json["email"]
+    level = request.json["level"]
+    mentorID = request.json["mentorID"]
+    enrolled = request.json["enrolled"]
+    
+    User.updateDataAdmin(id, name, vjudge_handle, email, level, mentorID, enrolled)
+
+    return {"hereeee": "here"}
+
 @views.route(urls['USERS'], methods = ["GET"], strict_slashes=False)
 def getUsers():
     role = request.args.get("role")

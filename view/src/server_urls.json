@@ -5,6 +5,7 @@
     "DATA" : "/data",
     "PROGRESS_PER_CONTEST" : "/progresspercontest",
     "PROFILE" : "/profile",
+    "PROFILE_ADMIN": "/profileadmin",
     "USERS" : "/users",
     "TRANSCRIPT" : "/transcript",
     "CONTEST" : "/contest",
