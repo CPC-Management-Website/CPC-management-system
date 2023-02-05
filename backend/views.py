@@ -63,9 +63,9 @@ def getUsers():
 
 @views.route(urls['USERS'], methods = ["PATCH"], strict_slashes=False)
 def restUserPassword():
-    email = request.json["email"]
-    User.resetPassword(email)
-    print("Reset password for ",email)
+    user_id = request.json["user_id"]
+    User.resetPassword(user_id)
+    print("Reset password for ",user_id)
     return "Success"
 
 @views.route(urls['USERS'], methods = ["DELETE"], strict_slashes=False)
