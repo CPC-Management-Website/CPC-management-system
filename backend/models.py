@@ -315,7 +315,7 @@ class ProgressPerContest():
     def addContest(contest_id, numProblems, start_date, end_date, topic, week_number):
         if(ProgressPerContest.contestExists(contest_id)):
             return "Contest already registered"
-        dateFormat = "%d/%m/%Y"
+        dateFormat = "%Y-%m-%d"
         try:
             start_date = datetime.datetime.strptime(start_date, dateFormat)
             end_date = datetime.datetime.strptime(end_date, dateFormat)

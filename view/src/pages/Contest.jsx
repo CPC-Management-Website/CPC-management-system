@@ -6,18 +6,12 @@ import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_REQUEST":
+    case "ADD_REQUEST":
       return { ...state, loading: true };
-    case "FETCH_SUCCESS":
-      return { ...state, loading: false };
-    case "FETCH_FAIL":
+    case "ADD_SUCCESS":
+      return { ...state, loading: false};
+    case "ADD_FAIL":
       return { ...state, loading: false, error: action.payload };
-    case "UPDATE_REQUEST":
-      return { ...state, loadingUpdate: true };
-    case "UPDATE_SUCCESS":
-      return { ...state, loadingUpdate: false };
-    case "UPDATE_FAIL":
-      return { ...state, loadingUpdate: false };
     default:
       return state;
   }
@@ -36,29 +30,34 @@ function ContestDetails() {
     error: "",
   });
 
-  const addContest = async () => {
+  const addContest = async (e) => {
+    console.log(contestID)
     e.preventDefault();
     try {
-      dispatch({ type: "FETCH_REQUEST" });
+      dispatch({ type: "ADD_REQUEST" });
       await axios.post(
         URLS.CONTEST,
         JSON.stringify({
-          contestID,
+          contestID: contestID,
           numOfProblems,
           startDate,
           endDate,
           topic,
           weekNum,
-        })
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
-      dispatch({ type: "FETCH_REQUEST" });
+      dispatch({ type: "ADD_SUCCESS" });
+      toast.success("Contest Added Successfully")
     } catch (error) {
-      dispatch({ type: "FETCH_FAIL" });
       if (!error?.response) {
-        setErrMsg("Internal Server Error");
+        toast.error("Internal Server Error");
       } else {
         toast.error(error.response.data.Error);
       }
+      dispatch({ type: "ADD_FAIL" });
     }
   };
 
@@ -67,19 +66,15 @@ function ContestDetails() {
       <p className="text-3xl font-semibold lg:my-10 mb-4">
         Add Contest Details
       </p>
-      {loading ? (
-        <div className="flex justify-center py-32">
-          <CircularProgress size={50} thickness={4} color="inherit" />
-        </div>
-      ) : (
         <form className="flex flex-col lg:w-[40%]" onSubmit={addContest}>
           <div className="flex flex-col">
             <label className="inputlabel">Contest ID*</label>
             <div className="inputCont">
               <input
                 className="input"
-                type="string"
+                type="number"
                 required
+                min={1}
                 placeholder="Contest ID"
                 onChange={(e) => setContestID(e.target.value)}
               />
@@ -105,7 +100,6 @@ function ContestDetails() {
                 className="input"
                 type="date"
                 required
-                placeholder="DD/MM/YYYY"
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
@@ -118,7 +112,6 @@ function ContestDetails() {
                 className="input"
                 type="date"
                 required
-                placeholder="DD/MM/YYYY"
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
@@ -131,6 +124,7 @@ function ContestDetails() {
                 className="input"
                 type="number"
                 required
+                min={1}
                 placeholder="Week Number"
                 onChange={(e) => setWeekNum(e.target.value)}
               />
@@ -144,6 +138,7 @@ function ContestDetails() {
                 className="input"
                 type="number"
                 required
+                min={1}
                 placeholder="Number of Problems"
                 onChange={(e) => setNumOfProblems(e.target.value)}
               />
@@ -151,7 +146,7 @@ function ContestDetails() {
           </div>
 
           <div className="flex flex-col mt-4">
-            {loadingUpdate ? (
+            {loading ? (
               <button
                 className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
                 type="submit"
@@ -168,7 +163,6 @@ function ContestDetails() {
             )}
           </div>
         </form>
-      )}
     </div>
   );
 }

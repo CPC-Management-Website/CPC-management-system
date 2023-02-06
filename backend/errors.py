@@ -30,4 +30,4 @@ def contest_already_registered(e):
 
 @errors.errorhandler(werkzeug.exceptions.BadRequest)
 def invalid_date_format(e):
-    return {"Error":'Invalid date format'}, 407
+    return {"Error":'Invalid date format'}, 411
