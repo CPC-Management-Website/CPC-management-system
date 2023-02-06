@@ -1,14 +1,14 @@
 {
-    "LOGIN" : "/login",
-    "USER_ENTRY": "/userentry",
-    "USER_ENTRY_FILE" : "/userentryfile",
-    "DATA" : "/data",
-    "PROGRESS_PER_CONTEST" : "/progresspercontest",
-    "PROFILE" : "/profile",
-    "PROFILE_ADMIN": "/profileadmin",
-    "USERS" : "/users",
-    "TRANSCRIPT" : "/transcript",
-    "CONTEST" : "/contest",
-    "USER" : "/user",
-    "RESOURCES" : "/resources"
+    "LOGIN" : "/backend/login",
+    "USER_ENTRY": "/backend/userentry",
+    "USER_ENTRY_FILE" : "/backend/userentryfile",
+    "DATA" : "/backend/data",
+    "PROGRESS_PER_CONTEST" : "/backend/progresspercontest",
+    "PROFILE" : "/backend/profile",
+    "PROFILE_ADMIN": "/backend/profileadmin",
+    "USERS" : "/backend/users",
+    "TRANSCRIPT" : "/backend/transcript",
+    "CONTEST" : "/backend/contest",
+    "USER" : "/backend/user",
+    "RESOURCES" : "/backend/resources"
 }
