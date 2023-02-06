@@ -299,6 +299,7 @@ export default function User() {
                         {item.email}
                       </StyledTableCell>
                       <StyledTableCell className="space-x-4" align="center">
+                      <Tooltip placement="bottom" title="Edit User">
                         <button
                           onClick={() => {
                             initUpdate(item);
@@ -306,9 +307,12 @@ export default function User() {
                         >
                           <CreateIcon />
                         </button>
+                      </Tooltip>
+                      <Tooltip placement="bottom" title="Delete User">
                         <button onClick={() => deleteHandler(item.email)}>
                           <DeleteIcon />
                         </button>
+                      </Tooltip>
                         {loadingReset ? (
                           <button onClick={() => resetPass(item.user_id)}>
                             <CircularProgress
@@ -341,6 +345,8 @@ export default function User() {
                   <div>{item.mentor_name}</div>
                   <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
+                  <Tooltip placement="bottom" title="Edit User">
+
                     <button
                       onClick={() => {
                         initUpdate(item);
@@ -348,9 +354,12 @@ export default function User() {
                     >
                       <CreateIcon />
                     </button>
+                  </Tooltip>
+                  <Tooltip placement="bottom" title="Delete User">
                     <button onClick={() => deleteHandler(item.email)}>
                       <DeleteIcon />
                     </button>
+                  </Tooltip>
                     {loadingReset ? (
                       <button onClick={() => resetPass(item.user_id)}>
                         <CircularProgress
@@ -406,6 +415,7 @@ export default function User() {
                         {item.email}
                       </StyledTableCell>
                       <StyledTableCell className="space-x-4" align="center">
+                      <Tooltip placement="bottom" title="Edit User">
                         <button
                           onClick={() => {
                             initUpdate(item);
@@ -413,9 +423,12 @@ export default function User() {
                         >
                           <CreateIcon />
                         </button>
+                      </Tooltip>
+                      <Tooltip placement="bottom" title="Delete User">
                         <button onClick={() => deleteHandler(item.email)}>
                           <DeleteIcon />
                         </button>
+                      </Tooltip>
                         {loadingReset ? (
                           <button onClick={() => resetPass(item.user_id)}>
                             <CircularProgress
@@ -451,6 +464,7 @@ export default function User() {
                   <div>{item.mentor_name}</div>
                   <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
+                  <Tooltip placement="bottom" title="Edit User">
                     <button
                       onClick={() => {
                         initUpdate(item);
@@ -458,9 +472,12 @@ export default function User() {
                     >
                       <CreateIcon />
                     </button>
+                  </Tooltip>
+                  <Tooltip placement="bottom" title="Delete User">
                     <button onClick={() => deleteHandler(item.email)}>
                       <DeleteIcon />
                     </button>
+                  </Tooltip>
                     {loadingReset ? (
                       <button onClick={() => resetPass(item.user_id)}>
                         <CircularProgress
@@ -525,6 +542,7 @@ export default function User() {
                         {item.enrolled ? <p> Yes </p> : <p> No </p>}
                       </StyledTableCell>
                       <StyledTableCell className="space-x-4" align="center">
+                      <Tooltip placement="bottom" title="Edit User">
                         <button
                           onClick={() => {
                             initUpdate(item);
@@ -532,9 +550,12 @@ export default function User() {
                         >
                           <CreateIcon />
                         </button>
+                      </Tooltip>
+                      <Tooltip placement="bottom" title="Delete User">
                         <button onClick={() => deleteHandler(item.email)}>
                           <DeleteIcon />
                         </button>
+                      </Tooltip>
                         {loadingReset ? (
                           <button onClick={() => resetPass(item.user_id)}>
                             <CircularProgress
@@ -550,9 +571,11 @@ export default function User() {
                             </button>
                           </Tooltip>
                         )}
-                        <button>
-                          <AlertDialog email={item.email} />
-                        </button>
+                        <Tooltip placement="bottom" title="View Transcript">
+                          <button>
+                            <AlertDialog email={item.email} />
+                          </button>
+                        </Tooltip>
                       </StyledTableCell>
                     </StyledTableRow>
                     // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
@@ -570,6 +593,7 @@ export default function User() {
                   <div>{item.mentor_name}</div>
                   <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
+                  <Tooltip placement="bottom" title="Edit User">
                     <button
                       onClick={() => {
                         initUpdate(item);
@@ -577,9 +601,12 @@ export default function User() {
                     >
                       <CreateIcon />
                     </button>
+                  </Tooltip>
+                  <Tooltip placement="bottom" title="Delete User">
                     <button onClick={() => deleteHandler(item.email)}>
                       <DeleteIcon />
                     </button>
+                  </Tooltip>
                     {loadingReset ? (
                       <button onClick={() => resetPass(item.user_id)}>
                         <CircularProgress
@@ -595,9 +622,11 @@ export default function User() {
                         </button>
                       </Tooltip>
                     )}
-                    <button>
-                      <AlertDialog email={item.email} />
-                    </button>
+                    <Tooltip placement="bottom" title="View Transcript">
+                      <button>
+                        <AlertDialog email={item.email} />
+                      </button>
+                    </Tooltip>
                   </div>
                 </div>
                 // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
