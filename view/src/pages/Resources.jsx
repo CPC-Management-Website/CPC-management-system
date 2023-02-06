@@ -18,6 +18,12 @@ const reducer = (state, action) => {
       return { ...state, resources: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+    case "ADD_REQUEST":
+      return { ...state, loadingAdd: true };
+    case "ADD_SUCCESS":
+      return { ...state, loadingAdd: false };
+    case "ADD_FAIL":
+      return { ...state, loadingAdd: false };
     case "UPDATE_REQUEST":
       return { ...state, loadingUpdate: true };
     case "UPDATE_SUCCESS":
@@ -42,7 +48,7 @@ const reducer = (state, action) => {
 export default function Resources() {
   const { state } = useContext(Store);
   const { userInfo } = state;
-  const [{ loading, loadingUpdate, loadingDelete, resources }, dispatch] =
+  const [{ loading, loadingAdd,loadingUpdate, loadingDelete, resources }, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: "",
@@ -66,7 +72,7 @@ export default function Resources() {
   const enterResource = async (e) => {
     e.preventDefault();
     try {
-      dispatch({ type: "UPDATE_REQUEST" });
+      dispatch({ type: "ADD_REQUEST" });
       await axios.post(
         URLS.RESOURCES,
         JSON.stringify({ resourceTopic, resourceLevel, resourceLink }),
@@ -74,23 +80,29 @@ export default function Resources() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      dispatch({ type: "UPDATE_SUCCESS" });
+      dispatch({ type: "ADD_SUCCESS" });
+      toast.success("Resource added successfully")
       getResources();
     } catch (error) {
-      dispatch({ type: "UPDATE_FAIL" });
+      toast.error("Failed to add resource")
+      dispatch({ type: "ADD_FAIL" });
       console.log(error);
     }
   };
 
   const editResource = async (resource) => {
+    e.preventDefault();
     try {
       let resource_id = resource.resource_id;
+      dispatch({ type: "UPDATE_REQUEST" });
       await axios.patch(
         URLS.RESOURCES,
         JSON.stringify({ resource_id, newTopic, newLevel, newLink })
       );
+      dispatch({ type: "UPDATE_SUCCESS" });
     } catch (error) {
       console.log(error);
+      dispatch({ type: "UPDATE_FAIL" });
     }
   };
 
@@ -104,7 +116,7 @@ export default function Resources() {
           },
         });
         dispatch({ type: "DELETE_SUCCESS" });
-        toast.success("resource successfully deleted");
+        toast.success("Resource deleted successfully");
         getResources();
       } catch (err) {
         toast.error(err);
@@ -132,21 +144,24 @@ export default function Resources() {
           <input
             className="w-full p-2 border-2 border-gray-500 rounded"
             placeholder="Topic.."
+            required
             onChange={(e) => setResourceTopic(e.target.value)}
           ></input>
           <input
             className="w-full p-2 border-2 border-gray-500 rounded"
             placeholder="Link.."
+            required
             onChange={(e) => setResourceLink(e.target.value)}
           ></input>
           <input
             type="number"
             className="w-full p-2 border-2 border-gray-500 rounded"
             placeholder="Level.."
+            required
             onChange={(e) => setResourceLevel(e.target.value)}
           ></input>
           <div className="flex flex-col lg:flex-row">
-            {loadingUpdate ? (
+            {loadingAdd ? (
               <button
                 className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
                 type="submit"
