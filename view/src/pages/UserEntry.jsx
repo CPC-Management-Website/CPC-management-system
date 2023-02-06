@@ -94,7 +94,7 @@ function UserEntry() {
       if (!error?.response) {
         toast.error("Internal Server Error");
       } else {
-        toast.warning(error.response.data.Error);
+        toast.warning(error.response.data.Error,{autoClose:false});
       }
       dispatch({ type: "ADD_BULK_FAIL" });
       console.log(error);
