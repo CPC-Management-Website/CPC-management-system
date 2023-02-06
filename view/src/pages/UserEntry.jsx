@@ -2,6 +2,7 @@ import React, { useState, useEffect, useReducer } from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
+import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -11,19 +12,18 @@ const reducer = (state, action) => {
       return { ...state, product: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-    case "DELETE_REQUEST":
-      return { ...state, loadingDelete: true, successDelete: false };
-    case "DELETE_SUCCESS":
-      return {
-        ...state,
-        loadingDelete: false,
-        successDelete: true,
-      };
-    case "DELETE_FAIL":
-      return { ...state, loadingDelete: false, successDelete: false };
-
-    case "DELETE_RESET":
-      return { ...state, loadingDelete: false, successDelete: false };
+    case "ADD_REQUEST":
+      return { ...state, loadingAdd: true };
+    case "ADD_SUCCESS":
+      return { ...state, loadingAdd: false};
+    case "ADD_FAIL":
+      return { ...state, loadingAdd: false, error: action.payload };
+    case "ADD_BULK_REQUEST":
+      return { ...state, loadingAddBulk: true };
+    case "ADD_BULK_SUCCESS":
+      return { ...state, loadingAddBulk: false};
+    case "ADD_BULK_FAIL":
+      return { ...state, loadingAddBulk: false, error: action.payload };
     default:
       return state;
   }
@@ -41,7 +41,7 @@ function UserEntry() {
   const [roles, setRoles] = useState([]);
   const [level, setLevel] = useState("");
 
-  const [{ loading, error, product, loadingDelete, successDelete }, dispatch] =
+  const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete }, dispatch] =
     useReducer(reducer, {
       loading: false,
       error: "",
@@ -50,6 +50,7 @@ function UserEntry() {
   const enterUser = async (e) => {
     e.preventDefault();
     try {
+      dispatch({ type: "ADD_REQUEST" });
       const response = await axios.post(
         URLS.USER_ENTRY,
         JSON.stringify({
@@ -65,15 +66,16 @@ function UserEntry() {
         }
       );
       console.log(response);
-      setSuccess(true);
-      setErrMsg("Form Submitted Successfully");
+      dispatch({ type: "ADD_SUCCESS" });
+      toast.success("User added successfully");
     } catch (error) {
       if (!error?.response) {
-        setErrMsg("Internal Server Error");
+        toast.error("Internal Server Error");
       } else {
-        setErrMsg(error.response.data.Error);
+        toast.error(error.response.data.Error);
       }
       console.log(error);
+      dispatch({type: "ADD_FAIL"})
       //return console.log(error)
     }
   };
@@ -81,19 +83,20 @@ function UserEntry() {
   const enterFile = async (e) => {
     e.preventDefault();
     try {
+      dispatch({ type: "ADD_BULK_REQUEST" });
       const data = new FormData();
       data.append("excel-file", selectedFile, "file.xlsx");
       const response = await axios.post(URLS.USER_ENTRY_FILE, data);
       console.log(response);
-      setSuccess(true);
-      setErrMsg("Form Submitted Successfully");
-      //  alert("Form Submitted Successfully")
+      dispatch({ type: "ADD_BULK_SUCCESS" });
+      toast.success("Users added successfully");
     } catch (error) {
       if (!error?.response) {
-        setErrMsg("Internal Server Error");
+        toast.error("Internal Server Error");
       } else {
-        setErrMsg(error.response.data.Error);
+        toast.warning(error.response.data.Error);
       }
+      dispatch({ type: "ADD_BULK_FAIL" });
       console.log(error);
     }
   };
@@ -187,7 +190,7 @@ function UserEntry() {
           </div>
         </div>
         <div className="flex flex-col mt-4">
-          {loading ? (
+          {loadingAdd ? (
             <button
               className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
               type="submit"
@@ -236,7 +239,7 @@ function UserEntry() {
           )}
         </div>
         <div className="flex flex-col mt-4">
-          {loading ? (
+          {loadingAddBulk ? (
             <button
               className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
               type="submit"
