@@ -148,7 +148,7 @@ function NavBar() {
   };
 
   return (
-    <nav className="sticky top-0 ">
+    <nav className="sticky top-0 z-50">
       {userInfo ? (
         <div className="flex flex-row py-2 justify-between px-4 lg:justify-around items-center bg-white text-black drop-shadow ">
           <span className="flex lg:hidden mr-4">
