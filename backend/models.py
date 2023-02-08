@@ -312,23 +312,17 @@ class ProgressPerContest():
         return False
 
     @staticmethod
-    def addContest(contest_id, numProblems, start_date, end_date, topic, week_number):
+    def addContest(contest_id, numProblems, yellowThreshold, greenThreshold, topic, week_number):
         if(ProgressPerContest.contestExists(contest_id)):
             return "Contest already registered"
-        dateFormat = "%Y-%m-%d"
-        try:
-            start_date = datetime.datetime.strptime(start_date, dateFormat)
-            end_date = datetime.datetime.strptime(end_date, dateFormat)
-        except:
-            return "Incorrect date format"
         mycursor = g.db.cursor()
         query  = "INSERT INTO contest \
                 (`contest_id`, `total_problems`,\
-                `start_date`, `end_date`, `topic`,\
+                `yellow_threshold`, `green_threshold`, `topic`,\
                 `week_number`, `minimum_problems`, `total_participants`) \
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query,(contest_id, numProblems, start_date,
-                 end_date, topic, week_number,numProblems, 0))
+        mycursor.execute(query,(contest_id, numProblems, yellowThreshold,
+                 greenThreshold, topic, week_number,0, 0))
         g.db.commit()
         return "Success"
 

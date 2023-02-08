@@ -86,17 +86,17 @@ def displayTranscript():
 def addContest():
     contestID = request.json["contestID"]
     numOfProblems = request.json["numOfProblems"]
-    startDate = request.json["startDate"]
-    endDate = request.json["endDate"]
+    yellowThreshold = request.json["yellowThreshold"]
+    greenThreshold = request.json["greenThreshold"]
     topic = request.json["topic"]
     weekNum = request.json["weekNum"]
-    status = ProgressPerContest.addContest(contestID, numOfProblems, startDate, endDate, topic, weekNum)
+    status = ProgressPerContest.addContest(contestID, numOfProblems, yellowThreshold, greenThreshold, topic, weekNum)
     print(status)
     if status == 'Contest already registered':
         return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
     elif status == 'Incorrect date format':
         return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
-    ProgressPerContest.addProgress(contestID)
+    # ProgressPerContest.addProgress(contestID)
     return {"add contest": "in add contest"}
 
 @views.route(urls["RESOURCES"], methods = ["POST"], strict_slashes = False)

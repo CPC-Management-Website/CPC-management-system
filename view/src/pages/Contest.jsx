@@ -20,8 +20,8 @@ const reducer = (state, action) => {
 function ContestDetails() {
   const [contestID, setContestID] = useState("");
   const [numOfProblems, setNumOfProblems] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [yellowThreshold, setYellowThreshold] = useState("");
+  const [greenThreshold, setGreenThreshold] = useState("");
   const [topic, setTopic] = useState("");
   const [weekNum, setWeekNum] = useState("");
 
@@ -40,8 +40,8 @@ function ContestDetails() {
         JSON.stringify({
           contestID: contestID,
           numOfProblems,
-          startDate,
-          endDate,
+          yellowThreshold,
+          greenThreshold,
           topic,
           weekNum,
         }),
@@ -94,25 +94,44 @@ function ContestDetails() {
           </div>
 
           <div className="flex flex-col">
-            <label className="inputlabel">Start Date*</label>
+            <label className="inputlabel">Yellow threshold*</label>
             <div className="inputCont">
               <input
                 className="input"
-                type="date"
+                type="number"
                 required
-                onChange={(e) => setStartDate(e.target.value)}
+                min={1}
+                placeholder="Yellow threshold"
+                onChange={(e) => setYellowThreshold(e.target.value)}
               />
             </div>
           </div>
 
           <div className="flex flex-col">
-            <label className="inputlabel">End Date*</label>
+            <label className="inputlabel">Green threshold*</label>
             <div className="inputCont">
               <input
                 className="input"
-                type="date"
+                type="number"
                 required
-                onChange={(e) => setEndDate(e.target.value)}
+                min={1}
+                placeholder="Green threshold"
+                onChange={(e) => setGreenThreshold(e.target.value)}
+              />
+            </div>
+          </div>
+
+
+          <div className="flex flex-col">
+            <label className="inputlabel">Number of Problems*</label>
+            <div className="inputCont">
+              <input
+                className="input"
+                type="number"
+                required
+                min={1}
+                placeholder="Number of Problems"
+                onChange={(e) => setNumOfProblems(e.target.value)}
               />
             </div>
           </div>
@@ -130,21 +149,6 @@ function ContestDetails() {
               />
             </div>
           </div>
-
-          <div className="flex flex-col">
-            <label className="inputlabel">Number of Problems*</label>
-            <div className="inputCont">
-              <input
-                className="input"
-                type="number"
-                required
-                min={1}
-                placeholder="Number of Problems"
-                onChange={(e) => setNumOfProblems(e.target.value)}
-              />
-            </div>
-          </div>
-
           <div className="flex flex-col mt-4">
             {loading ? (
               <button
