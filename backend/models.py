@@ -268,7 +268,17 @@ class ProgressPerContest():
                 VALUES (%s,%s,%s,%s,%s);"
         mycursor.executemany(query,progressList)
         g.db.commit()
-    
+
+    @staticmethod
+    def registerBulk(toBeRegistered_List):
+        mycursor = g.db.cursor()
+        query  = "INSERT INTO progress_per_contest \
+                (`user_id`, `contest_id`,\
+                `solved_problems`, `rank`, `zone`) \
+                VALUES (%s,%s,%s,%s,%s);"
+        mycursor.executemany(query,toBeRegistered_List)
+        g.db.commit()
+
     def __init__(self) -> None:
         print("in init")
     
@@ -325,6 +335,18 @@ class ProgressPerContest():
                  greenThreshold, topic, week_number,0, 0))
         g.db.commit()
         return "Success"
+
+    @staticmethod
+    def register_contestants(contest_id):
+        trainees = User.getVjudge_Handles()
+        toBeRegistered_List = []
+        for trainee in trainees:
+            id = trainee["user_id"]
+            vjudge = trainee["vjudge_handle"]
+            print(id, vjudge)         
+            toBeRegistered_List.append((id,contest_id,0,0,"Red")) #the second zero here is a temporary number for user rank in contest
+        ProgressPerContest.registerBulk(toBeRegistered_List = toBeRegistered_List)
+        return " "
 
     @staticmethod
     def addProgress(contest_id):
