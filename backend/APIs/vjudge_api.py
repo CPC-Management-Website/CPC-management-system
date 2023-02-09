@@ -1,6 +1,10 @@
 
 import requests
 from collections import defaultdict
+from dotenv import load_dotenv
+import os
+import json
+load_dotenv()
 
 # header for requesting data
 _headers = {
@@ -170,7 +174,7 @@ def get_vjudge_data(username: str = '',
 
     return res[:limit]
 
-def getProgress(contest_id):
+def getProgress_old(contest_id):
     res = get_vjudge_data(contest_id=contest_id,result=1)
     num_solved = defaultdict(lambda: 0)
     solved_problems = defaultdict(lambda:set())
@@ -181,19 +185,54 @@ def getProgress(contest_id):
     for userName, problems in solved_problems.items():
         num_solved[userName]=len(problems)
 
-    return num_solved
+    return 
+
+def getProgress(contest_id):
+    with requests.session() as session:
+        login_request = "https://vjudge.net/user/login?username={username}&password={password}".format(
+            username=os.getenv('VJUDGE_USERNAME'),password=os.getenv("VJUDGE_PASSWORD"))
+        login = session.post(login_request)
+
+        data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
+        response = session.get(data_request)
+
+        participants = json.loads(response.text)["participants"]
+        submissions = json.loads(response.text)["submissions"]
+
+        progress = []
+        vjudge = dict()
+        progress = defaultdict(lambda: 0)
+
+        for participant in participants.items():
+            contestant_id = participant[0]
+            vjudgeHandle = participant[1][0]
+            vjudge[contestant_id]=vjudgeHandle
+            progress[vjudgeHandle]=0
+        for submission in submissions:
+            contestant_id = submission[0]
+            accepted = submission[2] #1 for accepted, 0 otherwise
+            if accepted:
+                vjudgeHandle = vjudge[str(contestant_id)]
+                progress[vjudgeHandle]+=1
+        
+        return progress
+
+
 
 def _main():
-    contest_id = 452160
+    contest_id = 449968
 
-    res = get_vjudge_data(contest_id = contest_id)
-    filtered_res = {}
-    for x in res:
-        filtered_res[(x['problemId'],x['userName'])] = x
-        #print(x)
+    # res = get_vjudge_data(contest_id = contest_id)
+    # filtered_res = {}
+    # for x in res:
+    #     filtered_res[(x['problemId'],x['userName'])] = x
+    #     #print(x)
 
-    for x in filtered_res:
-        print (x)
+    # for x in filtered_res:
+    #     print (x)
+
+    progress = getProgress(contest_id=contest_id)
+    print(progress)
 
 
 if __name__ == "__main__":

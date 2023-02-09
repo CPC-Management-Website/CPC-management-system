@@ -123,7 +123,6 @@ class User(UserMixin):
     @staticmethod
     def getVjudge_Handles():
         mycursor = g.db.cursor()
-        print("debugging")
         query  = "SELECT `user_id`, `vjudge_handle` from user;"
         mycursor.execute(query)
         columns = mycursor.column_names

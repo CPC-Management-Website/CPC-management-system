@@ -97,6 +97,7 @@ def addContest():
     elif status == 'Incorrect date format':
         return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
     ProgressPerContest.register_contestants(contest_id=contestID)
+    # ProgressPerContest.updateProgress(contest_id=contestID)
     # ProgressPerContest.addProgress(contestID)
     return {"add contest": "in add contest"}
 
