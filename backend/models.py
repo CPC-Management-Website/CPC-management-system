@@ -230,23 +230,23 @@ class ProgressPerContest():
     # rank = 0
     # zone = "red"
     @staticmethod
-    def getProblemCount(contest_id):
+    def getContestParameters(contest_id):
         # g.db.reconnect()
         mycursor = g.db.cursor(dictionary=True)
-        query  = "SELECT `total_problems` from contest where contest_id = %s;"
+        query  = "SELECT `total_problems`, `yellow_threshold`, `green_threshold` from contest where contest_id = %s;"
         mycursor.execute(query,(contest_id,))
         record = mycursor.fetchone()
-        return record['total_problems']
+        return record['total_problems'], record['yellow_threshold'], record['green_threshold']
     
     @staticmethod
-    def getZone(problemCount,solved):
-        if solved < problemCount*0.25:
-            return 'Red'
-        if solved < problemCount*0.5:
-            return 'Yellow'
-        if solved < problemCount*0.75:
+    def getZone(problemCount,solved,yellowThreshold,greenThreshold):
+        if solved == problemCount:
+            return 'Blue'
+        if solved >= greenThreshold:
             return 'Green'
-        return 'Blue'
+        if solved >= yellowThreshold:
+            return 'Yellow'
+        return 'Red'
 
     @staticmethod
     def addProgressPerContest(user_id, contest_id, solved_problems,zone):
@@ -260,12 +260,12 @@ class ProgressPerContest():
         g.db.commit()
     
     @staticmethod
-    def addProgressPerContestBulk(progressList):
+    def updateProgressPerContestBulk(progressList):
         mycursor = g.db.cursor()
-        query  = "INSERT INTO progress_per_contest \
-                (`user_id`, `contest_id`,\
-                `solved_problems`, `rank`, `zone`) \
-                VALUES (%s,%s,%s,%s,%s);"
+        query  = "UPDATE progress_per_contest SET \
+                solved_problems=%s, rank=%s, zone=%s \
+                WHERE user_id=%s AND contest_id=%s;"
+
         mycursor.executemany(query,progressList)
         g.db.commit()
 
@@ -349,11 +349,10 @@ class ProgressPerContest():
         return " "
 
     @staticmethod
-    def addProgress(contest_id):
+    def updateProgress(contest_id):
         print("here")
         print(contest_id)
-        problemCount = ProgressPerContest.getProblemCount(contest_id=contest_id)
-        print('#Problems:',problemCount)
+        problemCount, yellowThreshold, greenThreshold = ProgressPerContest.getContestParameters(contest_id=contest_id)
         trainees = User.getVjudge_Handles()
         res = getProgress(contest_id=contest_id)
         print(dict(res))
@@ -364,11 +363,11 @@ class ProgressPerContest():
             print(id, vjudge)         
             numSolved = res[vjudge]
             print("Solved:",numSolved)
-            zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved)
+            zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved, yellowThreshold=yellowThreshold, greenThreshold=greenThreshold)
             print(zone)
-            progressList.append((id,contest_id,numSolved,0,zone)) #the zero here is a temporary number for user rank in contest
+            progressList.append((numSolved,0,zone,id,contest_id)) #the zero here is a temporary number for user rank in contest
             # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
-        ProgressPerContest.addProgressPerContestBulk(progressList = progressList)
+        ProgressPerContest.updateProgressPerContestBulk(progressList = progressList)
         return " "
 
 class Resources():
