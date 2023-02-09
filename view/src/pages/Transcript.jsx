@@ -87,7 +87,7 @@ export default function Transcript() {
           <CircularProgress size={50} thickness={4} color="inherit" />
         </div>
       ) : (
-        <div className="flex flex-col space-y-4 lg:w-[50%]">
+        <div className="flex flex-col space-y-4 lg:w-[50%] mb-0 lg:mb-4">
           <div className="flex flex-col sm:text-xl space-y-4 border-2 border-gray-200 rounded-xl p-6">
             <div className="flex flex-row ">
               <strong className="mr-2">Name:</strong> {trainee.name}

@@ -85,6 +85,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="*"
+            element={
+              <div className="flex min-h-[90vh] justify-center font-semibold items-center text-3xl lg:text-5xl">
+                Page not found 404
+              </div>
+            }
+          />
         </Routes>
         <ToastContainer position="bottom-center" limit={1} autoClose={2000} />
       </div>

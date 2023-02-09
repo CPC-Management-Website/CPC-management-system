@@ -1,8 +1,15 @@
 import React, { useState, useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { Drawer } from "@mui/material";
 import { Store } from "../context/store";
 import CloseIcon from "@mui/icons-material/Close";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import PersonIcon from "@mui/icons-material/Person";
+import Logout from "@mui/icons-material/Logout";
 import {
   ADD_CONTESTS,
   ADD_USERS,
@@ -26,6 +33,15 @@ function NavBar() {
   const { state } = useContext(Store);
   const { userInfo } = state;
   const { dispatch: ctxDispatch } = useContext(Store);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openDrop = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const [open, setOpen] = useState(false);
 
@@ -150,7 +166,7 @@ function NavBar() {
   return (
     <nav className="sticky top-0 z-50">
       {userInfo ? (
-        <div className="flex flex-row py-2 justify-between px-4 lg:justify-around items-center bg-white text-black drop-shadow ">
+        <div className="flex flex-row py-2 justify-between px-4 lg:justify-center items-center bg-white text-black drop-shadow whitespace-nowrap">
           <span className="flex lg:hidden mr-4">
             <img
               src="https://img.icons8.com/ios-filled/30/000000/menu-rounded.png"
@@ -161,25 +177,21 @@ function NavBar() {
             </Drawer>
           </span>
 
-          <NavLink className="text-3xl" to={HOMEPAGE}>
+          <NavLink
+            className="flex flex-row items-center text-3xl"
+            to={HOMEPAGE}
+          >
+            <img className="w-10" src="/CPC_logo.png" />
             ASUFE CPC
           </NavLink>
 
-          <ul className="hidden lg:flex flex-row space-x-8">
+          <ul className="hidden lg:flex flex-row space-x-8 mx-32">
             <li className="nav-item">
               <NavLink
                 to={HOMEPAGE}
                 className={(navData) => (navData.isActive ? "active" : null)}
               >
                 Home
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to={PROFILE}
-                className={(navData) => (navData.isActive ? "active" : null)}
-              >
-                Profile
               </NavLink>
             </li>
 
@@ -265,19 +277,68 @@ function NavBar() {
                 </NavLink>
               </li>
             ) : null}
-
-            <li className="flex items-center ml-2">
-              <NavLink
-                to="/"
-                className={
-                  "bg-violet-800 text-white rounded px-3 py-1 hover:bg-violet-600"
-                }
-                onClick={signoutHandler}
-              >
-                Sign out
-              </NavLink>
-            </li>
           </ul>
+          <div className="hidden lg:flex flex-col items-center">
+            <AccountCircleIcon
+              className="cursor-pointer text-violet-800"
+              sx={{ fontSize: 30 }}
+              onClick={handleClick}
+            />
+            <Menu
+              anchorEl={anchorEl}
+              open={openDrop}
+              onClose={handleClose}
+              onClick={handleClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  width: 180,
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.2,
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 10,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{
+                horizontal: "right",
+                vertical: "top",
+              }}
+              anchorOrigin={{
+                horizontal: "right",
+                vertical: "bottom",
+              }}
+            >
+              <Link to="/profile">
+                <MenuItem sx={{ py: 1.5 }}>
+                  <ListItemIcon>
+                    <PersonIcon fontSize="small" />
+                  </ListItemIcon>
+                  Profile
+                </MenuItem>
+              </Link>
+
+              <Divider />
+              <Link to="/" onClick={signoutHandler}>
+                <MenuItem>
+                  <ListItemIcon>
+                    <Logout fontSize="small" />
+                  </ListItemIcon>
+                  Logout
+                </MenuItem>
+              </Link>
+            </Menu>
+          </div>
         </div>
       ) : null}
     </nav>
