@@ -4,6 +4,7 @@ from flask_login import LoginManager
 import mysql.connector.pooling
 import os
 from dotenv import load_dotenv
+from models import ProgressPerContest
 
 load_dotenv()
 cors = CORS()
@@ -58,6 +59,15 @@ def create_app():
     return app
 
 app = create_app()
+
+@app.cli.command()
+def updateProgress():
+    """Update contests progress"""
+    with app.test_request_context():
+        app.preprocess_request()
+        print('Updating Contests Progress...')
+        ProgressPerContest.updateAllProgress()
+        print('Done!')
 
 if __name__ == "__main__":
     app.run(debug=True)
