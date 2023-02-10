@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_login import LoginManager
 import mysql.connector.pooling
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 from models import ProgressPerContest
 
@@ -65,9 +66,10 @@ def updateProgress():
     """Update contests progress"""
     with app.test_request_context():
         app.preprocess_request()
-        print('Updating Contests Progress...')
+        print(datetime.utcnow(),'Updating Contests Progress...')
         ProgressPerContest.updateAllProgress()
-        print('Done!')
+        print(datetime.utcnow(),'Done!')
+        print()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
