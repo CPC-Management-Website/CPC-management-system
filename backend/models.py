@@ -349,25 +349,30 @@ class ProgressPerContest():
 
     @staticmethod
     def updateProgress(contest_id):
-        print("here")
-        print(contest_id)
         problemCount, yellowThreshold, greenThreshold = ProgressPerContest.getContestParameters(contest_id=contest_id)
         trainees = User.getVjudge_Handles()
         res = getProgress(contest_id=contest_id)
-        print(dict(res))
         progressList = []
         for trainee in trainees:
             id = trainee["user_id"]
-            vjudge = trainee["vjudge_handle"]
-            print(id, vjudge)         
+            vjudge = trainee["vjudge_handle"]        
             numSolved = res[vjudge]
-            print("Solved:",numSolved)
-            zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved, yellowThreshold=yellowThreshold, greenThreshold=greenThreshold)
-            print(zone)
+            zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved, yellowThreshold=yellowThreshold, greenThreshold=greenThreshold)      
             progressList.append((numSolved,0,zone,id,contest_id)) #the zero here is a temporary number for user rank in contest
             # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
         ProgressPerContest.updateProgressPerContestBulk(progressList = progressList)
         return " "
+    
+    @staticmethod
+    def updateAllProgress():
+        mycursor = g.db.cursor(dictionary=True)
+        query = "SELECT contest_id FROM contest;"
+        mycursor.execute(query)
+        contests = mycursor.fetchall()
+        for contest in contests:
+            contestID = contest["contest_id"]
+            print("Updating progress for contest "+str(contestID))
+            ProgressPerContest.updateProgress(contest_id=contestID)
 
 class Resources():
     
