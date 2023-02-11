@@ -6,3 +6,4 @@ export const UNAUTHORIZED = "/unauthorized";
 export const RESOURCES = "/resources";
 export const PROFILE = "/profile";
 export const USERS = "/users";
+export const REGISTER = "/register"

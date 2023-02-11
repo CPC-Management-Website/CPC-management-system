@@ -14,12 +14,14 @@ import {
   PROFILE,
   CONTEST,
   USERS,
+  REGISTER,
 } from "../src/urls/frontend_urls";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NavBar from "./components/NavBar";
 import { ToastContainer } from "react-toastify";
 import Contest from "./pages/Contest.jsx";
 import Users from "./pages/Users.jsx";
+import Register from "./pages/Register"
 
 function App() {
   const location = useLocation();
@@ -83,6 +85,12 @@ function App() {
               <ProtectedRoute>
                 <Users />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path={REGISTER}
+            element={
+                <Register />
             }
           />
           <Route
