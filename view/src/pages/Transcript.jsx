@@ -81,7 +81,7 @@ export default function Transcript() {
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
-      <p className="text-3xl font-semibold lg:my-10 mb-4">Trasncript</p>
+      <p className="text-3xl font-semibold lg:my-10 mb-4">Transcript</p>
       {loading ? (
         <div className="flex justify-center py-32">
           <CircularProgress size={50} thickness={4} color="inherit" />
