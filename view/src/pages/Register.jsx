@@ -3,6 +3,8 @@ import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
+import { LOGIN } from "../urls/frontend_urls";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -18,6 +20,8 @@ const reducer = (state, action) => {
 };
 
 function Register() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
@@ -108,6 +112,7 @@ function Register() {
       );
       console.log(response);
       dispatch({ type: "REGISTER_SUCCESS" });
+      navigate(LOGIN);
       toast.success("Registration Successfull");
     } catch (error) {
       if (!error?.response) {
