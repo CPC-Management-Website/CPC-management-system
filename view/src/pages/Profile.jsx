@@ -73,7 +73,7 @@ export default function EditProfile() {
       displayProfile();
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL" });
-      toast.error(error);
+      toast.error(error.response.data.Error);
     }
   };
 

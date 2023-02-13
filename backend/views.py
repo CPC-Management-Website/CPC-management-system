@@ -25,6 +25,15 @@ def displayProfile():
     return json.dumps(user.__dict__)
 
 
+def checkAvailablity(id,email,vjudge_handle):
+    old_email = User.getUserEmail(user_id=id)
+    if old_email!=email and User.email_exists(email=email):
+        return errors.email_already_registered(werkzeug.exceptions.BadRequest)
+
+    old_vjudge_handle = User.getVjudgeHandle(user_id=id)
+    if old_vjudge_handle!=vjudge_handle and User.vjudge_handle_exists(vjudge_handle=vjudge_handle):
+        return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
+
 @views.route(urls['PROFILE'], methods = ["POST"], strict_slashes=False)
 def editProfile():
 
@@ -34,6 +43,9 @@ def editProfile():
     vjudge_handle = request.json["vjudgeHandle"]
     password = request.json["password"]
     
+    error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
+    if error:
+        return error
     User.updateData(id,email,name, vjudge_handle, password)
 
     return {"hereeee": "here"}
@@ -49,6 +61,9 @@ def editProfileAdmin():
     mentorID = request.json["mentorID"]
     enrolled = request.json["enrolled"]
     
+    error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
+    if error:
+        return error
     User.updateDataAdmin(id, name, vjudge_handle, email, level, mentorID, enrolled)
 
     return {"hereeee": "here"}

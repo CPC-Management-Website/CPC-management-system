@@ -237,7 +237,7 @@ export default function User() {
       toast.success("Profile updated");
     } catch (error) {
       dispatch({ type: "UPDATE_FAIL" });
-      toast.error(error);
+      toast.error(error.response.data.Error);
     }
   };
 

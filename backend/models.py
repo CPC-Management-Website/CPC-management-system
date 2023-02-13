@@ -51,6 +51,14 @@ class User(UserMixin):
         mycursor.execute(query,(user_id,))
         email =  mycursor.fetchone()[0]
         return email
+    
+    @staticmethod
+    def getVjudgeHandle(user_id):
+        mycursor = g.db.cursor()
+        query = "SELECT vjudge_handle FROM user where user_id=%s;"
+        mycursor.execute(query,(user_id,))
+        vjudge_handle =  mycursor.fetchone()[0]
+        return vjudge_handle
 
     @staticmethod    
     def email_exists(email):
