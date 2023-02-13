@@ -6,24 +6,12 @@ import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_REQUEST":
-      return { ...state, loading: true };
-    case "FETCH_SUCCESS":
-      return { ...state, product: action.payload, loading: false };
-    case "FETCH_FAIL":
-      return { ...state, loading: false, error: action.payload };
-    case "ADD_REQUEST":
-      return { ...state, loadingAdd: true };
-    case "ADD_SUCCESS":
-      return { ...state, loadingAdd: false};
-    case "ADD_FAIL":
-      return { ...state, loadingAdd: false, error: action.payload };
-    case "ADD_BULK_REQUEST":
-      return { ...state, loadingAddBulk: true };
-    case "ADD_BULK_SUCCESS":
-      return { ...state, loadingAddBulk: false};
-    case "ADD_BULK_FAIL":
-      return { ...state, loadingAddBulk: false, error: action.payload };
+    case "REGISTER_REQUEST":
+      return { ...state, loadingRegister: true };
+    case "REGISTER_SUCCESS":
+      return { ...state, loadingRegister: false};
+    case "REGISTER_FAIL":
+      return { ...state, loadingRegister: false, error: action.payload };
     default:
       return state;
   }
@@ -31,20 +19,23 @@ const reducer = (state, action) => {
 
 function Register() {
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
   const [phoneNumber, setPhoneNumber]=useState("");
   const [university, setUniversity]=useState("");
   const [faculty, setFaculty]=useState("");
   const [level, setLevel] = useState("");
   const [major, setMajor] = useState("");
-  const [trainingLevle, setTrainingLevel] = useState("");
-  const [platformRole, setPlatformRole] = useState(2); //2 is the id for Trainee role
-  const [selectedFile, setSelectedFile] = useState("");
-  const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [roles, setRoles] = useState([]);
+  const [availDays,setAvailDays]=useState(
+    {
+      sat: false,
+      sun: false,
+      mon: false,
+      tues: false,
+      wed: false,
+      thur: false
+    }
+  );
   const days = [
     {
         label: "Saturday",
@@ -89,33 +80,35 @@ function Register() {
     }
   ]
 
-  const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete }, dispatch] =
+  const [{ loadingRegister }, dispatch] =
     useReducer(reducer, {
       loading: false,
       error: "",
     });
 
-  const enterUser = async (e) => {
-    e.preventDefault();
+  const registerUser = async (e) => {
     try {
-      dispatch({ type: "ADD_REQUEST" });
+      dispatch({ type: "REGISTER_REQUEST" });
       const response = await axios.post(
-        URLS.USER_ENTRY,
+        URLS.REGISTER,
         JSON.stringify({
+          fullName,
           email,
-          firstName,
-          lastName,
           vjudgeHandle,
-          platformRole,
+          phoneNumber,
+          university,
+          faculty,
           level,
+          major,
+          availDays,
         }),
         {
           headers: { "Content-Type": "application/json" },
         }
       );
       console.log(response);
-      dispatch({ type: "ADD_SUCCESS" });
-      toast.success("User added successfully");
+      dispatch({ type: "REGISTER_SUCCESS" });
+      toast.success("Registration Successfull");
     } catch (error) {
       if (!error?.response) {
         toast.error("Internal Server Error");
@@ -123,9 +116,29 @@ function Register() {
         toast.error(error.response.data.Error);
       }
       console.log(error);
-      dispatch({type: "ADD_FAIL"})
+      dispatch({type: "REGISTER_FAIL"})
       //return console.log(error)
     }
+  };
+  
+  function validateCheckboxes() {
+    for (const day in availDays){
+      if(availDays[day])return true;
+    }
+    return false;
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(validateCheckboxes()){
+      registerUser()
+    }else{
+      toast.warning("Please select at least one day to attend sessions")
+    }
+  };
+  const updateCheckbox = ({ checked,value }) => {
+    availDays[value]=checked
+    setAvailDays({...availDays})
   };
 
   useEffect(() => {
@@ -135,13 +148,13 @@ function Register() {
   return (
     <div className="flex flex-col p-4 lg:p-0  lg:items-center">
       <p className="text-3xl font-semibold lg:my-10 mb-4">Register</p>
-      <form className="flex flex-col lg:w-[40%]" onSubmit={enterUser}>
+      <form className="flex flex-col lg:w-[40%]" onSubmit={handleSubmit}>
         <div className="flex flex-col">
           <label className="inputlabel">Full Name*</label>
           <div className="inputCont">
             <input
               className="input"
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => setFullName(e.target.value)}
               type="string"
               placeholder="Full Name"
               required
@@ -167,6 +180,7 @@ function Register() {
               placeholder="Vjudge Handle"
               className="input"
               onChange={(e) => setVjudgeHandle(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -176,7 +190,10 @@ function Register() {
             <input
               placeholder="Phone Number"
               className="input"
+              type = "tel"
+              // pattern="^01[0-2,5][0-9]{8}$"
               onChange={(e) => setPhoneNumber(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -187,6 +204,7 @@ function Register() {
               placeholder="University"
               className="input"
               onChange={(e) => setUniversity(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -197,6 +215,7 @@ function Register() {
               placeholder="Faculty"
               className="input"
               onChange={(e) => setFaculty(e.target.value)}
+              required
             />
           </div>
         </div>
@@ -205,12 +224,16 @@ function Register() {
             <div className="inputCont">
                     <select
                       onChange={(e) =>
-                        updateLevel(e.target.value === "NULL" ? null : e.target.value)
+                        setLevel(e.target.value === "NULL" ? null : e.target.value)
                       }
                       type="string"
                       placeholder="Level"
                       className="input"
+                      required
                     >
+                      <option key={null} value={undefined}>
+                        {""}
+                      </option>
                       {levels?.map(({ value }) => (
                         <option key={value} value={value}>
                           {value}
@@ -226,19 +249,20 @@ function Register() {
               placeholder="Major"
               className="input"
               onChange={(e) => setMajor(e.target.value)}
+              required
             />
           </div>
         </div>
         <div className="flex flex-col">
           <label className="inputlabel"> On which day(s) do you prefer to attend sessions?*</label>
-          <div className="inputCont">
+          <div className="inputCont" required>
             {days.map(({label,value})=>(
                 <label key = {value}>
                     <input
                     name="day"
                     type="checkbox"
                     value={value}
-                    //   onChange={(e) =>updateUser({})}
+                    onChange={(e) =>updateCheckbox(e.target)}
                     />{" "}
                 {label}
             </label>
@@ -246,7 +270,7 @@ function Register() {
           </div>
         </div>
         <div className="flex flex-col mt-4">
-          {loadingAdd ? (
+          {loadingRegister ? (
             <button
               className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
               type="submit"

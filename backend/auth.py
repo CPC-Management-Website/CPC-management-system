@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import secrets
 from urls import urls
-from models import User, Permissions
+from models import User, Permissions, AvailableDays
 from APIs.email_api import sendPasswordEmails
 
 auth = Blueprint("auth", __name__)
@@ -41,7 +41,7 @@ def login():
     return {"email" : email,"password" : password, "permissions": perm}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
-def register():
+def register_admin():
     name = request.json["firstName"]+" "+request.json["lastName"]
     email = request.json["email"]
     password = secrets.token_urlsafe(password_length)
@@ -58,6 +58,40 @@ def register():
                     enrolled = True, points = 0,
                     password = generate_password_hash(password, method='sha256'))
         print("User added successfully")
+        sendPasswordEmails([{"name":name,"password":password,"email":email}])
+    return {"email" : email,"password" : password}
+
+@auth.route(urls['REGISTER'], methods=["POST"], strict_slashes=False)
+def register():
+    name = request.json["fullName"]
+    email = request.json["email"]
+    vjudge = request.json["vjudgeHandle"]
+    phone = request.json["phoneNumber"]
+    university = request.json["university"]
+    faculty = request.json["faculty"]
+    level = request.json["level"]
+    major = request.json["major"]
+    availableDays = request.json["availDays"]
+    password = secrets.token_urlsafe(password_length)
+
+    if User.email_exists(email):
+        print("email already registered")
+        return errors.email_already_registered(werkzeug.exceptions.BadRequest)
+    else:
+        User.registerUser(
+            name=name,
+            email=email,
+            vjudge=vjudge,
+            phone=phone,
+            university=university,
+            faculty=faculty,
+            university_level=level,
+            major=major,
+            password=generate_password_hash(password, method='sha256')
+        )
+        print("User added successfully")
+        AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
+        print("Available days added successfully")
         sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
 

@@ -10,5 +10,6 @@
     "TRANSCRIPT" : "/backend/transcript",
     "CONTEST" : "/backend/contest",
     "USER" : "/backend/user",
-    "RESOURCES" : "/backend/resources"
+    "RESOURCES" : "/backend/resources",
+    "REGISTER" : "/backend/register"
 }

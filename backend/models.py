@@ -85,6 +85,18 @@ class User(UserMixin):
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
         mycursor.execute(query,(vjudge_handle,name,email,level,roleID,enrolled,points,password,))
         g.db.commit()
+    @staticmethod
+    def registerUser(name,email,vjudge,phone,university,faculty,university_level,major,password):
+        mycursor = g.db.cursor()
+        roleID = Permissions.getRoleID("Trainee")
+        query  = "INSERT INTO user \
+                (`name`, `email`,\
+                `vjudge_handle`, `phone_number`,\
+                `university`, `faculty`, `university_level`,\
+                `major`, `password`, `user_role`)\
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(name,email,vjudge,phone,university,faculty,university_level,major,password,roleID))
+        g.db.commit()
 
 
 
@@ -408,4 +420,23 @@ class Resources():
         mycursor = g.db.cursor()
         query = "DELETE FROM resource WHERE (`resource_id` = %s);"
         mycursor.execute(query,(int(id),))
+        g.db.commit()
+
+class AvailableDays():
+    @staticmethod
+    def addAvailableDays(email,availableDays):
+        userID = User.getUserID(email=email)
+        mycursor = g.db.cursor()
+        query  = "INSERT INTO available_days \
+                (`user_id`, `sat`, `sun`, `mon`, `tues`, `wed`, `thur`) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(
+            userID,
+            availableDays["sat"],
+            availableDays["sun"],
+            availableDays["mon"],
+            availableDays["tues"],
+            availableDays["wed"],
+            availableDays["thur"]
+            ))
         g.db.commit()
