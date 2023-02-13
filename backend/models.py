@@ -57,8 +57,8 @@ class User(UserMixin):
         mycursor = g.db.cursor()
         query = "SELECT * FROM user where email=%s;"
         mycursor.execute(query,(email,))
-        mycursor.fetchone()
-        if mycursor.rowcount ==1:
+        mycursor.fetchall()
+        if mycursor.rowcount >=1:
             return True
         return False
         # return bool(mycursor.rowcount)
@@ -68,9 +68,8 @@ class User(UserMixin):
         mycursor = g.db.cursor()
         query = "SELECT * FROM user where vjudge_handle=%s;"
         mycursor.execute(query,(vjudge_handle,))
-        mycursor.fetchone()
-        print(mycursor.rowcount)
-        if mycursor.rowcount ==1:
+        mycursor.fetchall()
+        if mycursor.rowcount >=1:
             return True
         return False
         # return bool(mycursor.rowcount)
