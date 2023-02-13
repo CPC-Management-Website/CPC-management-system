@@ -94,7 +94,7 @@ class User(UserMixin):
         # return bool(mycursor.rowcount)
 
     @staticmethod
-    def addUser(vjudge_handle,name,email,level,roleID,enrolled,points,password):
+    def addUser_admin(vjudge_handle,name,email,level,roleID,enrolled,points,password):
         mycursor = g.db.cursor()
         # roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
@@ -104,8 +104,16 @@ class User(UserMixin):
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
         mycursor.execute(query,(vjudge_handle,name,email,level,roleID,enrolled,points,password,))
         g.db.commit()
+
     @staticmethod
-    def registerUser(name,email,vjudge,phone,university,faculty,university_level,major,password):
+    def registerUser_admin(vjudge_handle,name,email,level,roleID,enrolled,points,password):
+        User.addUser_admin(vjudge_handle,name,email,level,roleID,enrolled,points,password)
+        user_id = User.getUserID(email=email)
+        print("Registering",email,"in contests")
+        ProgressPerContest.register_contestant(user_id)
+
+    @staticmethod
+    def addUser(name,email,vjudge,phone,university,faculty,university_level,major,password):
         mycursor = g.db.cursor()
         roleID = Permissions.getRoleID("Trainee")
         query  = "INSERT INTO user \
@@ -117,7 +125,12 @@ class User(UserMixin):
         mycursor.execute(query,(name,email,vjudge,phone,university,faculty,university_level,major,password,roleID))
         g.db.commit()
 
-
+    @staticmethod
+    def registerUser(name,email,vjudge,phone,university,faculty,university_level,major,password):
+       User.addUser(name,email,vjudge,phone,university,faculty,university_level,major,password)
+       user_id = User.getUserID(email=email)
+       print("Registering",email,"in contests")
+       ProgressPerContest.register_contestant(user_id)
 
     @staticmethod
     def updatePassword(user_id,newPassword):       
@@ -377,6 +390,15 @@ class ProgressPerContest():
             toBeRegistered_List.append((id,contest_id,0,0,"Red")) #the second zero here is a temporary number for user rank in contest
         ProgressPerContest.registerBulk(toBeRegistered_List = toBeRegistered_List)
         return " "
+    
+    @staticmethod
+    def register_contestant(contestant_id):
+        contests = ProgressPerContest.getAllContests()
+        toBeRegistered_List = []
+        for contest in contests:
+            contest_id = contest["contest_id"]        
+            toBeRegistered_List.append((contestant_id,contest_id,0,0,"Red")) #the second zero here is a temporary number for user rank in contest
+        ProgressPerContest.registerBulk(toBeRegistered_List = toBeRegistered_List)
 
     @staticmethod
     def updateProgress(contest_id):

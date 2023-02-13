@@ -55,7 +55,7 @@ def register_admin():
     if User.vjudge_handle_exists(vjudge_handle=vjudge):
         print("vjudge handle already registered")
         return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
-    User.addUser(vjudge_handle = vjudge,name = name,
+    User.registerUser_admin(vjudge_handle = vjudge,name = name,
                 email = email, level = level,roleID = roleID,
                 enrolled = True, points = 0,
                 password = generate_password_hash(password, method='sha256'))
@@ -127,7 +127,7 @@ def registerfile():
             print("user already registered")
             already_registered.append(email)
         else:
-            User.addUser(vjudge_handle = vjudge,name = name,
+            User.registerUser_admin(vjudge_handle = vjudge,name = name,
                     email = email, level = level,roleID = roleID,
                     enrolled = True, points = 0,
                     password = generate_password_hash(password, method='sha256'))
