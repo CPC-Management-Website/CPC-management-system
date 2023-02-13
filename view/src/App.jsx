@@ -4,7 +4,7 @@ import UserEntry from "./pages/UserEntry.jsx";
 import Resources from "./pages/Resources.jsx";
 import Home from "./pages/Home.jsx";
 import Profile from "./pages/Profile";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import Transcript from "./pages/Transcript.jsx";
 import {
   HOMEPAGE,
@@ -15,6 +15,7 @@ import {
   CONTEST,
   USERS,
   REGISTER,
+  LOGIN,
 } from "../src/urls/frontend_urls";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NavBar from "./components/NavBar";
@@ -29,8 +30,10 @@ function App() {
       <div>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path={"/login"} 
+          <Route path="/" 
+            element={ <Navigate to={HOMEPAGE} /> }
+          />
+          <Route path={LOGIN} 
             element={
               <Login />
             }

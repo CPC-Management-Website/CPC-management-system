@@ -58,7 +58,7 @@ function NavBar() {
         <li className="nav-item">
           <NavLink
             onClick={toggleDrawer(false)}
-            to="/"
+            to={HOMEPAGE}
             className={(navData) => (navData.isActive ? "active" : null)}
           >
             Home
@@ -152,7 +152,7 @@ function NavBar() {
       {userInfo ? (
         <li className="nav-item">
           <NavLink
-            to="/"
+            to={HOMEPAGE}
             onClick={() => {
               signoutHandler();
               toggleDrawer(false);
@@ -362,7 +362,7 @@ function NavBar() {
                 </Link>
 
                 <Divider />
-                <Link to="/" onClick={signoutHandler}>
+                <Link to={HOMEPAGE} onClick={signoutHandler}>
                   <MenuItem>
                     <ListItemIcon>
                       <Logout fontSize="small" />
