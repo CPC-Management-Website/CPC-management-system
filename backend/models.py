@@ -64,6 +64,18 @@ class User(UserMixin):
         # return bool(mycursor.rowcount)
     
     @staticmethod    
+    def vjudge_handle_exists(vjudge_handle):
+        mycursor = g.db.cursor()
+        query = "SELECT * FROM user where vjudge_handle=%s;"
+        mycursor.execute(query,(vjudge_handle,))
+        mycursor.fetchone()
+        print(mycursor.rowcount)
+        if mycursor.rowcount ==1:
+            return True
+        return False
+        # return bool(mycursor.rowcount)
+    
+    @staticmethod    
     def id_exists(id):
         mycursor = g.db.cursor()
         query = "SELECT * FROM user where user_id=%s;"

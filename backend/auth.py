@@ -52,13 +52,15 @@ def register_admin():
     if User.email_exists(email):
         print("email already registered")
         return errors.email_already_registered(werkzeug.exceptions.BadRequest)
-    else:
-        User.addUser(vjudge_handle = vjudge,name = name,
-                    email = email, level = level,roleID = roleID,
-                    enrolled = True, points = 0,
-                    password = generate_password_hash(password, method='sha256'))
-        print("User added successfully")
-        sendPasswordEmails([{"name":name,"password":password,"email":email}])
+    if User.vjudge_handle_exists(vjudge_handle=vjudge):
+        print("vjudge handle already registered")
+        return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
+    User.addUser(vjudge_handle = vjudge,name = name,
+                email = email, level = level,roleID = roleID,
+                enrolled = True, points = 0,
+                password = generate_password_hash(password, method='sha256'))
+    print("User added successfully")
+    sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
 
 @auth.route(urls['REGISTER'], methods=["POST"], strict_slashes=False)
@@ -77,22 +79,24 @@ def register():
     if User.email_exists(email):
         print("email already registered")
         return errors.email_already_registered(werkzeug.exceptions.BadRequest)
-    else:
-        User.registerUser(
-            name=name,
-            email=email,
-            vjudge=vjudge,
-            phone=phone,
-            university=university,
-            faculty=faculty,
-            university_level=level,
-            major=major,
-            password=generate_password_hash(password, method='sha256')
-        )
-        print("User added successfully")
-        AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
-        print("Available days added successfully")
-        sendPasswordEmails([{"name":name,"password":password,"email":email}])
+    if User.vjudge_handle_exists(vjudge_handle=vjudge):
+        print("Vjudge handle already registered")
+        return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
+    User.registerUser(
+        name=name,
+        email=email,
+        vjudge=vjudge,
+        phone=phone,
+        university=university,
+        faculty=faculty,
+        university_level=level,
+        major=major,
+        password=generate_password_hash(password, method='sha256')
+    )
+    print("User added successfully")
+    AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
+    print("Available days added successfully")
+    sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
 
 @auth.route(urls['USER_ENTRY'], methods=["GET"], strict_slashes=False)
