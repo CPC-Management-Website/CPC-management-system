@@ -25,18 +25,20 @@ import Register from "./pages/Register"
 
 function App() {
   const location = useLocation();
-
-  if (location.pathname !== "/") {
     return (
       <div>
         <NavBar />
         <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path={"/login"} 
+            element={
+              <Login />
+            }
+          />
           <Route
             path={HOMEPAGE}
             element={
-              <ProtectedRoute>
                 <Home />
-              </ProtectedRoute>
             }
           />
           <Route
@@ -105,16 +107,6 @@ function App() {
         <ToastContainer position="bottom-center" limit={1} autoClose={2000} />
       </div>
     );
-  }
-
-  return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Login />} />
-      </Routes>
-      <ToastContainer position="top-center" limit={1} autoClose={2000} />
-    </div>
-  );
 }
 
 export default App;
