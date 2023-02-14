@@ -374,32 +374,31 @@ function NavBar() {
             </div>
           ) : null}
         {userInfo ? (null):
-        <div>
-          <ul className="hidden lg:flex flex-row space-x-8 mx-32">
+        
+        <ul className="hidden lg:flex flex-row space-x-8 mx-32">
+          <li className="nav-item">
+              <NavLink
+                end
+                to={LOGIN}
+                className={(navData) =>
+                  navData.isActive ? "active" : "nav-links"
+                }
+              >
+                Login
+              </NavLink>
+            </li>
             <li className="nav-item">
-                <NavLink
-                  end
-                  to={LOGIN}
-                  className={(navData) =>
-                    navData.isActive ? "active" : "nav-links"
-                  }
-                >
-                  Login
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  end
-                  to={REGISTER}
-                  className={(navData) =>
-                    navData.isActive ? "active" : "nav-links"
-                  }
-                >
-                  Register
-                </NavLink>
-              </li>
-          </ul>
-          </div>
+              <NavLink
+                end
+                to={REGISTER}
+                className={(navData) =>
+                  navData.isActive ? "active" : "nav-links"
+                }
+              >
+                Register
+              </NavLink>
+            </li>
+        </ul>
         }
       </div>
     </nav>
