@@ -11,7 +11,7 @@ const reducer = (state, action) => {
     case "REGISTER_REQUEST":
       return { ...state, loadingRegister: true };
     case "REGISTER_SUCCESS":
-      return { ...state, loadingRegister: false};
+      return { ...state, loadingRegister: false };
     case "REGISTER_FAIL":
       return { ...state, loadingRegister: false, error: action.payload };
     default:
@@ -25,12 +25,12 @@ function Register() {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
-  const [phoneNumber, setPhoneNumber]=useState("");
-  const [university, setUniversity]=useState("");
-  const [faculty, setFaculty]=useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [university, setUniversity] = useState("");
+  const [faculty, setFaculty] = useState("");
   const [level, setLevel] = useState("");
   const [major, setMajor] = useState("");
-  const [availDays,setAvailDays]=useState(
+  const [availDays, setAvailDays] = useState(
     {
       sat: false,
       sun: false,
@@ -42,45 +42,77 @@ function Register() {
   );
   const days = [
     {
-        label: "Saturday",
-        value: "sat"
+      label: "Saturday",
+      value: "sat"
     },
     {
-        label: "Sunday",
-        value: "sun"
+      label: "Sunday",
+      value: "sun"
     },
     {
-        label: "Monday",
-        value: "mon"
+      label: "Monday",
+      value: "mon"
     },
     {
-        label: "Tuesday",
-        value: "tues"
+      label: "Tuesday",
+      value: "tues"
     },
     {
-        label: "Wednesday",
-        value: "wed"
+      label: "Wednesday",
+      value: "wed"
     },
     {
-        label: "Thursday",
-        value: "thur"
+      label: "Thursday",
+      value: "thur"
     }
   ]
   const levels = [
     {
-        value: "Freshman"
+      value: "Freshman"
     },
     {
-        value: "Sophomore"
+      value: "Sophomore"
     },
     {
-        value: "Junior"
+      value: "Junior"
     },
     {
-        value: "Senior 1"
+      value: "Senior 1"
     },
     {
-        value: "Senior 2"
+      value: "Senior 2"
+    }
+  ]
+  const majors = [
+    {
+      value: "Freshman"
+    },
+    {
+      value: "General Electrical"
+    },
+    {
+      value: "General Mechanical"
+    },
+    {
+      value: "CSE (Computer and Systems Engineering)"
+    },
+    {
+      value: "ECE (Electronics and Communications Engineering)"
+    },
+    {
+      value: "EPM (Electrical Power and Machines)"
+    },
+    {
+      value: "CESS (Computer Engineering Software Systems)"
+    },
+    {
+      value: "CIS (Computer and Information Science)"
+    },
+    {
+      value: "Mechatronics"
+    },
+    {
+      value: "Other"
     }
   ]
 
@@ -121,33 +153,33 @@ function Register() {
         toast.error(error.response.data.Error);
       }
       console.log(error);
-      dispatch({type: "REGISTER_FAIL"})
+      dispatch({ type: "REGISTER_FAIL" })
       //return console.log(error)
     }
   };
-  
+
   function validateCheckboxes() {
-    for (const day in availDays){
-      if(availDays[day])return true;
+    for (const day in availDays) {
+      if (availDays[day]) return true;
     }
     return false;
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(validateCheckboxes()){
+    if (validateCheckboxes()) {
       registerUser()
-    }else{
+    } else {
       toast.warning("Please select at least one day to attend sessions")
     }
   };
-  const updateCheckbox = ({ checked,value }) => {
-    availDays[value]=checked
-    setAvailDays({...availDays})
+  const updateCheckbox = ({ checked, value }) => {
+    availDays[value] = checked
+    setAvailDays({ ...availDays })
   };
 
   useEffect(() => {
-    
+
   }, []);
 
   return (
@@ -195,7 +227,7 @@ function Register() {
             <input
               placeholder="Phone Number"
               className="input"
-              type = "tel"
+              type="tel"
               // pattern="^01[0-2,5][0-9]{8}$"
               onChange={(e) => setPhoneNumber(e.target.value)}
               required
@@ -225,52 +257,64 @@ function Register() {
           </div>
         </div>
         <div className="flex flex-col w-full">
-            <label className="inputlabel">Level*</label>
-            <div className="inputCont">
-                    <select
-                      onChange={(e) =>
-                        setLevel(e.target.value === "NULL" ? null : e.target.value)
-                      }
-                      type="string"
-                      placeholder="Level"
-                      className="input"
-                      required
-                    >
-                      <option key={null} value={undefined}>
-                        {""}
-                      </option>
-                      {levels?.map(({ value }) => (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </select>
-            </div>
+          <label className="inputlabel">Level*</label>
+          <div className="inputCont">
+            <select
+              onChange={(e) =>
+                setLevel(e.target.value === "NULL" ? null : e.target.value)
+              }
+              type="string"
+              placeholder="Level"
+              className="input"
+              required
+            >
+              <option key={null} value={undefined}>
+                {""}
+              </option>
+              {levels?.map(({ value }) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="flex flex-col">
           <label className="inputlabel">Major*</label>
           <div className="inputCont">
-            <input
+            <select
+              onChange={(e) =>
+                setMajor(e.target.value === "NULL" ? null : e.target.value)
+              }
+              type="string"
               placeholder="Major"
               className="input"
-              onChange={(e) => setMajor(e.target.value)}
               required
-            />
+            >
+              <option key={null} value={undefined}>
+                {""}
+              </option>
+              {majors?.map(({ value }) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="flex flex-col">
           <label className="inputlabel"> On which day(s) do you prefer to attend sessions?*</label>
           <div className="inputCont" required>
-            {days.map(({label,value})=>(
-                <label key = {value}>
-                    <input
-                    name="day"
-                    type="checkbox"
-                    value={value}
-                    onChange={(e) =>updateCheckbox(e.target)}
-                    />{" "}
+            {days.map(({ label, value }) => (
+              <label key={value}>
+                <input
+                  name="day"
+                  type="checkbox"
+                  value={value}
+                  onChange={(e) => updateCheckbox(e.target)}
+                />{" "}
                 {label}
-            </label>
+              </label>
             ))}
           </div>
         </div>
