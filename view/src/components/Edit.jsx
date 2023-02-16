@@ -74,19 +74,6 @@ export default function Edit(props) {
                   </div>
                 </div>
                 <div className="flex flex-col">
-                  <label className="inputlabel">Level</label>
-                  <div className="inputCont">
-                    <input
-                      value={user?.level}
-                      type="number"
-                      className="input"
-                      onChange={(e) =>
-                        updateUser({ ...user, level: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col">
                   <label className="inputlabel">Mentor</label>
                   <div className="inputCont">
                     <select
@@ -113,47 +100,7 @@ export default function Edit(props) {
                     </select>
                   </div>
                 </div>
-                <div className="flex flex-col">
-                  <label className="inputlabel">Enrolled</label>
-                  <div className="inputCont">
-                    <div className="flex flex-col">
-                      <div className="radio">
-                        <label>
-                          <input
-                            name="enrolled"
-                            type="radio"
-                            value={1}
-                            checked={user?.enrolled === 1}
-                            onChange={(e) =>
-                              updateUser({
-                                ...user,
-                                enrolled: Number(e.target.value),
-                              })
-                            }
-                          />{" "}
-                          Yes
-                        </label>
-                      </div>
-                      <div>
-                        <label>
-                          <input
-                            name="enrolled"
-                            type="radio"
-                            value={0}
-                            checked={user?.enrolled === 0}
-                            onChange={(e) =>
-                              updateUser({
-                                ...user,
-                                enrolled: Number(e.target.value),
-                              })
-                            }
-                          />{" "}
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                
                 <div className="flex flex-col mt-4">
                   {loadingUpdate ? (
                     <button

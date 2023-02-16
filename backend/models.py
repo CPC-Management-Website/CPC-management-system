@@ -5,6 +5,11 @@ import secrets
 import datetime
 from APIs.vjudge_api import getProgress
 from flask import g
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+current_season_id = os.getenv("CURRENT_SEASON_ID")
 
 password_length = 10
 
@@ -13,26 +18,22 @@ class User(UserMixin):
     vjudge_handle = None
     name = None
     email = None
-    level = None
     role_id = None
-    enrolled = None
     points = None
     password = None
 
     def __init__(self, email):
         mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT `user_id`, `vjudge_handle`, \
-                `name`, `email`, `level`, `user_role`, \
-                `enrolled`, `points`, `password` from user where email = %s;"
+                `name`, `email`, `user_role`, \
+                `points`, `password` from user where email = %s;"
         mycursor.execute(query,(email,))
         record = mycursor.fetchone()
         self.id = record["user_id"]
         self.vjudge_handle = record["vjudge_handle"]
         self.name = record["name"]
         self.email = record["email"]
-        self.level = record["level"]
         self.role_id = record["user_role"]
-        self.enrolled = record["enrolled"]
         self.points = record["points"]
         self.password = record["password"]
 
@@ -94,23 +95,23 @@ class User(UserMixin):
         # return bool(mycursor.rowcount)
 
     @staticmethod
-    def addUser_admin(vjudge_handle,name,email,level,roleID,enrolled,points,password):
+    def addUser_admin(vjudge_handle,name,email,level,roleID,points,password):
         mycursor = g.db.cursor()
         # roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
                 (`vjudge_handle`, `name`,\
-                `email`, `level`, `user_role`, \
-                `enrolled`, `points`, `password`)\
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query,(vjudge_handle,name,email,level,roleID,enrolled,points,password,))
+                `email`, `user_role`, \
+                `points`, `password`)\
+                VALUES (%s,%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(vjudge_handle,name,email,roleID,points,password,))
         g.db.commit()
 
     @staticmethod
-    def registerUser_admin(vjudge_handle,name,email,level,roleID,enrolled,points,password):
-        User.addUser_admin(vjudge_handle,name,email,level,roleID,enrolled,points,password)
+    def registerUser_admin(vjudge_handle,name,email,level,roleID,points,password):
+        User.addUser_admin(vjudge_handle,name,email,level,roleID,points,password)
         user_id = User.getUserID(email=email)
         print("Registering",email,"in contests")
-        ProgressPerContest.register_contestant(user_id)
+        ProgressPerContest.initContestProgress_contestant(user_id)
 
     @staticmethod
     def addUser(name,email,vjudge,phone,university,faculty,university_level,major,password):
@@ -130,7 +131,7 @@ class User(UserMixin):
        User.addUser(name,email,vjudge,phone,university,faculty,university_level,major,password)
        user_id = User.getUserID(email=email)
        print("Registering",email,"in contests")
-       ProgressPerContest.register_contestant(user_id)
+       ProgressPerContest.initContestProgress_contestant(user_id)
 
     @staticmethod
     def updatePassword(user_id,newPassword):       
@@ -185,8 +186,6 @@ class User(UserMixin):
                 u.vjudge_handle,\
                 u.name,\
                 u.email,\
-                u.level,\
-                u.enrolled,\
                 u.mentor_id,\
                 m.name as mentor_name\
                 from (user u) \
@@ -215,10 +214,10 @@ class User(UserMixin):
         g.db.commit()
     
     @staticmethod
-    def updateDataAdmin(id, name, vjudge_handle, email, level, mentorID, enrolled):
+    def updateDataAdmin(id, name, vjudge_handle, email, mentorID):
         mycursor = g.db.cursor()
-        query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s, level=%s, mentor_id=%s, enrolled=%s WHERE user_id=%s;"
-        mycursor.execute(query, (name,vjudge_handle,email,level,mentorID,enrolled,id,))
+        query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s, mentor_id=%s WHERE user_id=%s;"
+        mycursor.execute(query, (name,vjudge_handle,email,mentorID,id,))
         g.db.commit()
     
     @staticmethod
@@ -365,22 +364,22 @@ class ProgressPerContest():
         return False
 
     @staticmethod
-    def addContest(contest_id, numProblems, yellowThreshold, greenThreshold, topic, week_number):
+    def addContest(contest_id, numProblems, yellowThreshold, greenThreshold, topic, week_number, levelID):
         if(ProgressPerContest.contestExists(contest_id)):
             return "Contest already registered"
         mycursor = g.db.cursor()
         query  = "INSERT INTO contest \
                 (`contest_id`, `total_problems`,\
                 `yellow_threshold`, `green_threshold`, `topic`,\
-                `week_number`, `minimum_problems`, `total_participants`) \
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
+                `week_number`, `minimum_problems`, `level_id`, `season_id`) \
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);"
         mycursor.execute(query,(contest_id, numProblems, yellowThreshold,
-                 greenThreshold, topic, week_number,0, 0))
+                 greenThreshold, topic, week_number,0, levelID, current_season_id))
         g.db.commit()
         return "Success"
 
     @staticmethod
-    def register_contestants(contest_id):
+    def initContestProgress_contest(contest_id):
         trainees = User.getVjudge_Handles()
         toBeRegistered_List = []
         for trainee in trainees:
@@ -392,7 +391,7 @@ class ProgressPerContest():
         return " "
     
     @staticmethod
-    def register_contestant(contestant_id):
+    def initContestProgress_contestant(contestant_id):
         contests = ProgressPerContest.getAllContests()
         toBeRegistered_List = []
         for contest in contests:
@@ -433,7 +432,7 @@ class Resources():
     def addResource(topic,link,level):
         mycursor = g.db.cursor()
         query  = "INSERT INTO resource \
-                (`topic`, `link`,`level`) \
+                (`topic`, `link`,`level_id`) \
                 VALUES (%s,%s,%s);"
         mycursor.execute(query,(topic,link,int(level),))
         g.db.commit()
@@ -441,7 +440,14 @@ class Resources():
     @staticmethod
     def getAllResources():
         mycursor = g.db.cursor(dictionary=True)
-        query  = "SELECT * from resource;"
+        query  = "SELECT distinct\
+                r.resource_id,\
+                r.topic,\
+                r.link,\
+                r.season_id,\
+                l.name as level\
+                from (resource r) \
+                left join training_levels l on (r.level_id = l.level_id)"
         mycursor.execute(query)
         records = mycursor.fetchall()
         resources = []
@@ -481,3 +487,24 @@ class AvailableDays():
             availableDays["thur"]
             ))
         g.db.commit()
+
+class Levels():
+    def getAllLevels():
+        mycursor = g.db.cursor(dictionary=True)
+        query = "SELECT `level_id`, `name` FROM training_levels"
+        mycursor.execute(query)
+        records = mycursor.fetchall()
+        levels = []
+        for record in records:
+            levels.append(record)
+        return levels
+    
+    def getVisibleLevels():
+        mycursor = g.db.cursor(dictionary=True)
+        query = "SELECT `level_id`, `name` FROM training_levels WHERE visible = 1"
+        mycursor.execute(query)
+        records = mycursor.fetchall()
+        levels = []
+        for record in records:
+            levels.append(record)
+        return levels

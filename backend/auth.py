@@ -57,7 +57,7 @@ def register_admin():
         return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
     User.registerUser_admin(vjudge_handle = vjudge,name = name,
                 email = email, level = level,roleID = roleID,
-                enrolled = True, points = 0,
+                points = 0,
                 password = generate_password_hash(password, method='sha256'))
     print("User added successfully")
     sendPasswordEmails([{"name":name,"password":password,"email":email}])
@@ -129,7 +129,7 @@ def registerfile():
         else:
             User.registerUser_admin(vjudge_handle = vjudge,name = name,
                     email = email, level = level,roleID = roleID,
-                    enrolled = True, points = 0,
+                    points = 0,
                     password = generate_password_hash(password, method='sha256'))
             print(email, " added successfully")
             emails.append({"email":email,"name":name,"password":password})

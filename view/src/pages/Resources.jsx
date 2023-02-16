@@ -12,12 +12,20 @@ import {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_REQUEST":
+    case "GET_RESOURCES_REQUEST":
       return { ...state, loading: true };
-    case "FETCH_SUCCESS":
+    case "GET_RESOURCES_SUCCESS":
       return { ...state, resources: action.payload, loading: false };
-    case "FETCH_FAIL":
+    case "GET_RESOURCES_FAIL":
       return { ...state, loading: false, error: action.payload };
+
+    case "GET_LEVELS_REQUEST":
+      return { ...state};
+    case "GET_LEVELS_SUCCESS":
+      return { ...state, levels: action.payload};
+    case "GET_LEVELS_FAIL":
+      return { ...state, error: action.payload };
+
     case "ADD_REQUEST":
       return { ...state, loadingAdd: true };
     case "ADD_SUCCESS":
@@ -48,7 +56,7 @@ const reducer = (state, action) => {
 export default function Resources() {
   const { state } = useContext(Store);
   const { userInfo } = state;
-  const [{ loading, loadingAdd,loadingUpdate, loadingDelete, resources }, dispatch] =
+  const [{ loading, loadingAdd,loadingUpdate, loadingDelete, resources, levels }, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: "",
@@ -60,11 +68,21 @@ export default function Resources() {
 
   const getResources = async () => {
     try {
-      dispatch({ type: "FETCH_REQUEST" });
+      dispatch({ type: "GET_RESOURCES_REQUEST" });
       const response = await axios.get(URLS.RESOURCES);
-      dispatch({ type: "FETCH_SUCCESS", payload: response.data });
+      dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
     } catch (error) {
-      dispatch({ type: "FETCH_FAIL" });
+      dispatch({ type: "GET_RESOURCES_FAIL" });
+      console.log(error);
+    }
+  };
+  const getLevels = async () => {
+    try {
+      dispatch({ type: "GET_LEVELS_REQUEST" });
+      const response = await axios.get(URLS.LEVELS);
+      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_LEVELS_FAIL" });
       console.log(error);
     }
   };
@@ -129,6 +147,7 @@ export default function Resources() {
 
   useEffect(() => {
     getResources();
+    getLevels();
   }, []);
 
   return (
@@ -153,13 +172,24 @@ export default function Resources() {
             required
             onChange={(e) => setResourceLink(e.target.value)}
           ></input>
-          <input
-            type="number"
+          <select
+            type="string"
             className="w-full p-2 border-2 border-gray-500 rounded"
             placeholder="Level.."
             required
-            onChange={(e) => setResourceLevel(e.target.value)}
-          ></input>
+            onChange={(e) =>
+              setResourceLevel(e.target.value === "NULL" ? null : e.target.value)
+            }
+          >
+            <option key={null} value={undefined}>
+                {""}
+            </option>
+            {levels?.map(({ level_id, name }) => (
+              <option key={level_id} value={level_id}>
+                {name}
+              </option>
+            ))}
+          </select>
           <div className="flex flex-col lg:flex-row">
             {loadingAdd ? (
               <button

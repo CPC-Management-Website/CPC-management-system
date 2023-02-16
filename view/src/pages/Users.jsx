@@ -77,9 +77,7 @@ export default function User() {
     "Name",
     "VJudgeHandle",
     "Email",
-    "Level",
     "Mentor",
-    "Enrolled",
   ];
 
   const { state } = useContext(Store);
@@ -223,9 +221,7 @@ export default function User() {
           name: userToEdit.name,
           vjudgeHandle: userToEdit.vjudge_handle,
           email: userToEdit.email,
-          level: userToEdit.level,
           mentorID: userToEdit.mentor_id,
-          enrolled: userToEdit.enrolled,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -341,9 +337,7 @@ export default function User() {
                   <div>{item.name}</div>
                   <div>{item.vjudge_handle}</div>
                   <div>{item.email}</div>
-                  <div>{item.level}</div>
                   <div>{item.mentor_name}</div>
-                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
                   <Tooltip placement="bottom" title="Edit User">
 
@@ -460,9 +454,7 @@ export default function User() {
                   </div>
                   <div>{item.vjudge_handle}</div>
                   <div>{item.email}</div>
-                  <div>{item.level}</div>
                   <div>{item.mentor_name}</div>
-                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
                   <Tooltip placement="bottom" title="Edit User">
                     <button
@@ -533,13 +525,7 @@ export default function User() {
                         {item.email}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {item.level}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
                         {item.mentor_name}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {item.enrolled ? <p> Yes </p> : <p> No </p>}
                       </StyledTableCell>
                       <StyledTableCell className="space-x-4" align="center">
                       <Tooltip placement="bottom" title="Edit User">
@@ -591,7 +577,6 @@ export default function User() {
                   <div>{item.email}</div>
                   <div>{item.level}</div>
                   <div>{item.mentor_name}</div>
-                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
                   <Tooltip placement="bottom" title="Edit User">
                     <button

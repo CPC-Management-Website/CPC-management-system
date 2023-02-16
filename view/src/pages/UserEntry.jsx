@@ -136,13 +136,13 @@ function UserEntry() {
           </div>
         </div>
         <div className="flex flex-col">
-          <label className="inputlabel">Name*</label>
+          <label className="inputlabel">Full Name*</label>
           <div className="inputCont">
             <input
               className="input"
               onChange={(e) => setFirstName(e.target.value)}
               type="string"
-              placeholder="First Name"
+              placeholder="Full Name"
               required
             />
           </div>
