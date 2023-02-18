@@ -310,7 +310,6 @@ class ProgressPerContest():
     
     @staticmethod
     def updateProgressPerContestBulk(progressList):
-        print(progressList)
         mycursor = g.db.cursor()
         query  = "UPDATE progress_per_contest SET \
                 solved_problems=%s, rank=%s, zone=%s \
@@ -441,16 +440,14 @@ class ProgressPerContest():
                 id = trainee["user_id"]
                 vjudge = trainee["vjudge_handle"]        
                 numSolved = res[vjudge]
-                print(id,vjudge,numSolved)
                 zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved, yellowThreshold=yellowThreshold, greenThreshold=greenThreshold)      
                 progressList.append((numSolved,0,zone,id,contest_id)) #the zero here is a temporary number for user rank in contest
                 # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
-                print("here")
-            print("here2")
+
             ProgressPerContest.updateProgressPerContestBulk(progressList = progressList)
-            print("here3")
+            print("Successfully updated progress for contest", contest_id)
         except:
-            print("Couldn't update progress for contest ", contest_id)
+            print("Couldn't update progress for contest", contest_id)
         return " "
     
     @staticmethod
