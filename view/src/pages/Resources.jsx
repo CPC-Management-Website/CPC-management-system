@@ -66,7 +66,18 @@ export default function Resources() {
   const [resourceLink, setResourceLink] = useState("");
   const [resourceLevel, setResourceLevel] = useState("");
 
-  const getResources = async () => {
+  const getMyResources = async () => {
+    try {
+      const params = new URLSearchParams([["level_id", userInfo.enrollment.level_id]]);
+      dispatch({ type: "GET_RESOURCES_REQUEST" });
+      const response = await axios.get(URLS.MYRESOURCES, {params});
+      dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_RESOURCES_FAIL" });
+      console.log(error);
+    }
+  };
+  const getAllResources = async () => {
     try {
       dispatch({ type: "GET_RESOURCES_REQUEST" });
       const response = await axios.get(URLS.RESOURCES);
@@ -100,7 +111,7 @@ export default function Resources() {
       );
       dispatch({ type: "ADD_SUCCESS" });
       toast.success("Resource added successfully")
-      getResources();
+      getAllResources();
     } catch (error) {
       toast.error("Failed to add resource")
       dispatch({ type: "ADD_FAIL" });
@@ -135,7 +146,7 @@ export default function Resources() {
         });
         dispatch({ type: "DELETE_SUCCESS" });
         toast.success("Resource deleted successfully");
-        getResources();
+        getMyResources();
       } catch (err) {
         toast.error(err);
         dispatch({
@@ -146,7 +157,10 @@ export default function Resources() {
   };
 
   useEffect(() => {
-    getResources();
+    userInfo?.permissions.find((perm) => perm === (ADD_RESOURCES || UPDATE_RESOURCES || DELETE_RESOURCES))?
+      getAllResources()
+    : 
+      getMyResources()
     getLevels();
   }, []);
 

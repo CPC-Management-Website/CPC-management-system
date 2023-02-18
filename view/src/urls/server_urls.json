@@ -11,6 +11,7 @@
     "CONTEST" : "/backend/contest",
     "USER" : "/backend/user",
     "RESOURCES" : "/backend/resources",
+    "MYRESOURCES" : "/backend/myresources",
     "REGISTER" : "/backend/register",
     "LEVELS" : "/backend/levels"
 }

@@ -4,17 +4,18 @@ function ProgressPerContest(props) {
       <div className="flex flex-col">
         <a
           target="_blank"
-          href={`https://vjudge.net/contest/${props.contestItem?.contest_id}`}
+          href={`https://vjudge.net/contest/${props.progressItem?.contest_id}`}
           className="underline text-blue-600"
         >
-          {props.contestItem?.topic}
+          {props.progressItem?.topic}
         </a>
-        <p>week number : {props.contestItem?.week_number}</p>
+        <p>week number : {props.progressItem?.week_number}</p>
       </div>
       <div className="flex flex-col sm:w-60">
         <p>
+          {console.log(props.progressItem)}
           solved problems: {props.progressItem?.solved_problems} out of{" "}
-          {props.contestItem?.total_problems}
+          {props.progressItem?.total_problems}
         </p>
         <p>
           zone:{" "}

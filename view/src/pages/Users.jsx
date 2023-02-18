@@ -38,6 +38,13 @@ const reducer = (state, action) => {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
+    case "GET_LEVELS_REQUEST":
+      return { ...state};
+    case "GET_LEVELS_SUCCESS":
+      return { ...state, levels: action.payload};
+    case "GET_LEVELS_FAIL":
+      return { ...state, error: action.payload };
+
     case "SHOW_DIALOGUE":
       return { ...state, open: true };
     case "HIDE_DIALOGUE":
@@ -77,7 +84,9 @@ export default function User() {
     "Name",
     "VJudgeHandle",
     "Email",
+    "Level",
     "Mentor",
+    "Enrolled",
   ];
 
   const { state } = useContext(Store);
@@ -107,6 +116,7 @@ export default function User() {
       trainees,
       mentors,
       admins,
+      levels,
       open,
     },
     dispatch,
@@ -221,7 +231,11 @@ export default function User() {
           name: userToEdit.name,
           vjudgeHandle: userToEdit.vjudge_handle,
           email: userToEdit.email,
+          levelID: userToEdit.level_id,
           mentorID: userToEdit.mentor_id,
+          enrolled: userToEdit.enrolled,
+          seasonID: userToEdit.season_id,
+          enrollmentID: userToEdit.enrollment_id,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -236,6 +250,16 @@ export default function User() {
       toast.error(error.response.data.Error);
     }
   };
+  const getLevels = async () => {
+    try {
+      dispatch({ type: "GET_LEVELS_REQUEST" });
+      const response = await axios.get(URLS.LEVELS);
+      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_LEVELS_FAIL" });
+      console.log(error);
+    }
+  };
 
   const getData = async () => {
     if (userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS)) {
@@ -245,6 +269,7 @@ export default function User() {
       getAdmins();
     }
     getTrainees();
+    getLevels();
   };
 
   useEffect(() => {
@@ -258,6 +283,7 @@ export default function User() {
           user={userToEdit}
           mentors={mentors}
           opened={open}
+          levels={levels}
           handleClose={handleClose}
           submitEdit={editHandler}
           updateUser={setUserToEdit}
@@ -337,7 +363,9 @@ export default function User() {
                   <div>{item.name}</div>
                   <div>{item.vjudge_handle}</div>
                   <div>{item.email}</div>
+                  <div>{item.level}</div>
                   <div>{item.mentor_name}</div>
+                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
                   <Tooltip placement="bottom" title="Edit User">
 
@@ -454,7 +482,9 @@ export default function User() {
                   </div>
                   <div>{item.vjudge_handle}</div>
                   <div>{item.email}</div>
+                  <div>{item.level}</div>
                   <div>{item.mentor_name}</div>
+                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
                   <Tooltip placement="bottom" title="Edit User">
                     <button
@@ -525,7 +555,13 @@ export default function User() {
                         {item.email}
                       </StyledTableCell>
                       <StyledTableCell align="center">
+                        {item.level_name}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
                         {item.mentor_name}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {item.enrolled ? <p> Yes </p> : <p> No </p>}
                       </StyledTableCell>
                       <StyledTableCell className="space-x-4" align="center">
                       <Tooltip placement="bottom" title="Edit User">
@@ -577,6 +613,7 @@ export default function User() {
                   <div>{item.email}</div>
                   <div>{item.level}</div>
                   <div>{item.mentor_name}</div>
+                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
                   <Tooltip placement="bottom" title="Edit User">
                     <button

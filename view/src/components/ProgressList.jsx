@@ -17,30 +17,29 @@ const reducer = (state, action) => {
   }
 };
 
-function render(contestList, progressList) {
+function render(progressList) {
+  console.log(progressList)
   const data = [];
-  for (let i = 0; i < contestList.length; i++) {
+  for (let i = 0; i < progressList.length; i++) {
     data.push(
       <ProgressPerContest
         key={i}
         progressItem={progressList[i]}
-        contestItem={contestList[i]}
       />
     );
   }
   return data;
 }
 
-function ProgressList(email) {
+function ProgressList(props) {
   const [progressList, setProgressList] = useState([]);
-  const [contestList, setContestList] = useState([]);
   const [{ loading }, dispatch] = useReducer(reducer, {
     loading: true,
     error: "",
   });
 
   const getProgressList = async () => {
-    const params = new URLSearchParams([["email", email["email"]]]);
+    const params = new URLSearchParams([["email", props["email"]],["levelID",props["level_id"]]]);
     try {
       dispatch({ type: "FETCH_REQUEST" });
       const response = await axios.get(
@@ -52,7 +51,6 @@ function ProgressList(email) {
       );
       dispatch({ type: "FETCH_SUCCESS" });
       setProgressList(response.data.progress);
-      setContestList(response.data.contests);
     } catch (err) {
       dispatch({ type: "FETCH_FAIL" });
       console.log(err);
@@ -61,6 +59,7 @@ function ProgressList(email) {
 
   useEffect(() => {
     getProgressList();
+    console.log(progressList)
   }, []);
 
   return loading ? (
@@ -68,7 +67,7 @@ function ProgressList(email) {
       <CircularProgress size={50} thickness={4} color="inherit" />
     </div>
   ) : (
-    render(contestList, progressList)
+    render(progressList)
   );
 }
 

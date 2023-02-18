@@ -52,9 +52,17 @@ export default function CustomTable({ headers, items }) {
                 {item.email ? (
                   <StyledTableCell align="center">{item.email}</StyledTableCell>
                 ) : null}
+                {item.level ? (
+                  <StyledTableCell align="center">{item.level}</StyledTableCell>
+                ) : null}
                 {item.mentor_name ? (
                   <StyledTableCell align="center">
                     {item.mentor_name}
+                  </StyledTableCell>
+                ) : null}
+                {item.enrolled ? (
+                  <StyledTableCell align="center">
+                    {item.enrolled ? <p> Yes </p> : <p> No </p>}
                   </StyledTableCell>
                 ) : null}
                 <StyledTableCell className="space-x-4" align="center">

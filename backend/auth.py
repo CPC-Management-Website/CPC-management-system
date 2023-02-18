@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import secrets
 from urls import urls
-from models import User, Permissions, AvailableDays
+from models import User, Permissions, AvailableDays, Enrollment
 from APIs.email_api import sendPasswordEmails
 
 auth = Blueprint("auth", __name__)
@@ -33,12 +33,12 @@ def login():
         print("Logged in!")
         login_user(user,remember = remember_logins)
         perm = Permissions(user).getAllowedPermissions()
+        enrollment = Enrollment.getEnrollment(user_id=user.id)
         user_json = json.dumps(user.__dict__)
-
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    return {"email" : email,"password" : password, "permissions": perm}
+    return {"email" : email,"password" : password, "permissions": perm, "enrollment":enrollment}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register_admin():
@@ -96,6 +96,7 @@ def register():
     print("User added successfully")
     AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
     print("Available days added successfully")
+    Enrollment.enrollFromRegistration(email=email)
     sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
 

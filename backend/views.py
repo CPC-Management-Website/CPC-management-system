@@ -9,7 +9,7 @@ from models import ProgressPerContest
 import errors
 import werkzeug
 
-from models import User, Resources, Levels
+from models import User, Resources, Levels, Enrollment
 
 
 views = Blueprint("views", __name__)
@@ -58,11 +58,19 @@ def editProfileAdmin():
     vjudge_handle = request.json["vjudgeHandle"]
     email = request.json["email"]
     mentorID = request.json["mentorID"]
-    
+    enrollmentID = request.json["enrollmentID"]
+    levelID = request.json["levelID"]
+    seasonID = request.json["seasonID"]
+    enrolled = request.json["enrolled"]
+
     error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
     if error:
         return error
     User.updateDataAdmin(id, name, vjudge_handle, email, mentorID)
+    if(enrollmentID):
+        Enrollment.updateEnrollment(enrollment_id=enrollmentID,level_id=levelID, season_id=seasonID, enrolled=enrolled)
+    else:
+        Enrollment.enroll(user_id=id,level_id=levelID)
 
     return {"hereeee": "here"}
 
@@ -91,8 +99,10 @@ def deletUser():
 @views.route(urls['TRANSCRIPT'], methods = ["GET"], strict_slashes=False)
 def displayTranscript():
     email = request.args.get("email")
+    levelID = request.args.get("levelID")
+    print(levelID)
     print(email)
-    return ProgressPerContest.getUserProgress(email)
+    return ProgressPerContest.getUserProgress(email = email,level_id = levelID)
 
 
 @views.route(urls['CONTEST'], methods = ["POST"], strict_slashes = False)
@@ -124,8 +134,16 @@ def addResource():
     return ""
 
 @views.route(urls["RESOURCES"], methods = ["GET"], strict_slashes = False)
-def getResources():
+def getAllResources():
     resources = Resources.getAllResources()
+    return json.dumps(resources)
+
+@views.route(urls["MYRESOURCES"], methods = ["GET"], strict_slashes = False)
+def getMyResources():
+    level_id = request.args.get("level_id")
+    print(level_id)
+    resources = Resources.getResources(level_id=level_id)
+    print(resources)
     return json.dumps(resources)
 
 @views.route(urls['RESOURCES'], methods = ["PATCH"], strict_slashes=False)

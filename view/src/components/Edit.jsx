@@ -9,6 +9,8 @@ export default function Edit(props) {
   let mentors = props.mentors;
   let loadingUpdate = props.loadingUpdate;
   let loading = false;
+  let levels = props.levels
+  console.log(levels)
 
   const updateUser = props.updateUser;
   const submitEdit = props.submitEdit;
@@ -74,6 +76,35 @@ export default function Edit(props) {
                   </div>
                 </div>
                 <div className="flex flex-col">
+                  <label className="inputlabel">Level</label>
+                  <div className="inputCont">
+                    <select
+                      value={user?.level_id ? user.level_id : undefined}
+                      onChange={(e) =>
+                        updateUser({
+                          ...user,
+                          level_id:
+                            e.target.value === "NULL" ? null : e.target.value,
+                        })
+                      }
+                      type="string"
+                      placeholder="Level"
+                      className="input"
+                    >
+                      {user?.level_id? null:
+                        <option key={null} value={undefined}>
+                          NULL
+                        </option>
+                      }
+                      {levels?.map(({ name, level_id }) => (
+                        <option key={level_id} value={level_id}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex flex-col">
                   <label className="inputlabel">Mentor</label>
                   <div className="inputCont">
                     <select
@@ -100,7 +131,47 @@ export default function Edit(props) {
                     </select>
                   </div>
                 </div>
-                
+                <div className="flex flex-col">
+                  <label className="inputlabel">Enrolled</label>
+                  <div className="inputCont">
+                    <div className="flex flex-col">
+                      <div className="radio">
+                        <label>
+                          <input
+                            name="enrolled"
+                            type="radio"
+                            value={1}
+                            checked={user?.enrolled === 1}
+                            onChange={(e) =>
+                              updateUser({
+                                ...user,
+                                enrolled: Number(e.target.value),
+                              })
+                            }
+                          />{" "}
+                          Yes
+                        </label>
+                      </div>
+                      <div>
+                        <label>
+                          <input
+                            name="enrolled"
+                            type="radio"
+                            value={0}
+                            checked={user?.enrolled === 0}
+                            onChange={(e) =>
+                              updateUser({
+                                ...user,
+                                enrolled: Number(e.target.value),
+                              })
+                            }
+                          />{" "}
+                          No
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex flex-col mt-4">
                   {loadingUpdate ? (
                     <button

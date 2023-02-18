@@ -46,6 +46,7 @@ export default function SignIn() {
       });
       ctxDispatch({ type: "USER_SIGNIN", payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data));
+      console.log(data)
       dispatch({ type: "LOGIN_SUCCESS" });
       navigate(redirect || HOMEPAGE);
     } catch (err) {
