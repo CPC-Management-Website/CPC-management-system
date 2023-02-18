@@ -595,7 +595,8 @@ export default function User() {
                         )}
                         <Tooltip placement="bottom" title="View Transcript">
                           <button>
-                            <AlertDialog email={item.email} />
+                            <AlertDialog email={item.email} level_id = {item.level_id} />
+                            {console.log(item)}
                           </button>
                         </Tooltip>
                       </StyledTableCell>
@@ -646,7 +647,7 @@ export default function User() {
                     )}
                     <Tooltip placement="bottom" title="View Transcript">
                       <button>
-                        <AlertDialog email={item.email} />
+                      <AlertDialog email={item.email} level_id = {item.level_id} />
                       </button>
                     </Tooltip>
                   </div>
@@ -657,6 +658,7 @@ export default function User() {
           </>
         )}
       </div>
+      {console.log(trainees)}
     </>
   );
 }
