@@ -373,7 +373,8 @@ class ProgressPerContest():
                 c.level_id,\
                 c.season_id,\
                 c.topic,\
-                c.total_problems\
+                c.total_problems,\
+                c.week_number\
                 from (progress_per_contest p) \
                 inner join contest c on (c.contest_id = p.contest_id)\
                 WHERE (p.user_id = %s AND c.level_id = %s AND c.season_id = %s);"
