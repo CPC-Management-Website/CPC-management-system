@@ -189,10 +189,10 @@ def getProgress_old(contest_id):
 
 def getProgress(contest_id):
     with requests.session() as session:
-        login_request = "https://vjudge.net/user/login?username={username}&password={password}".format(
-            username=os.getenv('VJUDGE_USERNAME'),password=os.getenv("VJUDGE_PASSWORD"))
-        login = session.post(login_request)
-
+        login_request_url = "https://vjudge.net/user/login"
+        data = {"username":os.getenv('VJUDGE_USERNAME'),"password":os.getenv("VJUDGE_PASSWORD")}
+        login = session.post(url=login_request_url,data=data)
+        print("Login status:",login.text)
         data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
         response = session.get(data_request)
 
@@ -220,7 +220,7 @@ def getProgress(contest_id):
 
 
 def _main():
-    contest_id = 449968
+    contest_id = 541074
 
     # res = get_vjudge_data(contest_id = contest_id)
     # filtered_res = {}
