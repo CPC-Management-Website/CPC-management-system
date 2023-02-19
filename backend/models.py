@@ -95,7 +95,7 @@ class User(UserMixin):
         # return bool(mycursor.rowcount)
 
     @staticmethod
-    def addUser_admin(vjudge_handle,name,email,level,roleID,points,password):
+    def addUser_admin(vjudge_handle,name,email,level_id,roleID,points,password):
         mycursor = g.db.cursor()
         # roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
@@ -107,10 +107,11 @@ class User(UserMixin):
         g.db.commit()
 
     @staticmethod
-    def registerUser_admin(vjudge_handle,name,email,level,roleID,points,password):
-        User.addUser_admin(vjudge_handle,name,email,level,roleID,points,password)
+    def registerUser_admin(vjudge_handle,name,email,level_id,roleID,points,password):
+        User.addUser_admin(vjudge_handle,name,email,level_id,roleID,points,password)
         user_id = User.getUserID(email=email)
         print("Registering",email,"in contests")
+        Enrollment.enroll(user_id=user_id,level_id=level_id)
         ProgressPerContest.initContestProgress_contestant(user_id)
 
     @staticmethod
