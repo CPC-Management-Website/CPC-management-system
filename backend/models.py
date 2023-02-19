@@ -291,7 +291,7 @@ class ProgressPerContest():
     @staticmethod
     def getZone(problemCount,solved,yellowThreshold,greenThreshold):
         if solved == problemCount:
-            return 'Blue'
+            return 'Dark Green'
         if solved >= greenThreshold:
             return 'Green'
         if solved >= yellowThreshold:
