@@ -193,7 +193,7 @@ function NavBar() {
 
   const signoutHandler = () => {
     ctxDispatch({ type: "USER_SIGNOUT" });
-    localStorage.removeItem("userInfo");
+    sessionStorage.removeItem("userInfo");
   };
 
   return (

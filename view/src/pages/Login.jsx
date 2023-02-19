@@ -45,7 +45,7 @@ export default function SignIn() {
         password,
       });
       ctxDispatch({ type: "USER_SIGNIN", payload: data });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      sessionStorage.setItem("userInfo", JSON.stringify(data));
       console.log(data)
       dispatch({ type: "LOGIN_SUCCESS" });
       navigate(redirect || HOMEPAGE);

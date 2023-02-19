@@ -1,25 +1,25 @@
 function ProgressPerContest(props) {
-  let x = "bg-green-300"
+  let color = "bg-green-300"
   switch(props.progressItem?.zone){
     case "Red":
-      x = "bg-[#ffdddd]"
+      color = "bg-[#ffdddd]"
       break;
     case "Yellow":
-      x = "bg-yellow-200"
+      color = "bg-yellow-200"
       break;
     case "Green":
-      x = "bg-[#a9f5af]"
+      color = "bg-[#a9f5af]"
       break;
     case "Dark Green":
-      x = "bg-green-500"
+      color = "bg-green-500"
       break;
     default:
-      x = "bg-white"
+      color = "bg-white"
       break;
 
   }
   return (
-    <div className={`flex flex-col sm:flex-row sm:items-center justify-between w-full border-2 rounded p-4 ${x}`} >
+    <div className={`flex flex-col sm:flex-row sm:items-center justify-between w-full border-2 rounded p-4 ${color}`} >
       <div className="flex flex-col">
         <a
           target="_blank"
