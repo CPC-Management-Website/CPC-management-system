@@ -102,7 +102,7 @@ export default function Transcript() {
               <strong className="mr-2">E-mail:</strong> {trainee.email}
             </div>
             <div className="flex flex-row ">
-              <strong className="mr-2">VjudgeHandle:</strong>
+              <strong className="mr-2">Vjudge Handle:</strong>
               {trainee.vjudge_handle}
             </div>
           </div>

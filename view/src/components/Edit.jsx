@@ -52,7 +52,7 @@ export default function Edit(props) {
                   </div>
                 </div>
                 <div className="flex flex-col">
-                  <label className="inputlabel">VjudgeHandle</label>
+                  <label className="inputlabel">Vjudge Handle</label>
                   <div className="inputCont">
                     <input
                       value={user?.vjudge_handle}
