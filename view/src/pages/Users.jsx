@@ -45,13 +45,6 @@ const reducer = (state, action) => {
     case "GET_LEVELS_FAIL":
       return { ...state, error: action.payload };
 
-    case "GET_REGISTRATION_REQUEST":
-      return { ...state};
-    case "GET_REGISTRATION_SUCCESS":
-      return { ...state, registration: action.payload};
-    case "GET_REGISTRATION_FAIL":
-      return { ...state, error: action.payload };
-
     case "SHOW_DIALOGUE":
       return { ...state, open: true };
     case "HIDE_DIALOGUE":
@@ -101,7 +94,6 @@ export default function User() {
   const subHeaders = ["Name", "VJudgeHandle", "Email"];
 
   const [userToEdit, setUserToEdit] = useState();
-  const [buttonText, setButtonText] = useState("button");
 
   const handleClose = () => {
     dispatch({ type: "HIDE_DIALOGUE" });
@@ -126,7 +118,6 @@ export default function User() {
       admins,
       levels,
       open,
-      registration,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -270,19 +261,6 @@ export default function User() {
     }
   };
 
-  const getRegistrationStatus = async () => {
-    try {
-      dispatch({ type: "GET_REGISTRATION_REQUEST" });
-      const response = await axios.get(URLS.REGISTRATION);
-      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data });
-      {console.log(registration)}
-      setButtonText((registration.value === "open")? "Close Registration":"Open Registration")
-    } catch (error) {
-      dispatch({ type: "GET_REGISTRATION_FAIL" });
-      console.log(error);
-    }
-  };
-
   const getData = async () => {
     if (userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS)) {
       getMentors();
@@ -292,25 +270,7 @@ export default function User() {
     }
     getTrainees();
     getLevels();
-    getRegistrationStatus();
   };
-
-  const getButtonText = ()=>{
-    switch (registration){
-      case "open":
-        setButtonText("close registration")
-        return "close registration"
-        break;
-      case "closed":
-        setButtonText("open registration")
-        return "asldkfj"
-        break;
-      default:
-        setButtonText("loading")
-        return "loading"
-        break;
-    }
-  }
 
   useEffect(() => {
     getData();
@@ -318,7 +278,6 @@ export default function User() {
 
   return (
     <>
-    {console.log(registration)}
       <div className="flex flex-col p-4 sm:p-0 sm:mx-4 sm:mb-4 sm:min-h-screen sm:items-center">
         <Edit
           user={userToEdit}
@@ -330,10 +289,6 @@ export default function User() {
           updateUser={setUserToEdit}
           loadingUpdate={loadingUpdate}
         />
-        <button className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded mt-6"
-                onClick={() => resetPass(item.user_id)}>
-                  {getButtonText()}
-        </button>
         <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
         {loading_admins || loadingDelete ? (
           <div className="flex justify-center py-32">
@@ -449,7 +404,7 @@ export default function User() {
             </div>
           </>
         )}
-{console.log(registration)}
+
         <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Mentors</p>
         {loading_mentors || loadingDelete ? (
           <div className="flex justify-center py-32">
