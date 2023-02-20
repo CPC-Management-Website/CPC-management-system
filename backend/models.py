@@ -115,21 +115,21 @@ class User(UserMixin):
         ProgressPerContest.initContestProgress_contestant(user_id)
 
     @staticmethod
-    def addUser(name,email,vjudge,phone,university,faculty,university_level,major,password):
+    def addUser(name,email,vjudge,phone,university,faculty,university_level,major,discord,password):
         mycursor = g.db.cursor()
         roleID = Permissions.getRoleID("Trainee")
         query  = "INSERT INTO user \
                 (`name`, `email`,\
                 `vjudge_handle`, `phone_number`,\
                 `university`, `faculty`, `university_level`,\
-                `major`, `password`, `user_role`)\
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query,(name,email,vjudge,phone,university,faculty,university_level,major,password,roleID))
+                `major`,`discord_handle`, `password`, `user_role`)\
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(name,email,vjudge,phone,university,faculty,university_level,major,discord,password,roleID))
         g.db.commit()
 
     @staticmethod
-    def registerUser(name,email,vjudge,phone,university,faculty,university_level,major,password):
-       User.addUser(name,email,vjudge,phone,university,faculty,university_level,major,password)
+    def registerUser(name,email,vjudge,phone,university,faculty,university_level,major,discord,password):
+       User.addUser(name,email,vjudge,phone,university,faculty,university_level,major,discord,password)
        user_id = User.getUserID(email=email)
        print("Registering",email,"in contests")
        ProgressPerContest.initContestProgress_contestant(user_id)
