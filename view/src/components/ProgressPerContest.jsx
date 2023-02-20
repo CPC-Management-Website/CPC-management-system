@@ -28,12 +28,12 @@ function ProgressPerContest(props) {
         >
           {props.progressItem?.topic}
         </a>
-        <p>week number : {props.progressItem?.week_number}</p>
+        <p>Week number : {props.progressItem?.week_number}</p>
       </div>
       <div className="flex flex-col sm:w-60">
         <p>
           {console.log(props.progressItem)}
-          solved problems: {props.progressItem?.solved_problems} out of{" "}
+          Solved problems: {props.progressItem?.solved_problems} out of{" "}
           {props.progressItem?.total_problems}
         </p>
       </div>
