@@ -136,7 +136,6 @@ export default function EditProfile() {
                 placeholder="*******"
                 className="input"
                 type="password"
-                required
                 minLength={8}
                 onChange={(e) => setPassword(e.target.value)}
               />
