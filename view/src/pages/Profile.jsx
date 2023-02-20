@@ -96,6 +96,7 @@ export default function EditProfile() {
               <input
                 value={name}
                 className="input"
+                required
                 minLength={4}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -107,6 +108,7 @@ export default function EditProfile() {
             <div className="inputCont">
               <input
                 value={email}
+                required
                 className="input"
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -120,6 +122,7 @@ export default function EditProfile() {
               <input
                 value={vjudgeHandle}
                 className="input"
+                required
                 minLength={4}
                 onChange={(e) => setVjudgeHandle(e.target.value)}
               />
@@ -133,6 +136,7 @@ export default function EditProfile() {
                 placeholder="*******"
                 className="input"
                 type="password"
+                required
                 minLength={8}
                 onChange={(e) => setPassword(e.target.value)}
               />
