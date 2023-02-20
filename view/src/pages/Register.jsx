@@ -30,6 +30,7 @@ function Register() {
   const [faculty, setFaculty] = useState("");
   const [level, setLevel] = useState("");
   const [major, setMajor] = useState("");
+  const [discordHandle, setDiscordHandle] = useState("");
   const [availDays, setAvailDays] = useState(
     {
       sat: false,
@@ -136,6 +137,7 @@ function Register() {
           faculty,
           level,
           major,
+          discordHandle,
           availDays,
         }),
         {
@@ -303,6 +305,17 @@ function Register() {
           </div>
         </div>
         <div className="flex flex-col">
+          <label className="inputlabel">Discord Handle*</label>
+          <div className="inputCont">
+            <input
+              placeholder="username#1234"
+              className="input"
+              onChange={(e) => setDiscordHandle(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
           <label className="inputlabel"> On which day(s) do you prefer to attend sessions?*</label>
           <div className="inputCont" required>
             {days.map(({ label, value }) => (
@@ -318,7 +331,7 @@ function Register() {
             ))}
           </div>
         </div>
-        <div className="flex flex-col mt-4">
+        <div className="flex flex-col mt-4 mb-4">
           {loadingRegister ? (
             <button
               className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"

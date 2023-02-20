@@ -73,6 +73,7 @@ def register():
     faculty = request.json["faculty"]
     level = request.json["level"]
     major = request.json["major"]
+    discordHandle = request.json["discordHandle"]
     availableDays = request.json["availDays"]
     password = secrets.token_urlsafe(password_length)
 
@@ -91,6 +92,7 @@ def register():
         faculty=faculty,
         university_level=level,
         major=major,
+        discord=discordHandle,
         password=generate_password_hash(password, method='sha256')
     )
     print("User added successfully")
