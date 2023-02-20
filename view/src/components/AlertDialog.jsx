@@ -4,7 +4,7 @@ import DialogContent from "@mui/material/DialogContent";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import ProgressList from "./ProgressList";
 
-export default function AlertDialog(email) {
+export default function AlertDialog(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -30,7 +30,9 @@ export default function AlertDialog(email) {
         <DialogContent>
           <p className="text-3xl font-semibold mb-4">Trascript</p>
           <div className="flex flex-col space-y-4 rounded-xl">
-            <ProgressList email={email["email"]} />
+            <ProgressList email={props["email"]} level_id = {props["level_id"]} />
+            {console.log("level")}
+            {console.log(props)}
           </div>
         </DialogContent>
       </Dialog>

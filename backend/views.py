@@ -9,7 +9,7 @@ from models import ProgressPerContest
 import errors
 import werkzeug
 
-from models import User, Resources
+from models import User, Resources, Levels, Enrollment
 
 
 views = Blueprint("views", __name__)
@@ -57,14 +57,20 @@ def editProfileAdmin():
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]
     email = request.json["email"]
-    level = request.json["level"]
     mentorID = request.json["mentorID"]
+    enrollmentID = request.json["enrollmentID"]
+    levelID = request.json["levelID"]
+    seasonID = request.json["seasonID"]
     enrolled = request.json["enrolled"]
-    
+
     error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
     if error:
         return error
-    User.updateDataAdmin(id, name, vjudge_handle, email, level, mentorID, enrolled)
+    User.updateDataAdmin(id, name, vjudge_handle, email, mentorID)
+    if(enrollmentID):
+        Enrollment.updateEnrollment(enrollment_id=enrollmentID,level_id=levelID, season_id=seasonID, enrolled=enrolled)
+    else:
+        Enrollment.enroll(user_id=id,level_id=levelID)
 
     return {"hereeee": "here"}
 
@@ -93,8 +99,10 @@ def deletUser():
 @views.route(urls['TRANSCRIPT'], methods = ["GET"], strict_slashes=False)
 def displayTranscript():
     email = request.args.get("email")
+    levelID = request.args.get("levelID")
+    print(levelID)
     print(email)
-    return ProgressPerContest.getUserProgress(email)
+    return ProgressPerContest.getUserProgress(email = email,level_id = levelID)
 
 
 @views.route(urls['CONTEST'], methods = ["POST"], strict_slashes = False)
@@ -105,13 +113,14 @@ def addContest():
     greenThreshold = request.json["greenThreshold"]
     topic = request.json["topic"]
     weekNum = request.json["weekNum"]
-    status = ProgressPerContest.addContest(contestID, numOfProblems, yellowThreshold, greenThreshold, topic, weekNum)
+    levelID = request.json["levelID"]
+    status = ProgressPerContest.addContest(contestID, numOfProblems, yellowThreshold, greenThreshold, topic, weekNum, levelID)
     print(status)
     if status == 'Contest already registered':
         return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
     elif status == 'Incorrect date format':
         return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
-    ProgressPerContest.register_contestants(contest_id=contestID)
+    ProgressPerContest.initContestProgress_contest(contest_id=contestID)
     # ProgressPerContest.updateProgress(contest_id=contestID)
     # ProgressPerContest.addProgress(contestID)
     return {"add contest": "in add contest"}
@@ -125,8 +134,16 @@ def addResource():
     return ""
 
 @views.route(urls["RESOURCES"], methods = ["GET"], strict_slashes = False)
-def getResources():
+def getAllResources():
     resources = Resources.getAllResources()
+    return json.dumps(resources)
+
+@views.route(urls["MYRESOURCES"], methods = ["GET"], strict_slashes = False)
+def getMyResources():
+    level_id = request.args.get("level_id")
+    print(level_id)
+    resources = Resources.getResources(level_id=level_id)
+    print(resources)
     return json.dumps(resources)
 
 @views.route(urls['RESOURCES'], methods = ["PATCH"], strict_slashes=False)
@@ -143,3 +160,8 @@ def deleteResource():
     id = request.args.get("resource_id")
     Resources.deleteResource(id=id)
     return "Success"
+
+@views.route(urls["LEVELS"], methods = ["GET"], strict_slashes=False)
+def getLevels():
+    levels = Levels.getAllLevels()
+    return json.dumps(levels)

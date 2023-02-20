@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import secrets
 from urls import urls
-from models import User, Permissions, AvailableDays
+from models import User, Permissions, AvailableDays, Enrollment
 from APIs.email_api import sendPasswordEmails
 
 auth = Blueprint("auth", __name__)
@@ -33,12 +33,12 @@ def login():
         print("Logged in!")
         login_user(user,remember = remember_logins)
         perm = Permissions(user).getAllowedPermissions()
+        enrollment = Enrollment.getEnrollment(user_id=user.id)
         user_json = json.dumps(user.__dict__)
-
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    return {"email" : email,"password" : password, "permissions": perm}
+    return {"email" : email,"password" : password, "permissions": perm, "enrollment":enrollment}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register_admin():
@@ -47,7 +47,7 @@ def register_admin():
     password = secrets.token_urlsafe(password_length)
     vjudge = request.json["vjudgeHandle"]
     roleID = request.json["platformRole"]
-    level = request.json["level"]
+    levelID = request.json["levelID"]
 
     if User.email_exists(email):
         print("email already registered")
@@ -56,8 +56,8 @@ def register_admin():
         print("vjudge handle already registered")
         return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
     User.registerUser_admin(vjudge_handle = vjudge,name = name,
-                email = email, level = level,roleID = roleID,
-                enrolled = True, points = 0,
+                email = email, level_id = levelID,roleID = roleID,
+                points = 0,
                 password = generate_password_hash(password, method='sha256'))
     print("User added successfully")
     sendPasswordEmails([{"name":name,"password":password,"email":email}])
@@ -73,6 +73,7 @@ def register():
     faculty = request.json["faculty"]
     level = request.json["level"]
     major = request.json["major"]
+    discordHandle = request.json["discordHandle"]
     availableDays = request.json["availDays"]
     password = secrets.token_urlsafe(password_length)
 
@@ -91,11 +92,13 @@ def register():
         faculty=faculty,
         university_level=level,
         major=major,
+        discord=discordHandle,
         password=generate_password_hash(password, method='sha256')
     )
     print("User added successfully")
     AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
     print("Available days added successfully")
+    Enrollment.enrollFromRegistration(email=email)
     sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
 
@@ -129,7 +132,7 @@ def registerfile():
         else:
             User.registerUser_admin(vjudge_handle = vjudge,name = name,
                     email = email, level = level,roleID = roleID,
-                    enrolled = True, points = 0,
+                    points = 0,
                     password = generate_password_hash(password, method='sha256'))
             print(email, " added successfully")
             emails.append({"email":email,"name":name,"password":password})

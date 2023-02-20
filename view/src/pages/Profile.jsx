@@ -96,6 +96,8 @@ export default function EditProfile() {
               <input
                 value={name}
                 className="input"
+                required
+                minLength={4}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
@@ -106,18 +108,22 @@ export default function EditProfile() {
             <div className="inputCont">
               <input
                 value={email}
+                required
                 className="input"
+                type="email"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
 
           <div className="flex flex-col">
-            <label className="inputlabel">VjudgeHandle</label>
+            <label className="inputlabel">Vjudge Handle</label>
             <div className="inputCont">
               <input
                 value={vjudgeHandle}
                 className="input"
+                required
+                minLength={4}
                 onChange={(e) => setVjudgeHandle(e.target.value)}
               />
             </div>
@@ -130,6 +136,7 @@ export default function EditProfile() {
                 placeholder="*******"
                 className="input"
                 type="password"
+                minLength={8}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>

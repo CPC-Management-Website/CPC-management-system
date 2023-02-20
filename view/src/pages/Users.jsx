@@ -38,6 +38,13 @@ const reducer = (state, action) => {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
+    case "GET_LEVELS_REQUEST":
+      return { ...state};
+    case "GET_LEVELS_SUCCESS":
+      return { ...state, levels: action.payload};
+    case "GET_LEVELS_FAIL":
+      return { ...state, error: action.payload };
+
     case "SHOW_DIALOGUE":
       return { ...state, open: true };
     case "HIDE_DIALOGUE":
@@ -109,6 +116,7 @@ export default function User() {
       trainees,
       mentors,
       admins,
+      levels,
       open,
     },
     dispatch,
@@ -223,9 +231,11 @@ export default function User() {
           name: userToEdit.name,
           vjudgeHandle: userToEdit.vjudge_handle,
           email: userToEdit.email,
-          level: userToEdit.level,
+          levelID: userToEdit.level_id,
           mentorID: userToEdit.mentor_id,
           enrolled: userToEdit.enrolled,
+          seasonID: userToEdit.season_id,
+          enrollmentID: userToEdit.enrollment_id,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -240,6 +250,16 @@ export default function User() {
       toast.error(error.response.data.Error);
     }
   };
+  const getLevels = async () => {
+    try {
+      dispatch({ type: "GET_LEVELS_REQUEST" });
+      const response = await axios.get(URLS.LEVELS);
+      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_LEVELS_FAIL" });
+      console.log(error);
+    }
+  };
 
   const getData = async () => {
     if (userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS)) {
@@ -249,6 +269,7 @@ export default function User() {
       getAdmins();
     }
     getTrainees();
+    getLevels();
   };
 
   useEffect(() => {
@@ -262,6 +283,7 @@ export default function User() {
           user={userToEdit}
           mentors={mentors}
           opened={open}
+          levels={levels}
           handleClose={handleClose}
           submitEdit={editHandler}
           updateUser={setUserToEdit}
@@ -533,7 +555,7 @@ export default function User() {
                         {item.email}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {item.level}
+                        {item.level_name}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         {item.mentor_name}
@@ -573,7 +595,8 @@ export default function User() {
                         )}
                         <Tooltip placement="bottom" title="View Transcript">
                           <button>
-                            <AlertDialog email={item.email} />
+                            <AlertDialog email={item.email} level_id = {item.level_id} />
+                            {console.log(item)}
                           </button>
                         </Tooltip>
                       </StyledTableCell>
@@ -624,7 +647,7 @@ export default function User() {
                     )}
                     <Tooltip placement="bottom" title="View Transcript">
                       <button>
-                        <AlertDialog email={item.email} />
+                      <AlertDialog email={item.email} level_id = {item.level_id} />
                       </button>
                     </Tooltip>
                   </div>
@@ -635,6 +658,7 @@ export default function User() {
           </>
         )}
       </div>
+      {console.log(trainees)}
     </>
   );
 }

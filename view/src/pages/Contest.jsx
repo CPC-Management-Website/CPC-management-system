@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -6,6 +6,12 @@ import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "GET_LEVELS_REQUEST":
+      return { ...state};
+    case "GET_LEVELS_SUCCESS":
+      return { ...state, levels: action.payload};
+    case "GET_LEVELS_FAIL":
+      return { ...state, error: action.payload };
     case "ADD_REQUEST":
       return { ...state, loading: true };
     case "ADD_SUCCESS":
@@ -24,16 +30,29 @@ function ContestDetails() {
   const [greenThreshold, setGreenThreshold] = useState("");
   const [topic, setTopic] = useState("");
   const [weekNum, setWeekNum] = useState("");
+  const [levelID, setLevelID] = useState("");
 
-  const [{ loading, loadingUpdate }, dispatch] = useReducer(reducer, {
+  const [{ loading, loadingUpdate, levels }, dispatch] = useReducer(reducer, {
     loading: false,
     error: "",
   });
+
+  const getLevels = async () => {
+    try {
+      dispatch({ type: "GET_LEVELS_REQUEST" });
+      const response = await axios.get(URLS.LEVELS);
+      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_LEVELS_FAIL" });
+      console.log(error);
+    }
+  };
 
   const addContest = async (e) => {
     console.log(contestID)
     e.preventDefault();
     try {
+      console.log(levelID)
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
         URLS.CONTEST,
@@ -44,6 +63,7 @@ function ContestDetails() {
           greenThreshold,
           topic,
           weekNum,
+          levelID,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -60,6 +80,10 @@ function ContestDetails() {
       dispatch({ type: "ADD_FAIL" });
     }
   };
+
+  useEffect(() => {
+    getLevels();
+  }, []);
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
@@ -147,6 +171,29 @@ function ContestDetails() {
                 placeholder="Week Number"
                 onChange={(e) => setWeekNum(e.target.value)}
               />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label className="inputlabel">Level*</label>
+            <div className="inputCont">
+            <select
+                onChange={(e) =>
+                  setLevelID(e.target.value === "NULL" ? null : e.target.value)
+                }
+                type="string"
+                placeholder="Level"
+                className="input"
+                required
+              >
+              <option key={null} value={undefined}>
+                  {""}
+              </option>
+              {levels?.map(({ level_id, name }) => (
+                <option key={level_id} value={level_id}>
+                  {name}
+                </option>
+              ))}
+              </select>
             </div>
           </div>
           <div className="flex flex-col mt-4">

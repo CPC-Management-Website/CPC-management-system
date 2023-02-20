@@ -12,6 +12,12 @@ const reducer = (state, action) => {
       return { ...state, product: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
+    case "GET_LEVELS_REQUEST":
+      return { ...state};
+    case "GET_LEVELS_SUCCESS":
+      return { ...state, levels: action.payload};
+    case "GET_LEVELS_FAIL":
+      return { ...state, error: action.payload };
     case "ADD_REQUEST":
       return { ...state, loadingAdd: true };
     case "ADD_SUCCESS":
@@ -39,9 +45,9 @@ function UserEntry() {
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
   const [roles, setRoles] = useState([]);
-  const [level, setLevel] = useState("");
+  const [levelID, setLevelID] = useState("");
 
-  const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete }, dispatch] =
+  const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete, levels }, dispatch] =
     useReducer(reducer, {
       loading: false,
       error: "",
@@ -59,7 +65,7 @@ function UserEntry() {
           lastName,
           vjudgeHandle,
           platformRole,
-          level,
+          levelID,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -114,9 +120,20 @@ function UserEntry() {
       console.log(error);
     }
   };
+  const getLevels = async () => {
+    try {
+      dispatch({ type: "GET_LEVELS_REQUEST" });
+      const response = await axios.get(URLS.LEVELS);
+      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_LEVELS_FAIL" });
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getRoles();
+    getLevels();
   }, []);
 
   return (
@@ -136,13 +153,13 @@ function UserEntry() {
           </div>
         </div>
         <div className="flex flex-col">
-          <label className="inputlabel">Name*</label>
+          <label className="inputlabel">Full Name*</label>
           <div className="inputCont">
             <input
               className="input"
               onChange={(e) => setFirstName(e.target.value)}
               type="string"
-              placeholder="First Name"
+              placeholder="Full Name"
               required
             />
           </div>
@@ -177,16 +194,21 @@ function UserEntry() {
 
           <div className="flex flex-col w-full">
             <label className="inputlabel">Level*</label>
-            <input
-              type="number"
-              required
-              value={level}
-              placeholder="Level"
-              min={1}
-              max={2}
-              onChange={(e) => setLevel(e.target.value)}
-              className="input"
-            />
+            <select
+                onChange={(e) =>
+                  setLevelID(e.target.value === "NULL" ? null : e.target.value)
+                }
+                type="string"
+                placeholder="Level"
+                className="input"
+                required
+              >
+              {levels?.map(({ level_id, name }) => (
+                <option key={level_id} value={level_id}>
+                  {name}
+                </option>
+              ))}
+              </select>
           </div>
         </div>
         <div className="flex flex-col mt-4">

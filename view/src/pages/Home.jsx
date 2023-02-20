@@ -11,8 +11,8 @@ function Home() {
             Welcome back!
           </div>
           <div className="text-xl lg:text-2xl font-medium lg:text-left text-center">
-            Create resources, manage enrollment, track the performance of each
-            trainee and build learning community — all in one place.
+          We will help you keep track of your progress within enrolled levels, build a learning community,
+          get connected to your mentor - all in one place
           </div>
         </div>
         <div className="h-96 md:h-[800px]">

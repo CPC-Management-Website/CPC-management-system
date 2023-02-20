@@ -20,7 +20,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         transcript: action.payload,
-        loading_transcript: false,
+        loading_transcript: false
       };
     case "FETCH_FAIL_transcript":
       return { ...state, loading_transcript: false, error: action.payload };
@@ -56,27 +56,33 @@ export default function Transcript() {
     }
   };
 
-  const getProgressList = async () => {
-    const params = new URLSearchParams([["email", userInfo.email]]);
-    try {
-      dispatch({ type: "FETCH_REQUEST_transcript" });
-      const response = await axios.get(
-        URLS.TRANSCRIPT,
-        { params },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      dispatch({ type: "FETCH_SUCCESS_transcript", payload: response.data });
-    } catch (err) {
-      dispatch({ type: "FETCH_FAIL_transcript" });
-      console.log(err);
-    }
-  };
+  // const getProgressList = async () => {
+  //   const params = new URLSearchParams();
+  //   params.set("email", userInfo.email)
+  //   params.set("levelID", userInfo.enrollment.level_id)
+  //   console.log(userInfo.enrollment.level_id)
+  //   try {
+  //     dispatch({ type: "FETCH_REQUEST_transcript" });
+  //     const response = await axios.get(
+  //       URLS.TRANSCRIPT,
+  //       { params },
+  //       {
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+  //     dispatch({ type: "FETCH_SUCCESS_transcript", payload: response.data });
+  //     console.log(response)
+  //   } catch (err) {
+  //     dispatch({ type: "FETCH_FAIL_transcript" });
+  //     toast.error(err);
+  //     console.log(err);
+  //   }
+  // };
 
   useEffect(() => {
     getTrainee();
-    getProgressList();
+    
+    // getProgressList();
   }, []);
 
   return (
@@ -96,12 +102,12 @@ export default function Transcript() {
               <strong className="mr-2">E-mail:</strong> {trainee.email}
             </div>
             <div className="flex flex-row ">
-              <strong className="mr-2">VjudgeHandle:</strong>
+              <strong className="mr-2">Vjudge Handle:</strong>
               {trainee.vjudge_handle}
             </div>
           </div>
           <div className="flex flex-col space-y-4 border-2 border-gray-200 rounded-xl p-6">
-            <ProgressList email={userInfo.email} />
+            <ProgressList email={userInfo.email} level_id = {userInfo.enrollment?.level_id} />
           </div>
         </div>
       )}
