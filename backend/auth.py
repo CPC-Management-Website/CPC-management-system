@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import secrets
 from urls import urls
-from models import User, Permissions, AvailableDays, Enrollment
+from models import User, Permissions, AvailableDays, Enrollment, Levels
 from APIs.email_api import sendPasswordEmails
 
 auth = Blueprint("auth", __name__)
@@ -110,34 +110,39 @@ def getRoles():
 @auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
 def registerfile():
     roles = Permissions.getAllRoles()
+    levels  = Levels.getAllLevels()
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
     emails = []
     already_registered = []
     for index, row in df.iterrows():
         index+=2
-        vjudge = row["vjudge"]
-        email  = row["email"]
+        vjudge = row["Vjudge Handle"]
+        email  = row["Email"]
         password = secrets.token_urlsafe(password_length)
-        name = row["name"]
-        roleName = row["role"]
+        name = row["Name"]
+        roleName = row["Role"]
         res = [role for role in roles if role['user_role'] == roleName]
         roleID = res[0]["role_id"]
-        level = row["level"]
+        levelName = row["Level"]
+        res2 = [level for level in levels if level['name'] == levelName]
+        levelID = res2[0]["level_id"]
+        discord = row["Discord"]
         # print(name,email,password)
-        if User.email_exists(email):
+        if User.email_exists(email) or User.vjudge_handle_exists(vjudge):
             print(email)
             print("user already registered")
             already_registered.append(email)
         else:
             User.registerUser_admin(vjudge_handle = vjudge,name = name,
-                    email = email, level = level,roleID = roleID,
+                    email = email, level_id = levelID, roleID = roleID,
                     points = 0,
+                    discord=discord,
                     password = generate_password_hash(password, method='sha256'))
             print(email, " added successfully")
             emails.append({"email":email,"name":name,"password":password})
     sendPasswordEmails(emails)    
 
     if len(already_registered)>0:
-        return errors.email_already_registered_bulk(already_registered,werkzeug.exceptions.BadRequest)
+        return errors.user_already_registered_bulk(already_registered,werkzeug.exceptions.BadRequest)
     return " "

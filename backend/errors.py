@@ -21,8 +21,8 @@ def vjudge_already_registered(e):
     return {"Error":'This vjudge handle is already registered'}, 403
 
 @errors.errorhandler(werkzeug.exceptions.BadRequest)
-def email_already_registered_bulk(already_registered,e):
-    message = "These emails are already registered:\n"
+def user_already_registered_bulk(already_registered,e):
+    message = "These users have either emails or vjudge handles that are already registered:\n"
     for email in already_registered:
         message+=email+"\n"
     print(message)

@@ -260,7 +260,7 @@ function UserEntry() {
             </div>
           )}
         </div>
-        <div className="flex flex-col mt-4">
+        <div className="flex flex-col mt-4 mb-4">
           {loadingAddBulk ? (
             <button
               className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
