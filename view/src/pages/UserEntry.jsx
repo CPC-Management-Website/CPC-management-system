@@ -46,6 +46,7 @@ function UserEntry() {
   const [success, setSuccess] = useState(false);
   const [roles, setRoles] = useState([]);
   const [levelID, setLevelID] = useState("");
+  const [discordHandle, setDiscordHandle] = useState("");
 
   const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete, levels }, dispatch] =
     useReducer(reducer, {
@@ -64,6 +65,7 @@ function UserEntry() {
           firstName,
           lastName,
           vjudgeHandle,
+          discordHandle,
           platformRole,
           levelID,
         }),
@@ -171,6 +173,16 @@ function UserEntry() {
               placeholder="Vjudge Handle"
               className="input"
               onChange={(e) => setVjudgeHandle(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <label className="inputlabel">Discord Handle</label>
+          <div className="inputCont">
+            <input
+              placeholder="username#1234"
+              className="input"
+              onChange={(e) => setDiscordHandle(e.target.value)}
             />
           </div>
         </div>
