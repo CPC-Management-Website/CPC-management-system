@@ -1,7 +1,7 @@
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import React, { useState, useEffect, useContext, useReducer } from "react";
-import { VIEW_ADMINS, VIEW_MENTORS, EDIT_REGISTRATION_STATUS } from "../permissions/permissions";
+import { VIEW_ADMINS, VIEW_MENTORS, EDIT_REGISTRATION_STATUS, VIEW_TRAINEES, VIEW_MENTEES } from "../permissions/permissions";
 import { Store } from "../context/store";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -42,20 +42,20 @@ const reducer = (state, action) => {
       return { ...state, loading: false, error: action.payload };
 
     case "GET_LEVELS_REQUEST":
-      return { ...state};
+      return { ...state };
     case "GET_LEVELS_SUCCESS":
-      return { ...state, levels: action.payload};
+      return { ...state, levels: action.payload };
     case "GET_LEVELS_FAIL":
       return { ...state, error: action.payload };
 
     case "GET_REGISTRATION_REQUEST":
-      return { ...state};
+      return { ...state };
     case "GET_REGISTRATION_SUCCESS":
-      return { ...state, registration: action.payload};
+      return { ...state, registration: action.payload };
     case "GET_REGISTRATION_FAIL":
       return { ...state, error: action.payload };
     case "UPDATE_REGISTRATION_STATUS":
-      return { ...state, registration: action.payload};
+      return { ...state, registration: action.payload };
 
     case "SET_REGISTRATION_FAIL":
       return { ...state, error: action.payload };
@@ -174,6 +174,21 @@ export default function User() {
     }
   };
 
+  const getMentees = async (mentor_id) => {
+    try {
+      dispatch({ type: "FETCH_REQUEST_trainees" });
+      const response = await axios.get(URLS.MENTEES, {
+        params: {
+          mentor_id,
+        },
+      });
+      dispatch({ type: "FETCH_SUCCESS_trainees", payload: response.data });
+    } catch (err) {
+      dispatch({ type: "FETCH_FAIL" });
+      console.log(err);
+    }
+  };
+
   const getMentors = async () => {
     try {
       dispatch({ type: "FETCH_REQUEST_mentors" });
@@ -282,8 +297,8 @@ export default function User() {
     try {
       dispatch({ type: "GET_REGISTRATION_REQUEST" });
       const response = await axios.get(URLS.REGISTRATION);
-      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data.value==1? true:false });
-      {console.log(registration)}
+      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data.value == 1 ? true : false });
+      { console.log(registration) }
     } catch (error) {
       dispatch({ type: "GET_REGISTRATION_FAIL" });
       console.log(error);
@@ -296,31 +311,37 @@ export default function User() {
     }
     if (userInfo?.permissions?.find((perm) => perm === VIEW_ADMINS)) {
       getAdmins();
+    }
+    if (userInfo?.permissions?.find((perm) => perm === VIEW_MENTEES)) {
+      getMentees(userInfo.id);
+    } else {
+      //the user must be an admin
+      getTrainees();
+    }
+    if (userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS)) {
       getRegistrationStatus();
     }
-    getTrainees();
     getLevels();
-    console.log(registration)
   };
 
-  const handleRegistrationSwitch = async() =>{
+  const handleRegistrationSwitch = async () => {
     try {
       await axios.post(
         URLS.REGISTRATION,
         JSON.stringify({
-          registration : registration? false:true
+          registration: registration ? false : true
         }),
         {
           headers: { "Content-Type": "application/json" },
         }
-        );
-        toast.success("Registration status updated");
-        dispatch({ type: "UPDATE_REGISTRATION_STATUS", payload: !registration});
+      );
+      toast.success("Registration status updated");
+      dispatch({ type: "UPDATE_REGISTRATION_STATUS", payload: !registration });
     } catch (error) {
       toast.error(error.response.data.Error);
     }
-    
-    
+
+
   }
 
   useEffect(() => {
@@ -340,70 +361,118 @@ export default function User() {
           updateUser={setUserToEdit}
           loadingUpdate={loadingUpdate}
         />
-        {userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS)? 
+        {userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS) ?
           (
             <div className="mt-4">
               <FormGroup>
                 <FormControlLabel
-                  control={<Switch checked={registration||false}/>}
-                  disabled={registration === undefined? true:false}
+                  control={<Switch checked={registration || false} />}
+                  disabled={registration === undefined ? true : false}
                   label="Registration"
                   labelPlacement="top"
-                  onChange={()=>handleRegistrationSwitch()}
+                  onChange={() => handleRegistrationSwitch()}
                 />
               </FormGroup>
               {console.log(registration)}
             </div>
-          ):
+          ) :
           null
         }
-        
-        <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
-        {loading_admins || loadingDelete ? (
-          <div className="flex justify-center py-32">
-            <CircularProgress size={50} thickness={4} color="inherit" />
-          </div>
-        ) : (
+        {userInfo?.permissions?.find((perm) => perm === VIEW_ADMINS) ?
           <>
-            <TableContainer className="hidden md:flex" component={Paper}>
-              <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    {subHeaders.map((header) => (
-                      <StyledTableCell key={header} align="center">
-                        {header}
-                      </StyledTableCell>
-                    ))}
-                    <StyledTableCell align="center">ACTIONS</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
+            {loading_admins || loadingDelete ? (
+              <div className="flex justify-center py-32">
+                <CircularProgress size={50} thickness={4} color="inherit" />
+              </div>
+            ) : (
+              <>
+                <TableContainer className="hidden md:flex" component={Paper}>
+                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                    <TableHead>
+                      <TableRow>
+                        {subHeaders.map((header) => (
+                          <StyledTableCell key={header} align="center">
+                            {header}
+                          </StyledTableCell>
+                        ))}
+                        <StyledTableCell align="center">ACTIONS</StyledTableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {admins?.map((item) => (
+                        <StyledTableRow key={item.email}>
+                          <StyledTableCell align="center">
+                            {item.name}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {item.vjudge_handle}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {item.email}
+                          </StyledTableCell>
+                          <StyledTableCell className="space-x-4" align="center">
+                            <Tooltip placement="bottom" title="Edit User">
+                              <button
+                                onClick={() => {
+                                  initUpdate(item);
+                                }}
+                              >
+                                <CreateIcon />
+                              </button>
+                            </Tooltip>
+                            <Tooltip placement="bottom" title="Delete User">
+                              <button onClick={() => deleteHandler(item.email)}>
+                                <DeleteIcon />
+                              </button>
+                            </Tooltip>
+                            {loadingReset ? (
+                              <button onClick={() => resetPass(item.user_id)}>
+                                <CircularProgress
+                                  size={23}
+                                  thickness={4}
+                                  color="inherit"
+                                />
+                              </button>
+                            ) : (
+                              <Tooltip placement="bottom" title="Reset password">
+                                <button onClick={() => resetPass(item.user_id)}>
+                                  <RestartAltIcon />
+                                </button>
+                              </Tooltip>
+                            )}
+                          </StyledTableCell>
+                        </StyledTableRow>
+                        // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <div className="sm:hidden flex flex-col mb-4">
                   {admins?.map((item) => (
-                    <StyledTableRow key={item.email}>
-                      <StyledTableCell align="center">
-                        {item.name}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {item.vjudge_handle}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {item.email}
-                      </StyledTableCell>
-                      <StyledTableCell className="space-x-4" align="center">
-                      <Tooltip placement="bottom" title="Edit User">
-                        <button
-                          onClick={() => {
-                            initUpdate(item);
-                          }}
-                        >
-                          <CreateIcon />
-                        </button>
-                      </Tooltip>
-                      <Tooltip placement="bottom" title="Delete User">
-                        <button onClick={() => deleteHandler(item.email)}>
-                          <DeleteIcon />
-                        </button>
-                      </Tooltip>
+                    <div className="flex flex-col border-b py-4" key={item.email}>
+                      <div>{item.name}</div>
+                      <div>{item.vjudge_handle}</div>
+                      <div>{item.email}</div>
+                      <div>{item.level}</div>
+                      <div>{item.mentor_name}</div>
+                      <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
+                      <div className="space-x-4">
+                        <Tooltip placement="bottom" title="Edit User">
+
+                          <button
+                            onClick={() => {
+                              initUpdate(item);
+                            }}
+                          >
+                            <CreateIcon />
+                          </button>
+                        </Tooltip>
+                        <Tooltip placement="bottom" title="Delete User">
+                          <button onClick={() => deleteHandler(item.email)}>
+                            <DeleteIcon />
+                          </button>
+                        </Tooltip>
                         {loadingReset ? (
                           <button onClick={() => resetPass(item.user_id)}>
                             <CircularProgress
@@ -419,107 +488,115 @@ export default function User() {
                             </button>
                           </Tooltip>
                         )}
-                      </StyledTableCell>
-                    </StyledTableRow>
+                      </div>
+                    </div>
                     // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <div className="sm:hidden flex flex-col mb-4">
-              {admins?.map((item) => (
-                <div className="flex flex-col border-b py-4" key={item.email}>
-                  <div>{item.name}</div>
-                  <div>{item.vjudge_handle}</div>
-                  <div>{item.email}</div>
-                  <div>{item.level}</div>
-                  <div>{item.mentor_name}</div>
-                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
-                  <div className="space-x-4">
-                  <Tooltip placement="bottom" title="Edit User">
-
-                    <button
-                      onClick={() => {
-                        initUpdate(item);
-                      }}
-                    >
-                      <CreateIcon />
-                    </button>
-                  </Tooltip>
-                  <Tooltip placement="bottom" title="Delete User">
-                    <button onClick={() => deleteHandler(item.email)}>
-                      <DeleteIcon />
-                    </button>
-                  </Tooltip>
-                    {loadingReset ? (
-                      <button onClick={() => resetPass(item.user_id)}>
-                        <CircularProgress
-                          size={23}
-                          thickness={4}
-                          color="inherit"
-                        />
-                      </button>
-                    ) : (
-                      <Tooltip placement="bottom" title="Reset password">
-                        <button onClick={() => resetPass(item.user_id)}>
-                          <RestartAltIcon />
-                        </button>
-                      </Tooltip>
-                    )}
-                  </div>
                 </div>
-                // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
-              ))}
-            </div>
+              </>
+            )}
           </>
-        )}
+          :
+          null
+        }
 
-        <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Mentors</p>
-        {loading_mentors || loadingDelete ? (
-          <div className="flex justify-center py-32">
-            <CircularProgress size={50} thickness={4} color="inherit" />
-          </div>
-        ) : (
+        {userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS) ?
           <>
-            <TableContainer className="hidden md:flex" component={Paper}>
-              <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    {subHeaders.map((header) => (
-                      <StyledTableCell key={header} align="center">
-                        {header}
-                      </StyledTableCell>
-                    ))}
-                    <StyledTableCell align="center">ACTIONS</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Mentors</p>
+            {loading_mentors || loadingDelete ? (
+              <div className="flex justify-center py-32">
+                <CircularProgress size={50} thickness={4} color="inherit" />
+              </div>
+            ) : (
+              <>
+                <TableContainer className="hidden md:flex" component={Paper}>
+                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                    <TableHead>
+                      <TableRow>
+                        {subHeaders.map((header) => (
+                          <StyledTableCell key={header} align="center">
+                            {header}
+                          </StyledTableCell>
+                        ))}
+                        <StyledTableCell align="center">ACTIONS</StyledTableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {mentors?.map((item) => (
+                        <StyledTableRow key={item.email}>
+                          <StyledTableCell align="center">
+                            {item.name}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {item.vjudge_handle}
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            {item.email}
+                          </StyledTableCell>
+                          <StyledTableCell className="space-x-4" align="center">
+                            <Tooltip placement="bottom" title="Edit User">
+                              <button
+                                onClick={() => {
+                                  initUpdate(item);
+                                }}
+                              >
+                                <CreateIcon />
+                              </button>
+                            </Tooltip>
+                            <Tooltip placement="bottom" title="Delete User">
+                              <button onClick={() => deleteHandler(item.email)}>
+                                <DeleteIcon />
+                              </button>
+                            </Tooltip>
+                            {loadingReset ? (
+                              <button onClick={() => resetPass(item.user_id)}>
+                                <CircularProgress
+                                  size={23}
+                                  thickness={4}
+                                  color="inherit"
+                                />
+                              </button>
+                            ) : (
+                              <Tooltip placement="bottom" title="Reset password">
+                                <button onClick={() => resetPass(item.user_id)}>
+                                  <RestartAltIcon />
+                                </button>
+                              </Tooltip>
+                            )}
+                          </StyledTableCell>
+                        </StyledTableRow>
+                        // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <div className="sm:hidden flex flex-col mb-4">
                   {mentors?.map((item) => (
-                    <StyledTableRow key={item.email}>
-                      <StyledTableCell align="center">
+                    <div className="flex flex-col border-b py-4" key={item.email}>
+                      <div>
+                        <strong>Name: </strong>
                         {item.name}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {item.vjudge_handle}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {item.email}
-                      </StyledTableCell>
-                      <StyledTableCell className="space-x-4" align="center">
-                      <Tooltip placement="bottom" title="Edit User">
-                        <button
-                          onClick={() => {
-                            initUpdate(item);
-                          }}
-                        >
-                          <CreateIcon />
-                        </button>
-                      </Tooltip>
-                      <Tooltip placement="bottom" title="Delete User">
-                        <button onClick={() => deleteHandler(item.email)}>
-                          <DeleteIcon />
-                        </button>
-                      </Tooltip>
+                      </div>
+                      <div>{item.vjudge_handle}</div>
+                      <div>{item.email}</div>
+                      <div>{item.level}</div>
+                      <div>{item.mentor_name}</div>
+                      <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
+                      <div className="space-x-4">
+                        <Tooltip placement="bottom" title="Edit User">
+                          <button
+                            onClick={() => {
+                              initUpdate(item);
+                            }}
+                          >
+                            <CreateIcon />
+                          </button>
+                        </Tooltip>
+                        <Tooltip placement="bottom" title="Delete User">
+                          <button onClick={() => deleteHandler(item.email)}>
+                            <DeleteIcon />
+                          </button>
+                        </Tooltip>
                         {loadingReset ? (
                           <button onClick={() => resetPass(item.user_id)}>
                             <CircularProgress
@@ -535,62 +612,18 @@ export default function User() {
                             </button>
                           </Tooltip>
                         )}
-                      </StyledTableCell>
-                    </StyledTableRow>
+                      </div>
+                    </div>
                     // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <div className="sm:hidden flex flex-col mb-4">
-              {mentors?.map((item) => (
-                <div className="flex flex-col border-b py-4" key={item.email}>
-                  <div>
-                    <strong>Name: </strong>
-                    {item.name}
-                  </div>
-                  <div>{item.vjudge_handle}</div>
-                  <div>{item.email}</div>
-                  <div>{item.level}</div>
-                  <div>{item.mentor_name}</div>
-                  <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
-                  <div className="space-x-4">
-                  <Tooltip placement="bottom" title="Edit User">
-                    <button
-                      onClick={() => {
-                        initUpdate(item);
-                      }}
-                    >
-                      <CreateIcon />
-                    </button>
-                  </Tooltip>
-                  <Tooltip placement="bottom" title="Delete User">
-                    <button onClick={() => deleteHandler(item.email)}>
-                      <DeleteIcon />
-                    </button>
-                  </Tooltip>
-                    {loadingReset ? (
-                      <button onClick={() => resetPass(item.user_id)}>
-                        <CircularProgress
-                          size={23}
-                          thickness={4}
-                          color="inherit"
-                        />
-                      </button>
-                    ) : (
-                      <Tooltip placement="bottom" title="Reset password">
-                        <button onClick={() => resetPass(item.user_id)}>
-                          <RestartAltIcon />
-                        </button>
-                      </Tooltip>
-                    )}
-                  </div>
                 </div>
-                // {edit ? <StyledTableRow>hi</StyledTableRow> : null}
-              ))}
-            </div>
+              </>
+            )}
           </>
-        )}
+          :
+          null
+        }
+
 
         <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Trainees</p>
         {loading_trainees || loadingDelete ? (
@@ -633,20 +666,20 @@ export default function User() {
                         {item.enrolled ? <p> Yes </p> : <p> No </p>}
                       </StyledTableCell>
                       <StyledTableCell className="space-x-4" align="center">
-                      <Tooltip placement="bottom" title="Edit User">
-                        <button
-                          onClick={() => {
-                            initUpdate(item);
-                          }}
-                        >
-                          <CreateIcon />
-                        </button>
-                      </Tooltip>
-                      <Tooltip placement="bottom" title="Delete User">
-                        <button onClick={() => deleteHandler(item.email)}>
-                          <DeleteIcon />
-                        </button>
-                      </Tooltip>
+                        <Tooltip placement="bottom" title="Edit User">
+                          <button
+                            onClick={() => {
+                              initUpdate(item);
+                            }}
+                          >
+                            <CreateIcon />
+                          </button>
+                        </Tooltip>
+                        <Tooltip placement="bottom" title="Delete User">
+                          <button onClick={() => deleteHandler(item.email)}>
+                            <DeleteIcon />
+                          </button>
+                        </Tooltip>
                         {loadingReset ? (
                           <button onClick={() => resetPass(item.user_id)}>
                             <CircularProgress
@@ -664,7 +697,7 @@ export default function User() {
                         )}
                         <Tooltip placement="bottom" title="View Transcript">
                           <button>
-                            <AlertDialog email={item.email} level_id = {item.level_id} />
+                            <AlertDialog email={item.email} level_id={item.level_id} />
                           </button>
                         </Tooltip>
                       </StyledTableCell>
@@ -684,20 +717,20 @@ export default function User() {
                   <div>{item.mentor_name}</div>
                   <div>{item.enrolled ? <p> Yes </p> : <p> No </p>}</div>
                   <div className="space-x-4">
-                  <Tooltip placement="bottom" title="Edit User">
-                    <button
-                      onClick={() => {
-                        initUpdate(item);
-                      }}
-                    >
-                      <CreateIcon />
-                    </button>
-                  </Tooltip>
-                  <Tooltip placement="bottom" title="Delete User">
-                    <button onClick={() => deleteHandler(item.email)}>
-                      <DeleteIcon />
-                    </button>
-                  </Tooltip>
+                    <Tooltip placement="bottom" title="Edit User">
+                      <button
+                        onClick={() => {
+                          initUpdate(item);
+                        }}
+                      >
+                        <CreateIcon />
+                      </button>
+                    </Tooltip>
+                    <Tooltip placement="bottom" title="Delete User">
+                      <button onClick={() => deleteHandler(item.email)}>
+                        <DeleteIcon />
+                      </button>
+                    </Tooltip>
                     {loadingReset ? (
                       <button onClick={() => resetPass(item.user_id)}>
                         <CircularProgress
@@ -715,7 +748,7 @@ export default function User() {
                     )}
                     <Tooltip placement="bottom" title="View Transcript">
                       <button>
-                      <AlertDialog email={item.email} level_id = {item.level_id} />
+                        <AlertDialog email={item.email} level_id={item.level_id} />
                       </button>
                     </Tooltip>
                   </div>

@@ -82,6 +82,14 @@ def getUsers():
 
     return json.dumps(users)
 
+@views.route(urls['MENTEES'], methods = ["GET"], strict_slashes=False)
+def getMentees():
+    mentor_id = request.args.get("mentor_id")
+    print(mentor_id)
+    users = User.getMentees(mentorID=mentor_id)
+
+    return json.dumps(users)
+
 @views.route(urls['USERS'], methods = ["PATCH"], strict_slashes=False)
 def restUserPassword():
     user_id = request.json["user_id"]

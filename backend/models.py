@@ -205,6 +205,33 @@ class User(UserMixin):
         for record in records:
             users.append(record)
         return users
+    
+    @staticmethod
+    def getMentees(mentorID,season_id = current_season_id):
+        mycursor = g.db.cursor(dictionary=True)
+        query  = "SELECT distinct\
+                u.user_id,\
+                u.vjudge_handle,\
+                u.name,\
+                u.email,\
+                u.mentor_id,\
+                m.name as mentor_name,\
+                l.name as level_name,\
+                e.enrollment_id as enrollment_id,\
+                e.level_id as level_id,\
+                e.season_id as season_id,\
+                e.enrolled as enrolled\
+                from (user u) \
+                left join user m on (u.mentor_id = m.user_id)\
+                left join enrollment e on (u.user_id = e.user_id AND e.season_id = %s)\
+                left join training_levels l on (e.level_id = l.level_id)\
+                WHERE (u.mentor_id = %s);"
+        mycursor.execute(query,(season_id, mentorID,))
+        records = mycursor.fetchall()
+        users = []
+        for record in records:
+            users.append(record)
+        return users
 
     @staticmethod
     def resetPassword(user_id):
