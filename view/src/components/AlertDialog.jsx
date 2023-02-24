@@ -31,8 +31,6 @@ export default function AlertDialog(props) {
           <p className="text-3xl font-semibold mb-4">Trascript</p>
           <div className="flex flex-col space-y-4 rounded-xl">
             <ProgressList email={props["email"]} level_id = {props["level_id"]} />
-            {console.log("level")}
-            {console.log(props)}
           </div>
         </DialogContent>
       </Dialog>

@@ -16,3 +16,5 @@ export const VIEW_ALL_TRANSCRIPTS = "read_all_transcripts"
 
 export const ADD_CONTESTS = "add_contests"
 
+export const EDIT_REGISTRATION_STATUS = "edit_registration_status"
+

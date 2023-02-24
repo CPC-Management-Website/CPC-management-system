@@ -595,3 +595,16 @@ class Enrollment():
         userID = User.getUserID(email=email)
         levelID = 1     #id for level 1
         Enrollment.enroll(user_id=userID,level_id=levelID)
+
+class Vars():
+    def getVariableValue(varname):
+        mycursor = g.db.cursor(dictionary = True)
+        query = "SELECT `value` from vars WHERE name = %s;"
+        mycursor.execute(query,(varname,))
+        value = mycursor.fetchone()
+        return value
+    def setVariableValue(varname,value):
+        mycursor = g.db.cursor()
+        query = "UPDATE vars SET `value`=%s WHERE name=%s;"
+        mycursor.execute(query,(value,varname,))
+        g.db.commit()

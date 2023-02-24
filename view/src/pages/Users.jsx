@@ -1,7 +1,7 @@
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import React, { useState, useEffect, useContext, useReducer } from "react";
-import { VIEW_ADMINS, VIEW_MENTORS } from "../permissions/permissions";
+import { VIEW_ADMINS, VIEW_MENTORS, EDIT_REGISTRATION_STATUS } from "../permissions/permissions";
 import { Store } from "../context/store";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -16,6 +16,9 @@ import CreateIcon from "@mui/icons-material/Create";
 import CircularProgress from "@mui/material/CircularProgress";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Tooltip from "@mui/material/Tooltip";
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import { toast } from "react-toastify";
 import AlertDialog from "../components/AlertDialog";
 import Edit from "../components/Edit";
@@ -43,6 +46,18 @@ const reducer = (state, action) => {
     case "GET_LEVELS_SUCCESS":
       return { ...state, levels: action.payload};
     case "GET_LEVELS_FAIL":
+      return { ...state, error: action.payload };
+
+    case "GET_REGISTRATION_REQUEST":
+      return { ...state};
+    case "GET_REGISTRATION_SUCCESS":
+      return { ...state, registration: action.payload};
+    case "GET_REGISTRATION_FAIL":
+      return { ...state, error: action.payload };
+    case "UPDATE_REGISTRATION_STATUS":
+      return { ...state, registration: action.payload};
+
+    case "SET_REGISTRATION_FAIL":
       return { ...state, error: action.payload };
 
     case "SHOW_DIALOGUE":
@@ -94,6 +109,7 @@ export default function User() {
   const subHeaders = ["Name", "VJudgeHandle", "Email"];
 
   const [userToEdit, setUserToEdit] = useState();
+  // const [registrationStatus, setRegistrationStatus]= useState(undefined);
 
   const handleClose = () => {
     dispatch({ type: "HIDE_DIALOGUE" });
@@ -118,6 +134,7 @@ export default function User() {
       admins,
       levels,
       open,
+      registration,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -261,16 +278,50 @@ export default function User() {
     }
   };
 
+  const getRegistrationStatus = async () => {
+    try {
+      dispatch({ type: "GET_REGISTRATION_REQUEST" });
+      const response = await axios.get(URLS.REGISTRATION);
+      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data.value==1? true:false });
+      {console.log(registration)}
+    } catch (error) {
+      dispatch({ type: "GET_REGISTRATION_FAIL" });
+      console.log(error);
+    }
+  };
+
   const getData = async () => {
     if (userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS)) {
       getMentors();
     }
     if (userInfo?.permissions?.find((perm) => perm === VIEW_ADMINS)) {
       getAdmins();
+      getRegistrationStatus();
     }
     getTrainees();
     getLevels();
+    console.log(registration)
   };
+
+  const handleRegistrationSwitch = async() =>{
+    try {
+      await axios.post(
+        URLS.REGISTRATION,
+        JSON.stringify({
+          registration : registration? false:true
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+        );
+        toast.success("Registration status updated");
+        dispatch({ type: "UPDATE_REGISTRATION_STATUS", payload: !registration});
+    } catch (error) {
+      toast.error(error.response.data.Error);
+    }
+    
+    
+  }
 
   useEffect(() => {
     getData();
@@ -289,6 +340,24 @@ export default function User() {
           updateUser={setUserToEdit}
           loadingUpdate={loadingUpdate}
         />
+        {userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS)? 
+          (
+            <div className="mt-4">
+              <FormGroup>
+                <FormControlLabel
+                  control={<Switch checked={registration||false}/>}
+                  disabled={registration === undefined? true:false}
+                  label="Registration"
+                  labelPlacement="top"
+                  onChange={()=>handleRegistrationSwitch()}
+                />
+              </FormGroup>
+              {console.log(registration)}
+            </div>
+          ):
+          null
+        }
+        
         <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
         {loading_admins || loadingDelete ? (
           <div className="flex justify-center py-32">
@@ -596,7 +665,6 @@ export default function User() {
                         <Tooltip placement="bottom" title="View Transcript">
                           <button>
                             <AlertDialog email={item.email} level_id = {item.level_id} />
-                            {console.log(item)}
                           </button>
                         </Tooltip>
                       </StyledTableCell>
@@ -658,7 +726,6 @@ export default function User() {
           </>
         )}
       </div>
-      {console.log(trainees)}
     </>
   );
 }

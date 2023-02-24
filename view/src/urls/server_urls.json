@@ -13,5 +13,6 @@
     "RESOURCES" : "/backend/resources",
     "MYRESOURCES" : "/backend/myresources",
     "REGISTER" : "/backend/register",
-    "LEVELS" : "/backend/levels"
+    "LEVELS" : "/backend/levels",
+    "REGISTRATION" : "/backend/registrationstatus"
 }

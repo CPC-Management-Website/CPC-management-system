@@ -9,7 +9,7 @@ from models import ProgressPerContest
 import errors
 import werkzeug
 
-from models import User, Resources, Levels, Enrollment
+from models import User, Resources, Levels, Enrollment, Vars
 
 
 views = Blueprint("views", __name__)
@@ -165,3 +165,14 @@ def deleteResource():
 def getLevels():
     levels = Levels.getAllLevels()
     return json.dumps(levels)
+
+@views.route(urls["REGISTRATION"], methods = ["GET"], strict_slashes=False)
+def getRegistrationStatus():
+    res = Vars.getVariableValue("registration")
+    return res
+
+@views.route(urls["REGISTRATION"], methods = ["POST"], strict_slashes=False)
+def setRegistrationStatus():
+    value = request.json["registration"]
+    Vars.setVariableValue("registration",value=value)
+    return "Success"

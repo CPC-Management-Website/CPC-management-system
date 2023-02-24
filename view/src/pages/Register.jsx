@@ -14,6 +14,12 @@ const reducer = (state, action) => {
       return { ...state, loadingRegister: false };
     case "REGISTER_FAIL":
       return { ...state, loadingRegister: false, error: action.payload };
+    case "GET_REGISTRATION_REQUEST":
+      return { ...state, loading: true };
+    case "GET_REGISTRATION_SUCCESS":
+      return { ...state, registration: action.payload, loading: false };
+    case "GET_REGISTRATION_FAIL":
+      return { ...state, error: action.payload, loading: false };
     default:
       return state;
   }
@@ -117,12 +123,22 @@ function Register() {
     }
   ]
 
-  const [{ loadingRegister }, dispatch] =
+  const [{ loadingRegister, registration, loading }, dispatch] =
     useReducer(reducer, {
-      loading: false,
+      loading: true,
       error: "",
     });
 
+  const getRegistrationStatus = async () => {
+    try {
+      dispatch({ type: "GET_REGISTRATION_REQUEST" });
+      const response = await axios.get(URLS.REGISTRATION);
+      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data.value == 1 ? true : false });
+    } catch (error) {
+      dispatch({ type: "GET_REGISTRATION_FAIL" });
+      console.log(error);
+    }
+  };
   const registerUser = async (e) => {
     try {
       dispatch({ type: "REGISTER_REQUEST" });
@@ -181,174 +197,192 @@ function Register() {
   };
 
   useEffect(() => {
-
+    getRegistrationStatus()
   }, []);
 
   return (
+
     <div className="flex flex-col p-4 lg:p-0  lg:items-center">
-      <p className="text-3xl font-semibold lg:my-10 mb-4">Register</p>
-      <form className="flex flex-col lg:w-[40%]" onSubmit={handleSubmit}>
-        <div className="flex flex-col">
-          <label className="inputlabel">Full Name*</label>
-          <div className="inputCont">
-            <input
-              className="input"
-              onChange={(e) => setFullName(e.target.value)}
-              type="string"
-              placeholder="Full Name"
-              required
-            />
-          </div>
+      {loading ? (
+        <div className="flex min-h-[90vh] justify-center font-semibold items-center text-3xl lg:text-5xl">
+          <CircularProgress size={50} thickness={4} color="inherit" />
         </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">Email* (make sure to write it correctly)</label>
-          <div className="inputCont">
-            <input
-              className="input"
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder="useremail@gmail.com"
-              required
-            />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">Vjudge Handle*</label>
-          <div className="inputCont">
-            <input
-              placeholder="Vjudge Handle"
-              className="input"
-              onChange={(e) => setVjudgeHandle(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">Phone Number*</label>
-          <div className="inputCont">
-            <input
-              placeholder="Phone Number"
-              className="input"
-              type="tel"
-              // pattern="^01[0-2,5][0-9]{8}$"
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">University*</label>
-          <div className="inputCont">
-            <input
-              placeholder="University"
-              className="input"
-              onChange={(e) => setUniversity(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">Faculty*</label>
-          <div className="inputCont">
-            <input
-              placeholder="Faculty"
-              className="input"
-              onChange={(e) => setFaculty(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="flex flex-col w-full">
-          <label className="inputlabel">Level*</label>
-          <div className="inputCont">
-            <select
-              onChange={(e) =>
-                setLevel(e.target.value === "NULL" ? null : e.target.value)
-              }
-              type="string"
-              placeholder="Level"
-              className="input"
-              required
-            >
-              <option key={null} value={undefined}>
-                {""}
-              </option>
-              {levels?.map(({ value }) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">Major*</label>
-          <div className="inputCont">
-            <select
-              onChange={(e) =>
-                setMajor(e.target.value === "NULL" ? null : e.target.value)
-              }
-              type="string"
-              placeholder="Major"
-              className="input"
-              required
-            >
-              <option key={null} value={undefined}>
-                {""}
-              </option>
-              {majors?.map(({ value }) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">Discord Handle*</label>
-          <div className="inputCont">
-            <input
-              placeholder="username#1234"
-              className="input"
-              onChange={(e) => setDiscordHandle(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <label className="inputlabel"> On which day(s) do you prefer to attend sessions?*</label>
-          <div className="inputCont" required>
-            {days.map(({ label, value }) => (
-              <label key={value}>
-                <input
-                  name="day"
-                  type="checkbox"
-                  value={value}
-                  onChange={(e) => updateCheckbox(e.target)}
-                />{" "}
-                {label}
-              </label>
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col mt-4 mb-4">
-          {loadingRegister ? (
-            <button
-              className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
-              type="submit"
-            >
-              <CircularProgress size={23} thickness={4} color="inherit" />
-            </button>
-          ) : (
-            <button
-              className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
-              type="submit"
-            >
-              Register
-            </button>
-          )}
-        </div>
-      </form>
+      ) :
+        <>
+          {registration ? (
+            <>
+              <p className="text-3xl font-semibold lg:my-10 mb-4">Register</p>
+              <form className="flex flex-col lg:w-[40%]" onSubmit={handleSubmit}>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Full Name*</label>
+                  <div className="inputCont">
+                    <input
+                      className="input"
+                      onChange={(e) => setFullName(e.target.value)}
+                      type="string"
+                      placeholder="Full Name"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Email* (make sure to write it correctly)</label>
+                  <div className="inputCont">
+                    <input
+                      className="input"
+                      onChange={(e) => setEmail(e.target.value)}
+                      type="email"
+                      placeholder="useremail@gmail.com"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Vjudge Handle*</label>
+                  <div className="inputCont">
+                    <input
+                      placeholder="Vjudge Handle"
+                      className="input"
+                      onChange={(e) => setVjudgeHandle(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Phone Number*</label>
+                  <div className="inputCont">
+                    <input
+                      placeholder="Phone Number"
+                      className="input"
+                      type="tel"
+                      // pattern="^01[0-2,5][0-9]{8}$"
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">University*</label>
+                  <div className="inputCont">
+                    <input
+                      placeholder="University"
+                      className="input"
+                      onChange={(e) => setUniversity(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Faculty*</label>
+                  <div className="inputCont">
+                    <input
+                      placeholder="Faculty"
+                      className="input"
+                      onChange={(e) => setFaculty(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col w-full">
+                  <label className="inputlabel">Level*</label>
+                  <div className="inputCont">
+                    <select
+                      onChange={(e) =>
+                        setLevel(e.target.value === "NULL" ? null : e.target.value)
+                      }
+                      type="string"
+                      placeholder="Level"
+                      className="input"
+                      required
+                    >
+                      <option key={null} value={undefined}>
+                        {""}
+                      </option>
+                      {levels?.map(({ value }) => (
+                        <option key={value} value={value}>
+                          {value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Major*</label>
+                  <div className="inputCont">
+                    <select
+                      onChange={(e) =>
+                        setMajor(e.target.value === "NULL" ? null : e.target.value)
+                      }
+                      type="string"
+                      placeholder="Major"
+                      className="input"
+                      required
+                    >
+                      <option key={null} value={undefined}>
+                        {""}
+                      </option>
+                      {majors?.map(({ value }) => (
+                        <option key={value} value={value}>
+                          {value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Discord Handle*</label>
+                  <div className="inputCont">
+                    <input
+                      placeholder="username#1234"
+                      className="input"
+                      onChange={(e) => setDiscordHandle(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel"> On which day(s) do you prefer to attend sessions?*</label>
+                  <div className="inputCont" required>
+                    {days.map(({ label, value }) => (
+                      <label key={value}>
+                        <input
+                          name="day"
+                          type="checkbox"
+                          value={value}
+                          onChange={(e) => updateCheckbox(e.target)}
+                        />{" "}
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex flex-col mt-4 mb-4">
+                  {loadingRegister ? (
+                    <button
+                      className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
+                      type="submit"
+                    >
+                      <CircularProgress size={23} thickness={4} color="inherit" />
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
+                      type="submit"
+                    >
+                      Register
+                    </button>
+                  )}
+                </div>
+              </form>
+            </>
+          ) :
+            <div className="flex min-h-[90vh] justify-center font-semibold items-center text-3xl lg:text-5xl">
+              Registration is currently unavailable
+            </div>
+          }
+        </>
+      }
+
     </div>
   );
 }
