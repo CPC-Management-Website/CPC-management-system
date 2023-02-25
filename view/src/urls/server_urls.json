@@ -2,6 +2,7 @@
     "LOGIN" : "/backend/login",
     "USER_ENTRY": "/backend/userentry",
     "USER_ENTRY_FILE" : "/backend/userentryfile",
+    "ASSIGN_MENTORS" : "/backend/assignmentors",
     "DATA" : "/backend/data",
     "PROGRESS_PER_CONTEST" : "/backend/progresspercontest",
     "PROFILE" : "/backend/profile",

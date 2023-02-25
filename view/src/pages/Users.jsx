@@ -1,7 +1,7 @@
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import React, { useState, useEffect, useContext, useReducer } from "react";
-import { VIEW_ADMINS, VIEW_MENTORS, EDIT_REGISTRATION_STATUS, VIEW_TRAINEES, VIEW_MENTEES } from "../permissions/permissions";
+import { VIEW_ADMINS, VIEW_MENTORS, EDIT_REGISTRATION_STATUS, VIEW_TRAINEES, VIEW_MENTEES, UPDATE_USERS } from "../permissions/permissions";
 import { Store } from "../context/store";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -89,6 +89,13 @@ const reducer = (state, action) => {
       };
     case "DELETE_FAIL":
       return { ...state, loadingDelete: false, successDelete: false };
+
+    case "ASSIGN_MENTORS_REQUEST":
+      return { ...state, loadingAssignMentors: true };
+    case "ASSIGN_MENTORS_SUCCESS":
+      return { ...state, loadingAssignMentors: false};
+    case "ASSIGN_MENTORS_FAIL":
+      return { ...state, loadingAssignMentors: false, error: action.payload };
     default:
       return state;
   }
@@ -109,6 +116,7 @@ export default function User() {
   const subHeaders = ["Name", "VJudgeHandle", "Email"];
 
   const [userToEdit, setUserToEdit] = useState();
+  const [selectedFile, setSelectedFile] = useState("");
   // const [registrationStatus, setRegistrationStatus]= useState(undefined);
 
   const handleClose = () => {
@@ -135,6 +143,7 @@ export default function User() {
       levels,
       open,
       registration,
+      loadingAssignMentors,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -343,6 +352,28 @@ export default function User() {
 
 
   }
+
+  const enterFile = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "ASSIGN_MENTORS_REQUEST" });
+      const data = new FormData();
+      data.append("excel-file", selectedFile, "file.xlsx");
+      const response = await axios.post(URLS.ASSIGN_MENTORS, data);
+      console.log(response);
+      dispatch({ type: "ASSIGN_MENTORS_SUCCESS" });
+      toast.success("Mentors assigned successfully");
+      getData();
+    } catch (error) {
+      if (!error?.response) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.warning(error.response.data.Error,{autoClose:false});
+      }
+      dispatch({ type: "ASSIGN_MENTORS_FAIL" });
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getData();
@@ -758,7 +789,65 @@ export default function User() {
             </div>
           </>
         )}
+        {userInfo?.permissions?.find((perm) => perm === UPDATE_USERS) ?(
+          <>
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">Assign Mentors</p>
+        <form className="flex flex-col lg:w-[40%]" onSubmit={enterFile}>
+        <div className="flex flex-col">
+          <p className="inputlabel">Upload file</p>
+          <div className="flex flex-col">
+            <label
+              className="flex flex-row text-xl w-full justify-center items-center text-white py-1 px-6 bg-green-800 hover:bg-green-700 rounded mb-4 cursor-pointer"
+              htmlFor="Image"
+            >
+              <div className="flex mr-4">
+                <img src="https://img.icons8.com/ios-glyphs/30/ffffff/ms-excel.png" />
+              </div>
+              Add Excel File
+            </label>
+            <input
+              id="Image"
+              style={{ display: "none" }}
+              type="file"
+              accept=".xls,.xlsx"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+              required
+            />
+          </div>
+          {selectedFile?.length === 0 ? (
+            <strong>No files added</strong>
+          ) : (
+            <div className="flex">
+              <strong>{selectedFile?.name}</strong>
+            </div>
+          )}
+          {console.log(selectedFile?.name)}
+        </div>
+        <div className="flex flex-col mt-4 mb-4">
+          {loadingAssignMentors ? (
+            <button
+              className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
+              type="submit"
+            >
+              <CircularProgress size={23} thickness={4} color="inherit" />
+            </button>
+          ) : (
+            <button
+              className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
+              type="submit"
+            >
+              Assign Mentors
+            </button>
+          )}
+        </div>
+      </form>
+          </>
+          ):
+          null
+          }
+        
       </div>
+      
     </>
   );
 }

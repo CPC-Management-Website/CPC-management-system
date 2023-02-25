@@ -29,6 +29,14 @@ def user_already_registered_bulk(already_registered,e):
     return {"Error":message}, 405
 
 @errors.errorhandler(werkzeug.exceptions.BadRequest)
+def emails_do_not_exist(nonexistant_emails,e):
+    message = "These emails either do not exist or there is no mentor with the given email on the system:\n"
+    for email in nonexistant_emails:
+        message+=email+"\n"
+    print(message)
+    return {"Error":message}, 405
+
+@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def contest_already_registered(e):
     return {"Error":'This contest ID is already registered'}, 406
 

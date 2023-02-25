@@ -147,3 +147,27 @@ def registerfile():
     if len(already_registered)>0:
         return errors.user_already_registered_bulk(already_registered,werkzeug.exceptions.BadRequest)
     return " "
+
+@auth.route(urls['ASSIGN_MENTORS'], methods=["POST"], strict_slashes=False)
+def assignMentors():
+    file = request.files.get("excel-file")
+    df = pd.DataFrame(pd.read_excel(file))
+    nonexistant_emails = []
+    for index, row in df.iterrows():
+        index+=2
+        trainee_email  = row["Email"]
+        mentor_email = row["Mentor Email"]
+        # print(name,email,password)
+        if User.email_exists(email=trainee_email)==False:
+            nonexistant_emails.append(trainee_email)
+        elif User.email_exists(email=mentor_email)==False:
+            nonexistant_emails.append(mentor_email)
+        elif User.getUserRoleName(email = mentor_email) != "Mentor":
+            nonexistant_emails.append(mentor_email)
+        else:
+            User.assignMentor(traineeEmail=trainee_email,mentorEmail=mentor_email)
+
+        
+    if len(nonexistant_emails)>0:
+        return errors.emails_do_not_exist(nonexistant_emails,werkzeug.exceptions.BadRequest)
+    return " "

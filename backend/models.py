@@ -133,6 +133,36 @@ class User(UserMixin):
        user_id = User.getUserID(email=email)
        print("Registering",email,"in contests")
        ProgressPerContest.initContestProgress_contestant(user_id)
+    
+    @staticmethod
+    def assignMentor(traineeEmail, mentorEmail):
+        traineeID = User.getUserID(traineeEmail)
+        mentorID = User.getUserID(mentorEmail)
+        mycursor = g.db.cursor()
+        query = "UPDATE user SET mentor_id = %s WHERE user_id=%s;"
+        mycursor.execute(query, (mentorID,traineeID,))
+        g.db.commit()
+
+    @staticmethod
+    def getUserRoleID(email):
+        mycursor = g.db.cursor()
+        query = "SELECT user_role FROM user where email=%s;"
+        mycursor.execute(query,(email,))
+        ID =  mycursor.fetchone()[0]
+        return ID
+    
+    @staticmethod
+    def getRoleName(roleID):
+        mycursor = g.db.cursor()
+        query = "SELECT user_role FROM role where role_id=%s;"
+        mycursor.execute(query,(roleID,))
+        roleName =  mycursor.fetchone()[0]
+        return roleName
+
+    @staticmethod
+    def getUserRoleName(email):
+        roleID = User.getUserRoleID(email)
+        return User.getRoleName(roleID)
 
     @staticmethod
     def updatePassword(user_id,newPassword):       
