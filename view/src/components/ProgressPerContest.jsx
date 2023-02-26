@@ -11,7 +11,7 @@ function ProgressPerContest(props) {
       color = "bg-[#a9f5af]"
       break;
     case "Dark Green":
-      color = "bg-green-500"
+      color = "bg-[#008000]"
       break;
     default:
       color = "bg-white"
