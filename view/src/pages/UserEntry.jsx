@@ -45,7 +45,7 @@ function UserEntry() {
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
   const [roles, setRoles] = useState([]);
-  const [levelID, setLevelID] = useState("");
+  const [levelID, setLevelID] = useState(1);
   const [discordHandle, setDiscordHandle] = useState("");
 
   const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete, levels }, dispatch] =
@@ -207,6 +207,7 @@ function UserEntry() {
           <div className="flex flex-col w-full">
             <label className="inputlabel">Level*</label>
             <select
+                value={levelID}
                 onChange={(e) =>
                   setLevelID(e.target.value === "NULL" ? null : e.target.value)
                 }
