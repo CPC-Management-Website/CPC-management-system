@@ -199,21 +199,27 @@ def getProgress(contest_id):
         participants = json.loads(response.text)["participants"]
         submissions = json.loads(response.text)["submissions"]
 
-        progress = []
         vjudge = dict()
         progress = defaultdict(lambda: 0)
+        solved_problems = defaultdict(set)
 
         for participant in participants.items():
             contestant_id = participant[0]
             vjudgeHandle = participant[1][0]
             vjudge[contestant_id]=vjudgeHandle
             progress[vjudgeHandle]=0
+
         for submission in submissions:
             contestant_id = submission[0]
             accepted = submission[2] #1 for accepted, 0 otherwise
+            problem_id = submission[1]
+
             if accepted:
                 vjudgeHandle = vjudge[str(contestant_id)]
-                progress[vjudgeHandle]+=1
+                solved_problems[vjudgeHandle].add(problem_id)
+        
+        for contestant in progress:
+            progress[contestant]=len(solved_problems[contestant])  
         
         return progress
 
