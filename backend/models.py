@@ -3,7 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from APIs.email_api import sendPasswordResetEmail
 import secrets
 import datetime
-from APIs.vjudge_api import getProgress
+from APIs.vjudge_api import getProgress, getProgressBulk
 from flask import g
 import os
 from dotenv import load_dotenv
@@ -207,6 +207,17 @@ class User(UserMixin):
             result.append(dict(zip(columns,x)))
         # print (result)
         return result
+    
+    @staticmethod
+    def getIDsByVjudgeHandles():
+        mycursor = g.db.cursor(dictionary = True)
+        query  = "SELECT `user_id`, `vjudge_handle` from user;"
+        mycursor.execute(query)
+        result = mycursor.fetchall()
+        id = dict()
+        for entry in result:
+            id[entry['vjudge_handle']]=entry['user_id']
+        return id
 
     @staticmethod
     def getAllUsers(role,season_id = current_season_id):
@@ -345,6 +356,19 @@ class ProgressPerContest():
         mycursor.execute(query,(contest_id,))
         record = mycursor.fetchone()
         return record['total_problems'], record['yellow_threshold'], record['green_threshold']
+    
+    @staticmethod
+    def getContestParametersSeason(season_id):
+        # g.db.reconnect()
+        mycursor = g.db.cursor(dictionary=True)
+        query  = "SELECT `contest_id`, `total_problems`, `yellow_threshold`, `green_threshold` from contest where season_id = %s;"
+        mycursor.execute(query,(season_id,))
+        records = mycursor.fetchall()
+        contestParameters = dict()
+        for record in records:
+            params = {'total_problems':record['total_problems'],'yellow_threshold':record['yellow_threshold'],'green_threshold':record['green_threshold']}
+            contestParameters[record['contest_id']]=params
+        return contestParameters
     
     @staticmethod
     def getZone(problemCount,solved,yellowThreshold,greenThreshold):
@@ -510,15 +534,32 @@ class ProgressPerContest():
         return " "
     
     @staticmethod
+    def updateProgressBulk(progress, contestParameters):
+        id = User.getIDsByVjudgeHandles()
+        try:
+            progressList = []
+            for contest_id in progress:
+                print(f"Updating data for contest {contest_id}")
+                problemCount = contestParameters[contest_id]['total_problems']
+                yellowThreshold = contestParameters[contest_id]['yellow_threshold']
+                greenThreshold = contestParameters[contest_id]['green_threshold']
+                for vjudge_handle in progress[contest_id]:
+                    if vjudge_handle in id.keys():
+                        numSolved = progress[contest_id][vjudge_handle]
+                        zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved, yellowThreshold=yellowThreshold, greenThreshold=greenThreshold)      
+                        progressList.append((numSolved,0,zone,id[vjudge_handle],contest_id)) #the zero here is a temporary number for user rank in contest
+                        # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
+            ProgressPerContest.updateProgressPerContestBulk(progressList = progressList)
+            print("Successfully updated progress for all contests")
+        except:
+            print("Couldn't update progress")
+        return " "
+
+    @staticmethod
     def updateAllProgress():
-        mycursor = g.db.cursor(dictionary=True)
-        query = "SELECT contest_id FROM contest;"
-        mycursor.execute(query)
-        contests = mycursor.fetchall()
-        for contest in contests:
-            contestID = contest["contest_id"]
-            print("Updating progress for contest "+str(contestID))
-            ProgressPerContest.updateProgress(contest_id=contestID)
+        contestParameters = ProgressPerContest.getContestParametersSeason(season_id=current_season_id)
+        progress = getProgressBulk(contests=contestParameters.keys())
+        ProgressPerContest.updateProgressBulk(progress=progress, contestParameters=contestParameters)
 
 class Resources():
     
