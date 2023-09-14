@@ -187,42 +187,57 @@ def getProgress_old(contest_id):
 
     return 
 
-def getProgress(contest_id):
+def getProgress(contest_id, session):
+    data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
+    response = session.get(data_request)
+
+    participants = json.loads(response.text)["participants"]
+    submissions = json.loads(response.text)["submissions"]
+
+    vjudge = dict()
+    progress = defaultdict(lambda: 0)
+    solved_problems = defaultdict(set)
+
+    for participant in participants.items():
+        contestant_id = participant[0]
+        vjudgeHandle = participant[1][0]
+        vjudge[contestant_id]=vjudgeHandle
+        progress[vjudgeHandle]=0
+
+    for submission in submissions:
+        contestant_id = submission[0]
+        accepted = submission[2] #1 for accepted, 0 otherwise
+        problem_id = submission[1]
+
+        if accepted:
+            vjudgeHandle = vjudge[str(contestant_id)]
+            solved_problems[vjudgeHandle].add(problem_id)
+    
+    for contestant in progress:
+        progress[contestant]=len(solved_problems[contestant])  
+    
+    return progress
+
+def getProgressTest(contest_id):
     with requests.session() as session:
         login_request_url = "https://vjudge.net/user/login"
         data = {"username":os.getenv('VJUDGE_USERNAME'),"password":os.getenv("VJUDGE_PASSWORD")}
         login = session.post(url=login_request_url,data=data)
         print("Login status:",login.text)
-        data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
-        response = session.get(data_request)
+        return getProgress(contest_id=contest_id, session=session)
 
-        participants = json.loads(response.text)["participants"]
-        submissions = json.loads(response.text)["submissions"]
-
-        vjudge = dict()
-        progress = defaultdict(lambda: 0)
-        solved_problems = defaultdict(set)
-
-        for participant in participants.items():
-            contestant_id = participant[0]
-            vjudgeHandle = participant[1][0]
-            vjudge[contestant_id]=vjudgeHandle
-            progress[vjudgeHandle]=0
-
-        for submission in submissions:
-            contestant_id = submission[0]
-            accepted = submission[2] #1 for accepted, 0 otherwise
-            problem_id = submission[1]
-
-            if accepted:
-                vjudgeHandle = vjudge[str(contestant_id)]
-                solved_problems[vjudgeHandle].add(problem_id)
-        
-        for contestant in progress:
-            progress[contestant]=len(solved_problems[contestant])  
-        
+def getProgressBulk(contests):
+    with requests.session() as session:
+        login_request_url = "https://vjudge.net/user/login"
+        data = {"username":os.getenv('VJUDGE_USERNAME'),"password":os.getenv("VJUDGE_PASSWORD")}
+        login = session.post(url=login_request_url,data=data)
+        print("Login status:",login.text)
+        progress = dict()
+        for contest_id in contests:
+            print(f"Getting data for contest {contest_id}")
+            curr_progress = getProgress(contest_id=contest_id,session=session)
+            progress[contest_id]=curr_progress
         return progress
-
 
 
 def _main():
@@ -237,7 +252,7 @@ def _main():
     # for x in filtered_res:
     #     print (x)
 
-    progress = getProgress(contest_id=contest_id)
+    progress = getProgressTest(contest_id=contest_id)
     print(progress)
 
 
