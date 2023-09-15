@@ -4,6 +4,10 @@ from collections import defaultdict
 from dotenv import load_dotenv
 import os
 import json
+import pickle
+
+COOKIE_STORAGE_FILE = 'vjudge_session_cookies.pickle'
+
 load_dotenv()
 
 # header for requesting data
@@ -189,59 +193,126 @@ def getProgress_old(contest_id):
 
 def getProgress(contest_id, session):
     data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
+    try:
+        response = session.get(data_request)
+
+        vjudge = dict()
+        progress = defaultdict(lambda: 0)
+        solved_problems = defaultdict(set)
+
+        if len(response.content)==0:
+            #this means that we cannot access this contest with the given account
+            return None
+        
+        if len(response.text) == 0:
+            # if the contest has no submissions, the response.text would be empty and calling json.loads() would raise an exception so we return an empty progress
+            return progress
+        
+        participants = json.loads(response.text)["participants"]
+        submissions = json.loads(response.text)["submissions"]
+
+        for participant in participants.items():
+            contestant_id = participant[0]
+            vjudgeHandle = participant[1][0]
+            vjudge[contestant_id]=vjudgeHandle
+            progress[vjudgeHandle]=0
+
+        for submission in submissions:
+            contestant_id = submission[0]
+            accepted = submission[2] #1 for accepted, 0 otherwise
+            problem_id = submission[1]
+
+            if accepted:
+                vjudgeHandle = vjudge[str(contestant_id)]
+                solved_problems[vjudgeHandle].add(problem_id)
+        
+        for contestant in progress:
+            progress[contestant]=len(solved_problems[contestant])  
+        
+        return progress
+    
+    except Exception as e:
+        print(e)
+        return None
+
+def session_valid(session):
+    contest_id = 541074 #make sure that the contest is PRIVATE and that the account you're using can access that contest
+
+    #This contest will be used to check if the login session is still valid by trying to get the data for that contest
+
+    #Provided that the account you're using can normally access that contest, if you get an empty response.content for that contest it
+    #means that you're not logged in
+
+    data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
     response = session.get(data_request)
+    if len(response.content)==0:
+        print("Invalid or stale session")
+        return False
+    return True
 
-    participants = json.loads(response.text)["participants"]
-    submissions = json.loads(response.text)["submissions"]
 
-    vjudge = dict()
-    progress = defaultdict(lambda: 0)
-    solved_problems = defaultdict(set)
+def save_session_cookies(session):
+    with open(COOKIE_STORAGE_FILE, 'wb') as f:
+        pickle.dump(session.cookies, f)
 
-    for participant in participants.items():
-        contestant_id = participant[0]
-        vjudgeHandle = participant[1][0]
-        vjudge[contestant_id]=vjudgeHandle
-        progress[vjudgeHandle]=0
+def load_session_cookies():
+    try:
+        with open(COOKIE_STORAGE_FILE, 'rb') as f:
+            cookies = pickle.load(f)
+            return cookies
+    except Exception as e:
+        print("Error getting stored session cookies")
+        print(e)
+        return None
 
-    for submission in submissions:
-        contestant_id = submission[0]
-        accepted = submission[2] #1 for accepted, 0 otherwise
-        problem_id = submission[1]
-
-        if accepted:
-            vjudgeHandle = vjudge[str(contestant_id)]
-            solved_problems[vjudgeHandle].add(problem_id)
-    
-    for contestant in progress:
-        progress[contestant]=len(solved_problems[contestant])  
-    
-    return progress
+def vjudge_login():
+    cookies = load_session_cookies()
+    with requests.session() as session:
+        if cookies is not None:
+            print("Reusing stored cookies")
+            session.cookies = cookies
+            if session_valid(session):
+                return session
+        
+        print("Logging in!")
+        login_request_url = "https://vjudge.net/user/login"
+        data = {"username":os.getenv('VJUDGE_USERNAME'),"password":os.getenv("VJUDGE_PASSWORD")}
+        login = session.post(url=login_request_url,data=data)
+        print("Login status:",login.text)
+        if login.text == "success":
+            print("Storing session cookies")
+            save_session_cookies(session)
+            return session
+        return None
 
 def getProgressTest(contest_id):
-    with requests.session() as session:
-        login_request_url = "https://vjudge.net/user/login"
-        data = {"username":os.getenv('VJUDGE_USERNAME'),"password":os.getenv("VJUDGE_PASSWORD")}
-        login = session.post(url=login_request_url,data=data)
-        print("Login status:",login.text)
-        return getProgress(contest_id=contest_id, session=session)
+    session = vjudge_login()
+    if session is None:
+        print("Couldn't login")
+        return None
+    return getProgress(contest_id=contest_id, session=session)
 
 def getProgressBulk(contests):
-    with requests.session() as session:
-        login_request_url = "https://vjudge.net/user/login"
-        data = {"username":os.getenv('VJUDGE_USERNAME'),"password":os.getenv("VJUDGE_PASSWORD")}
-        login = session.post(url=login_request_url,data=data)
-        print("Login status:",login.text)
-        progress = dict()
-        for contest_id in contests:
-            print(f"Getting data for contest {contest_id}")
-            curr_progress = getProgress(contest_id=contest_id,session=session)
-            progress[contest_id]=curr_progress
-        return progress
+    session = vjudge_login()
+    if session is None:
+        print("Couldn't login")
+        return None
+    
+    progress = dict()
+    
+    for contest_id in contests:
+        print(f"Getting data for contest {contest_id}")
+        curr_progress = getProgress(contest_id=contest_id,session=session)
+        if curr_progress == None:
+            print("Couldn't get data for contest {contest_id}")
+            continue
+        progress[contest_id]=curr_progress
+
+    return progress
 
 
 def _main():
-    contest_id = 541074
+    contest_id = 541074 #make sure that the account you're using can access this contest
 
     # res = get_vjudge_data(contest_id = contest_id)
     # filtered_res = {}
@@ -253,7 +324,10 @@ def _main():
     #     print (x)
 
     progress = getProgressTest(contest_id=contest_id)
-    print(progress)
+    if progress == None:
+        print("Cannot access contest")
+    else:
+        print(progress)
 
 
 if __name__ == "__main__":
