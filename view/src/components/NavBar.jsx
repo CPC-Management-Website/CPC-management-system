@@ -201,7 +201,7 @@ function NavBar() {
       <div className="flex flex-row py-2 justify-between px-4 lg:justify-center items-center bg-white text-black drop-shadow whitespace-nowrap">
         <span className="flex lg:hidden mr-4">
           <img
-            src="https://img.icons8.com/ios-filled/30/000000/menu-rounded.png"
+            src="https://img.icons8.com/ios-filled/50/menu--v6.png"
             onClick={toggleDrawer(true)}
           />
           <Drawer open={open} anchor="left" onClose={toggleDrawer(false)}>
