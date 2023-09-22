@@ -664,6 +664,17 @@ class Levels():
             levels.append(record)
         return levels
 
+class Seasons():
+    def getAllSeasons():
+        mycursor = g.db.cursor(dictionary=True)
+        query = "SELECT `season_id`, `name` FROM seasons"
+        mycursor.execute(query)
+        records = mycursor.fetchall()
+        seasons = []
+        for record in records:
+            seasons.append(record)
+        return seasons
+
 class Enrollment():
     def enroll(user_id, level_id):
         mycursor = g.db.cursor()
