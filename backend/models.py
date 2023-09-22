@@ -237,7 +237,7 @@ class User(UserMixin):
                 e.enrolled as enrolled\
                 from (user u) \
                 left join user m on (u.mentor_id = m.user_id)\
-                left join enrollment e on (u.user_id = e.user_id AND e.season_id = %s)\
+                inner join enrollment e on (u.user_id = e.user_id AND e.season_id = %s)\
                 left join training_levels l on (e.level_id = l.level_id)\
                 WHERE (u.user_role = %s)\
                 ORDER BY enrolled DESC, level_id ASC;"
