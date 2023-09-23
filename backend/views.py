@@ -77,16 +77,17 @@ def editProfileAdmin():
 @views.route(urls['USERS'], methods = ["GET"], strict_slashes=False)
 def getUsers():
     role = request.args.get("role")
-    print(role)
-    users = User.getAllUsers(role)
+    season = request.args.get("season")
+    users = User.getAllUsers(role = role, season_id=season)
 
     return json.dumps(users)
 
 @views.route(urls['MENTEES'], methods = ["GET"], strict_slashes=False)
 def getMentees():
     mentor_id = request.args.get("mentor_id")
+    season = request.args.get("season")
     print(mentor_id)
-    users = User.getMentees(mentorID=mentor_id)
+    users = User.getMentees(mentorID=mentor_id,season_id=season)
 
     return json.dumps(users)
 
@@ -108,9 +109,10 @@ def deletUser():
 def displayTranscript():
     email = request.args.get("email")
     levelID = request.args.get("levelID")
+    season = request.args.get("season")
     print(levelID)
     print(email)
-    return ProgressPerContest.getUserProgress(email = email,level_id = levelID)
+    return ProgressPerContest.getUserProgress(email = email,level_id = levelID,season_id=season)
 
 
 @views.route(urls['CONTEST'], methods = ["POST"], strict_slashes = False)
@@ -138,19 +140,22 @@ def addResource():
     resourceTopic = request.json["resourceTopic"]
     resourceLink = request.json["resourceLink"]
     resourceLevel = request.json["resourceLevel"]
-    Resources.addResource(topic=resourceTopic, link=resourceLink, level=resourceLevel)
+    resourceSeason = request.json["seasonID"]
+    Resources.addResource(topic=resourceTopic, link=resourceLink, level=resourceLevel,season_id=resourceSeason)
     return ""
 
 @views.route(urls["RESOURCES"], methods = ["GET"], strict_slashes = False)
 def getAllResources():
-    resources = Resources.getAllResources()
+    season = request.args.get("season")
+    resources = Resources.getAllResources(season_id=season)
     return json.dumps(resources)
 
 @views.route(urls["MYRESOURCES"], methods = ["GET"], strict_slashes = False)
 def getMyResources():
     level_id = request.args.get("level_id")
+    season = request.args.get("season")
     print(level_id)
-    resources = Resources.getResources(level_id=level_id)
+    resources = Resources.getResources(level_id=level_id,season_id=season)
     print(resources)
     return json.dumps(resources)
 

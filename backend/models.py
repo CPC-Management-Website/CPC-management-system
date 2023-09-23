@@ -573,7 +573,7 @@ class Resources():
         g.db.commit()
 
     @staticmethod
-    def getAllResources():
+    def getAllResources(season_id = current_season_id):
         mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT distinct\
                 r.resource_id,\
@@ -582,8 +582,9 @@ class Resources():
                 r.season_id,\
                 l.name as level\
                 from (resource r) \
-                left join training_levels l on (r.level_id = l.level_id)"
-        mycursor.execute(query)
+                left join training_levels l on (r.level_id = l.level_id) \
+                where (season_id = %s)"
+        mycursor.execute(query,(season_id,))
         records = mycursor.fetchall()
         resources = []
         for record in records:
