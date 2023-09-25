@@ -32,9 +32,8 @@ import {
 } from "../urls/frontend_urls";
 
 function NavBar() {
-  const { state } = useContext(Store);
-  const { userInfo } = state;
-  const { dispatch: ctxDispatch } = useContext(Store);
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo,seasonID,seasons } = state;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openDrop = Boolean(anchorEl);
@@ -51,8 +50,26 @@ function NavBar() {
     setOpen(newOpen);
   };
 
+  const changeSeasonHandler = (newSeason) =>{
+    ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(newSeason) });
+    sessionStorage.setItem("seasonID",newSeason)
+  };
+
   const list = () => (
     <ul className="text-black flex flex-col p-6 space-y-6 text-xl font-medium w-[80vw] bg-[f7f7f7]">
+      <select
+        value={seasonID}
+        onChange={(e) =>changeSeasonHandler(e.target.value)}
+        type="string"
+        placeholder="Level"
+        className="input"
+      >
+      {seasons?.map(({ season_id, name }) => (
+        <option key={season_id} value={season_id}>
+          {name}
+        </option>
+      ))}
+      </select>
       <ul className="flex felx-row justify-between">
       {userInfo ? (
         <li className="nav-item">
@@ -311,7 +328,20 @@ function NavBar() {
           ) : null}
           </ul>
           {userInfo ? (
-            <div className="hidden lg:flex flex-col items-center">
+            <div className="hidden lg:flex flex-row items-center">
+              <select
+                value={seasonID}
+                onChange={(e) =>changeSeasonHandler(e.target.value)}
+                type="string"
+                placeholder="Level"
+                className="inputNavbar mr-4"
+              >
+              {seasons?.map(({ season_id, name }) => (
+                <option key={season_id} value={season_id}>
+                  {name}
+                </option>
+              ))}
+              </select>
               <AccountCircleIcon
                 className="cursor-pointer text-violet-800"
                 sx={{ fontSize: 30 }}

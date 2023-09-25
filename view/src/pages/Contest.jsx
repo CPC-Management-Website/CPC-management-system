@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer,useContext } from "react";
+import { Store } from "../context/store";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -6,12 +7,6 @@ import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "GET_LEVELS_REQUEST":
-      return { ...state};
-    case "GET_LEVELS_SUCCESS":
-      return { ...state, levels: action.payload};
-    case "GET_LEVELS_FAIL":
-      return { ...state, error: action.payload };
     case "ADD_REQUEST":
       return { ...state, loading: true };
     case "ADD_SUCCESS":
@@ -24,6 +19,8 @@ const reducer = (state, action) => {
 };
 
 function ContestDetails() {
+  const { state } = useContext(Store);
+  const { levels } = state;
   const [contestID, setContestID] = useState("");
   const [numOfProblems, setNumOfProblems] = useState("");
   const [yellowThreshold, setYellowThreshold] = useState("");
@@ -32,21 +29,10 @@ function ContestDetails() {
   const [weekNum, setWeekNum] = useState("");
   const [levelID, setLevelID] = useState("");
 
-  const [{ loading, loadingUpdate, levels }, dispatch] = useReducer(reducer, {
+  const [{ loading, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: false,
     error: "",
   });
-
-  const getLevels = async () => {
-    try {
-      dispatch({ type: "GET_LEVELS_REQUEST" });
-      const response = await axios.get(URLS.LEVELS);
-      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "GET_LEVELS_FAIL" });
-      console.log(error);
-    }
-  };
 
   const addContest = async (e) => {
     console.log(contestID)
@@ -80,10 +66,6 @@ function ContestDetails() {
       dispatch({ type: "ADD_FAIL" });
     }
   };
-
-  useEffect(() => {
-    getLevels();
-  }, []);
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0 ">

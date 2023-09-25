@@ -41,13 +41,6 @@ const reducer = (state, action) => {
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
 
-    case "GET_LEVELS_REQUEST":
-      return { ...state };
-    case "GET_LEVELS_SUCCESS":
-      return { ...state, levels: action.payload };
-    case "GET_LEVELS_FAIL":
-      return { ...state, error: action.payload };
-
     case "GET_REGISTRATION_REQUEST":
       return { ...state };
     case "GET_REGISTRATION_SUCCESS":
@@ -112,6 +105,7 @@ export default function User() {
   ];
 
   const { state } = useContext(Store);
+  const { seasonID,seasons,levels } = state;
 
   const subHeaders = ["Name", "VJudgeHandle", "Email"];
 
@@ -140,7 +134,6 @@ export default function User() {
       trainees,
       mentors,
       admins,
-      levels,
       open,
       registration,
       loadingAssignMentors,
@@ -174,6 +167,7 @@ export default function User() {
       const response = await axios.get(URLS.USERS, {
         params: {
           role: "Trainee",
+          season: seasonID,
         },
       });
       dispatch({ type: "FETCH_SUCCESS_trainees", payload: response.data });
@@ -189,6 +183,7 @@ export default function User() {
       const response = await axios.get(URLS.MENTEES, {
         params: {
           mentor_id,
+          season: seasonID,
         },
       });
       dispatch({ type: "FETCH_SUCCESS_trainees", payload: response.data });
@@ -204,6 +199,7 @@ export default function User() {
       const response = await axios.get(URLS.USERS, {
         params: {
           role: "Mentor",
+          season: seasonID,
         },
       });
       dispatch({ type: "FETCH_SUCCESS_mentors", payload: response.data });
@@ -218,6 +214,7 @@ export default function User() {
       const response = await axios.get(URLS.USERS, {
         params: {
           role: "Admin",
+          season: seasonID,
         },
       });
       dispatch({ type: "FETCH_SUCCESS_admins", payload: response.data });
@@ -291,16 +288,6 @@ export default function User() {
       toast.error(error.response.data.Error);
     }
   };
-  const getLevels = async () => {
-    try {
-      dispatch({ type: "GET_LEVELS_REQUEST" });
-      const response = await axios.get(URLS.LEVELS);
-      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "GET_LEVELS_FAIL" });
-      console.log(error);
-    }
-  };
 
   const getRegistrationStatus = async () => {
     try {
@@ -330,7 +317,6 @@ export default function User() {
     if (userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS)) {
       getRegistrationStatus();
     }
-    getLevels();
   };
 
   const handleRegistrationSwitch = async () => {
@@ -377,7 +363,7 @@ export default function User() {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [seasonID]);
 
   return (
     <>
@@ -409,6 +395,22 @@ export default function User() {
           ) :
           null
         }
+        <div className="flex flex-col w-full mt-4">
+          <label className="inputlabel">Select Season</label>
+          <select
+            value={seasonID}
+            onChange={(e) =>setSeasonID(e.target.value)}
+            type="string"
+            placeholder="Level"
+            className="input"
+          >
+          {seasons?.map(({ season_id, name }) => (
+            <option key={season_id} value={season_id}>
+              {name}
+            </option>
+          ))}
+          </select>
+        </div>
         {userInfo?.permissions?.find((perm) => perm === VIEW_ADMINS) ?
           <>
             <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
@@ -728,7 +730,7 @@ export default function User() {
                         )}
                         <Tooltip placement="bottom" title="View Transcript">
                           <button>
-                            <AlertDialog email={item.email} level_id={item.level_id} />
+                            <AlertDialog email={item.email} level_id={item.level_id} season={seasonID} />
                           </button>
                         </Tooltip>
                       </StyledTableCell>
@@ -779,7 +781,7 @@ export default function User() {
                     )}
                     <Tooltip placement="bottom" title="View Transcript">
                       <button>
-                        <AlertDialog email={item.email} level_id={item.level_id} />
+                        <AlertDialog email={item.email} level_id={item.level_id} season={seasonID}/>
                       </button>
                     </Tooltip>
                   </div>

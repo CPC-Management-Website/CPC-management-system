@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
+import { Store } from "../context/store";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -12,12 +13,6 @@ const reducer = (state, action) => {
       return { ...state, product: action.payload, loading: false };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-    case "GET_LEVELS_REQUEST":
-      return { ...state};
-    case "GET_LEVELS_SUCCESS":
-      return { ...state, levels: action.payload};
-    case "GET_LEVELS_FAIL":
-      return { ...state, error: action.payload };
     case "ADD_REQUEST":
       return { ...state, loadingAdd: true };
     case "ADD_SUCCESS":
@@ -36,6 +31,9 @@ const reducer = (state, action) => {
 };
 
 function UserEntry() {
+  const { state } = useContext(Store)
+  const { levels } = state
+
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -48,7 +46,7 @@ function UserEntry() {
   const [levelID, setLevelID] = useState(1);
   const [discordHandle, setDiscordHandle] = useState("");
 
-  const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete, levels }, dispatch] =
+  const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete }, dispatch] =
     useReducer(reducer, {
       loading: false,
       error: "",
@@ -122,20 +120,9 @@ function UserEntry() {
       console.log(error);
     }
   };
-  const getLevels = async () => {
-    try {
-      dispatch({ type: "GET_LEVELS_REQUEST" });
-      const response = await axios.get(URLS.LEVELS);
-      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "GET_LEVELS_FAIL" });
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
     getRoles();
-    getLevels();
   }, []);
 
   return (

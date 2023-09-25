@@ -19,13 +19,6 @@ const reducer = (state, action) => {
     case "GET_RESOURCES_FAIL":
       return { ...state, loading: false, error: action.payload };
 
-    case "GET_LEVELS_REQUEST":
-      return { ...state};
-    case "GET_LEVELS_SUCCESS":
-      return { ...state, levels: action.payload};
-    case "GET_LEVELS_FAIL":
-      return { ...state, error: action.payload };
-
     case "ADD_REQUEST":
       return { ...state, loadingAdd: true };
     case "ADD_SUCCESS":
@@ -55,8 +48,8 @@ const reducer = (state, action) => {
 
 export default function Resources() {
   const { state } = useContext(Store);
-  const { userInfo } = state;
-  const [{ loading, loadingAdd,loadingUpdate, loadingDelete, resources, levels }, dispatch] =
+  const { userInfo,seasons,levels,seasonID } = state;
+  const [{ loading, loadingAdd,loadingUpdate, loadingDelete, resources}, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: "",
@@ -68,7 +61,7 @@ export default function Resources() {
 
   const getMyResources = async () => {
     try {
-      const params = new URLSearchParams([["level_id", userInfo.enrollment.level_id]]);
+      const params = new URLSearchParams([["level_id", userInfo.enrollment.level_id],["season",seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
       const response = await axios.get(URLS.MYRESOURCES, {params});
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
@@ -79,21 +72,12 @@ export default function Resources() {
   };
   const getAllResources = async () => {
     try {
+      const params = new URLSearchParams([["season",seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
-      const response = await axios.get(URLS.RESOURCES);
+      const response = await axios.get(URLS.RESOURCES,{params});
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_RESOURCES_FAIL" });
-      console.log(error);
-    }
-  };
-  const getLevels = async () => {
-    try {
-      dispatch({ type: "GET_LEVELS_REQUEST" });
-      const response = await axios.get(URLS.LEVELS);
-      dispatch({ type: "GET_LEVELS_SUCCESS", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "GET_LEVELS_FAIL" });
       console.log(error);
     }
   };
@@ -104,7 +88,7 @@ export default function Resources() {
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
         URLS.RESOURCES,
-        JSON.stringify({ resourceTopic, resourceLevel, resourceLink }),
+        JSON.stringify({ resourceTopic, resourceLevel, resourceLink, seasonID }),
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -161,8 +145,7 @@ export default function Resources() {
       getAllResources()
     : 
       getMyResources()
-    getLevels();
-  }, []);
+  }, [seasonID]);
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0  ">

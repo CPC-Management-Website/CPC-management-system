@@ -39,7 +39,7 @@ function ProgressList(props) {
   });
 
   const getProgressList = async () => {
-    const params = new URLSearchParams([["email", props["email"]],["levelID",props["level_id"]]]);
+    const params = new URLSearchParams([["email", props["email"]],["levelID",props["level_id"]],["season",props["season"]]]);
     try {
       dispatch({ type: "FETCH_REQUEST" });
       const response = await axios.get(
@@ -60,7 +60,7 @@ function ProgressList(props) {
   useEffect(() => {
     getProgressList();
     console.log(progressList)
-  }, []);
+  }, [props["season"]]);
 
   return loading ? (
     <div className="flex justify-center py-32">

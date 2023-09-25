@@ -31,7 +31,7 @@ const reducer = (state, action) => {
 
 export default function Transcript() {
   const { state } = useContext(Store);
-  const { userInfo } = state;
+  const { userInfo, seasons, seasonID } = state;
   const [{ loading, trainee, transcript, loading_transcript }, dispatch] =
     useReducer(reducer, {
       loading: true,
@@ -107,7 +107,7 @@ export default function Transcript() {
             </div>
           </div>
           <div className="flex flex-col space-y-4 border-2 border-gray-200 rounded-xl p-6">
-            <ProgressList email={userInfo.email} level_id = {userInfo.enrollment?.level_id} />
+            <ProgressList email={userInfo.email} level_id = {userInfo.enrollment?.level_id} season={seasonID} />
           </div>
         </div>
       )}
