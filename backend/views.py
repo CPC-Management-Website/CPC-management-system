@@ -156,7 +156,6 @@ def getMyResources():
     season = request.args.get("season")
     print(level_id)
     resources = Resources.getResources(level_id=level_id,season_id=season)
-    print(resources)
     return json.dumps(resources)
 
 @views.route(urls['RESOURCES'], methods = ["PATCH"], strict_slashes=False)
