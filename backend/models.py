@@ -668,7 +668,7 @@ class Levels():
 class Seasons():
     def getAllSeasons():
         mycursor = g.db.cursor(dictionary=True)
-        query = "SELECT `season_id`, `name` FROM seasons"
+        query = "SELECT `season_id`, `name` FROM seasons ORDER BY season_id DESC "
         mycursor.execute(query)
         records = mycursor.fetchall()
         seasons = []
