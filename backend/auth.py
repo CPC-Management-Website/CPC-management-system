@@ -164,6 +164,10 @@ def assignMentors():
             nonexistant_emails.append(mentor_email)
         elif User.getUserRoleName(email = mentor_email) != "Mentor":
             nonexistant_emails.append(mentor_email)
+        elif Enrollment.isEnrolled(User.getUserID(email=trainee_email))==False:
+            nonexistant_emails.append(trainee_email)
+        elif Enrollment.isEnrolled(User.getUserID(email=mentor_email))==False:
+            nonexistant_emails.append(mentor_email)
         else:
             User.assignMentor(traineeEmail=trainee_email,mentorEmail=mentor_email)
 

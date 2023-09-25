@@ -30,7 +30,7 @@ def user_already_registered_bulk(already_registered,e):
 
 @errors.errorhandler(werkzeug.exceptions.BadRequest)
 def emails_do_not_exist(nonexistant_emails,e):
-    message = "These emails either do not exist or there is no mentor with the given email on the system:\n"
+    message = "These emails either do not exist or there is no mentor with the given email on the system or the trainee or mentor is not registered in the current season:\n"
     for email in nonexistant_emails:
         message+=email+"\n"
     print(message)

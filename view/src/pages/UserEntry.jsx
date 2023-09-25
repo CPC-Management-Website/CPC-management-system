@@ -38,7 +38,7 @@ function UserEntry() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
-  const [platformRole, setPlatformRole] = useState(2); //2 is the id for Trainee role
+  const [platformRole, setPlatformRole] = useState(3); //3 is the id for Trainee role
   const [selectedFile, setSelectedFile] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);

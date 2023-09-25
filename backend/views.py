@@ -66,9 +66,9 @@ def editProfileAdmin():
     error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
     if error:
         return error
-    User.updateDataAdmin(id, name, vjudge_handle, email, mentorID)
+    User.updateDataAdmin(id, name, vjudge_handle, email)
     if(enrollmentID):
-        Enrollment.updateEnrollment(enrollment_id=enrollmentID,level_id=levelID, season_id=seasonID, enrolled=enrolled)
+        Enrollment.updateEnrollment(enrollment_id=enrollmentID,level_id=levelID, season_id=seasonID, mentor_id = mentorID, enrolled=enrolled)
     else:
         Enrollment.enroll(user_id=id,level_id=levelID)
 
