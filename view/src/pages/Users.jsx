@@ -395,22 +395,6 @@ export default function User() {
           ) :
           null
         }
-        <div className="flex flex-col w-full mt-4">
-          <label className="inputlabel">Select Season</label>
-          <select
-            value={seasonID}
-            onChange={(e) =>setSeasonID(e.target.value)}
-            type="string"
-            placeholder="Level"
-            className="input"
-          >
-          {seasons?.map(({ season_id, name }) => (
-            <option key={season_id} value={season_id}>
-              {name}
-            </option>
-          ))}
-          </select>
-        </div>
         {userInfo?.permissions?.find((perm) => perm === VIEW_ADMINS) ?
           <>
             <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
