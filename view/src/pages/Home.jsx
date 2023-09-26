@@ -29,10 +29,11 @@ function Home() {
     try {
       dispatch({ type: "REGISTER_REQUEST" });
       const email = userInfo.email
+      const user_id = userInfo.id
       console.log(email)
       const response = await axios.post(
         URLS.ENROLL,
-        JSON.stringify({email,}),
+        JSON.stringify({user_id, email,}),
         {
           headers: { "Content-Type": "application/json" },
         }

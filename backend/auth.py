@@ -179,7 +179,10 @@ def assignMentors():
 
 @auth.route(urls['ENROLL'], methods=["POST"], strict_slashes=False)
 def enroll():
+    user_id = request.json["user_id"]
     email = request.json["email"]
+    if Enrollment.getEnrollment(user_id=user_id):
+        return errors.user_already_enrolled(werkzeug.exceptions.BadRequest)
     print(f"Enrolling {email} in new season")
     Enrollment.enrollFromRegistration(email=email)
     return " "

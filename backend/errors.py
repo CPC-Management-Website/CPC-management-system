@@ -43,3 +43,7 @@ def contest_already_registered(e):
 @errors.errorhandler(werkzeug.exceptions.BadRequest)
 def invalid_date_format(e):
     return {"Error":'Invalid date format'}, 411
+
+@errors.errorhandler(werkzeug.exceptions.BadRequest)
+def user_already_enrolled(e):
+    return {"Error":'User already enrolled in current season'}, 412
