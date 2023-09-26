@@ -17,5 +17,6 @@
     "REGISTER" : "/backend/register",
     "LEVELS" : "/backend/levels",
     "SEASONS" : "/backend/seasons",
-    "REGISTRATION" : "/backend/registrationstatus"
+    "REGISTRATION" : "/backend/registrationstatus",
+    "ENROLL" : "/backend/enroll"
 }

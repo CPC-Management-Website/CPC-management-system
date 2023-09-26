@@ -691,6 +691,16 @@ class Enrollment():
         g.db.commit()
 
     @staticmethod
+    def getLatestEnrollmentSeason(user_id):
+        mycursor = g.db.cursor()
+        query = "SELECT IFNULL(MAX(season_id), 0) FROM enrollment where user_id = %s"
+        #This query gets the most privileged role (roles are sorted from most privileged to least privileged)
+        #and if a user for some reason is not enrolled in any season it assumes the role is trainee (roled_id = 3)
+        mycursor.execute(query,(user_id,))
+        season_id =  mycursor.fetchone()[0]
+        return season_id
+
+    @staticmethod
     def getEnrollment(user_id,season_id = current_season_id):
         mycursor = g.db.cursor(dictionary = True)
         query = "SELECT `enrollment_id`, `user_id`, `level_id`, `season_id`, `enrolled`\

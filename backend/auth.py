@@ -34,11 +34,12 @@ def login():
         login_user(user,remember = remember_logins)
         perm = Permissions(user).getAllowedPermissions()
         #enrollment = Enrollment.getEnrollment(user_id=user.id)
+        latestEnrollmentSeason = Enrollment.getLatestEnrollmentSeason(user_id=user.id)
         user_json = json.dumps(user.__dict__)
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    return {"email" : email,"password" : password, "permissions": perm, "id" : user.id}
+    return {"email" : email,"password" : password, "permissions": perm, "id" : user.id, "latestEnrollmentSeason":latestEnrollmentSeason}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register_admin():
@@ -174,4 +175,11 @@ def assignMentors():
         
     if len(nonexistant_emails)>0:
         return errors.emails_do_not_exist(nonexistant_emails,werkzeug.exceptions.BadRequest)
+    return " "
+
+@auth.route(urls['ENROLL'], methods=["POST"], strict_slashes=False)
+def enroll():
+    email = request.json["email"]
+    print(f"Enrolling {email} in new season")
+    Enrollment.enrollFromRegistration(email=email)
     return " "
