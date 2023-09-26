@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 current_season_id = os.getenv("CURRENT_SEASON_ID")
+print(f"Current season ID: {current_season_id}")
 
 password_length = 10
 
