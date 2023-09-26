@@ -108,11 +108,8 @@ def deletUser():
 @views.route(urls['TRANSCRIPT'], methods = ["GET"], strict_slashes=False)
 def displayTranscript():
     email = request.args.get("email")
-    levelID = request.args.get("levelID")
     season = request.args.get("season")
-    print(levelID)
-    print(email)
-    return ProgressPerContest.getUserProgress(email = email,level_id = levelID,season_id=season)
+    return ProgressPerContest.getUserProgress(email = email,season_id=season)
 
 
 @views.route(urls['CONTEST'], methods = ["POST"], strict_slashes = False)
@@ -152,10 +149,9 @@ def getAllResources():
 
 @views.route(urls["MYRESOURCES"], methods = ["GET"], strict_slashes = False)
 def getMyResources():
-    level_id = request.args.get("level_id")
+    user_id = request.args.get("user_id")
     season = request.args.get("season")
-    print(level_id)
-    resources = Resources.getResources(level_id=level_id,season_id=season)
+    resources = Resources.getResources(user_id=user_id,season_id=season)
     return json.dumps(resources)
 
 @views.route(urls['RESOURCES'], methods = ["PATCH"], strict_slashes=False)

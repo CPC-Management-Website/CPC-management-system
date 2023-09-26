@@ -60,8 +60,9 @@ export default function Resources() {
   const [resourceLevel, setResourceLevel] = useState("");
 
   const getMyResources = async () => {
+    console.log(userInfo)
     try {
-      const params = new URLSearchParams([["level_id", userInfo.enrollment.level_id],["season",seasonID]]);
+      const params = new URLSearchParams([["user_id", userInfo.id],["season",seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
       const response = await axios.get(URLS.MYRESOURCES, {params});
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });

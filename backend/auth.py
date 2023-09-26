@@ -33,12 +33,12 @@ def login():
         print("Logged in!")
         login_user(user,remember = remember_logins)
         perm = Permissions(user).getAllowedPermissions()
-        enrollment = Enrollment.getEnrollment(user_id=user.id)
+        #enrollment = Enrollment.getEnrollment(user_id=user.id)
         user_json = json.dumps(user.__dict__)
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    return {"email" : email,"password" : password, "permissions": perm, "enrollment":enrollment, "id" : user.id}
+    return {"email" : email,"password" : password, "permissions": perm, "id" : user.id}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register_admin():

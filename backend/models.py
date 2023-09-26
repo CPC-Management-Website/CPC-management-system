@@ -444,7 +444,7 @@ class ProgressPerContest():
         return contests
 
     @staticmethod
-    def getUserProgress(email, level_id, season_id = current_season_id):
+    def getUserProgress(email, season_id = current_season_id):
         ID = User.getUserID(email)
         mycursor = g.db.cursor(dictionary=True)
         # query  = "SELECT `contest_id`, `solved_problems`, `rank`, `zone`\
@@ -461,8 +461,9 @@ class ProgressPerContest():
                 c.week_number\
                 from (progress_per_contest p) \
                 inner join contest c on (c.contest_id = p.contest_id)\
-                WHERE (p.user_id = %s AND c.level_id = %s AND c.season_id = %s);"
-        mycursor.execute(query,(ID,level_id,season_id,))
+                inner join enrollment e on (e.level_id = c.level_id and e.season_id = c.season_id and e.user_id = p.user_id)\
+                WHERE (p.user_id = %s AND c.season_id = %s);"
+        mycursor.execute(query,(ID,season_id,))
         records = mycursor.fetchall()
         # contests = ProgressPerContest.getContestsFiltered(level_id=level_id,season_id=season_id)
         return {"progress": records}
@@ -594,7 +595,7 @@ class Resources():
         return resources
     
     @staticmethod
-    def getResources(level_id, season_id = current_season_id):
+    def getResources(user_id, season_id = current_season_id):
         mycursor = g.db.cursor(dictionary=True)
         query  = "SELECT distinct\
                 r.resource_id,\
@@ -604,9 +605,10 @@ class Resources():
                 r.level_id,\
                 l.name as level\
                 from (resource r) \
-                left join training_levels l on (r.level_id = l.level_id)\
-                where r.level_id = %s AND season_id = %s"
-        mycursor.execute(query,(level_id,season_id,))
+                inner join enrollment e on (e.season_id = r.season_id and e.level_id = r.level_id)\
+                inner join training_levels l on (r.level_id = l.level_id)\
+                where(e.user_id = %s and e.season_id = %s)"
+        mycursor.execute(query,(user_id,season_id,))
         records = mycursor.fetchall()
         resources = []
         for record in records:
