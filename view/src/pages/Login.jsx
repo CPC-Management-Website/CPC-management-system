@@ -44,10 +44,6 @@ export default function SignIn() {
         email,
         password,
       });
-      ctxDispatch({ type: "USER_SIGNIN", payload: data });
-      sessionStorage.setItem("userInfo", JSON.stringify(data));
-      console.log(data)
-
       const seasons = await axios.get(URLS.SEASONS);
       ctxDispatch({ type: "GET_SEASONS", payload: seasons.data });
       sessionStorage.setItem("seasons",JSON.stringify(seasons.data))
@@ -58,6 +54,10 @@ export default function SignIn() {
 
       ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID) });
       sessionStorage.setItem("seasonID",import.meta.env.VITE_CURRENT_SEASON_ID)
+
+      ctxDispatch({ type: "USER_SIGNIN", payload: data });
+      sessionStorage.setItem("userInfo", JSON.stringify(data));
+      console.log(data)
       
       dispatch({ type: "LOGIN_SUCCESS" });
       navigate(redirect || HOMEPAGE);
