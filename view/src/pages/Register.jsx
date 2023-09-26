@@ -59,6 +59,18 @@ function Register() {
     {
       label: "Monday",
       value: "mon"
+    },
+    {
+      label: "Tuesday",
+      value: "tues"
+    },
+    {
+      label: "Wednesday",
+      value: "wed"
+    },
+    {
+      label: "Thursday",
+      value: "thur"
     }
   ]
   const levels = [
