@@ -117,14 +117,14 @@ class User(UserMixin):
     @staticmethod
     def addUser(name,email,vjudge,phone,university,faculty,university_level,major,discord,password):
         mycursor = g.db.cursor()
-        roleID = Permissions.getRoleID("Trainee")
+        # roleID = Permissions.getRoleID("Trainee")
         query  = "INSERT INTO user \
                 (`name`, `email`,\
                 `vjudge_handle`, `phone_number`,\
                 `university`, `faculty`, `university_level`,\
-                `major`,`discord_handle`, `password`, `user_role`)\
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query,(name,email,vjudge,phone,university,faculty,university_level,major,discord,password,roleID))
+                `major`,`discord_handle`, `password`)\
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(name,email,vjudge,phone,university,faculty,university_level,major,discord,password))
         g.db.commit()
 
     @staticmethod
