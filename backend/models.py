@@ -96,20 +96,19 @@ class User(UserMixin):
         # return bool(mycursor.rowcount)
 
     @staticmethod
-    def addUser_admin(vjudge_handle,name,email,level_id,roleID,points,password,discord):
+    def addUser_admin(vjudge_handle,name,email,points,password,discord):
         mycursor = g.db.cursor()
         # roleID = Permissions.getRoleID(role)
         query  = "INSERT INTO user \
                 (`vjudge_handle`, `name`,\
-                `email`, `user_role`, \
-                `points`, `password`, `discord_handle`)\
-                VALUES (%s,%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query,(vjudge_handle,name,email,roleID,points,password,discord,))
+                `email`, `points`, `password`, `discord_handle`)\
+                VALUES (%s,%s,%s,%s,%s,%s);"
+        mycursor.execute(query,(vjudge_handle,name,email,points,password,discord,))
         g.db.commit()
 
     @staticmethod
     def registerUser_admin(vjudge_handle,name,email,level_id,roleID,points,password,discord):
-        User.addUser_admin(vjudge_handle,name,email,level_id,roleID,points,password,discord)
+        User.addUser_admin(vjudge_handle,name,email,points,password,discord)
         user_id = User.getUserID(email=email)
         print("Registering",email,"in contests")
         Enrollment.enroll(user_id=user_id,level_id=level_id)
