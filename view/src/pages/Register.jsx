@@ -48,79 +48,31 @@ function Register() {
     }
   );
   const days = [
-    {
-      label: "Saturday",
-      value: "sat"
-    },
-    {
-      label: "Sunday",
-      value: "sun"
-    },
-    {
-      label: "Monday",
-      value: "mon"
-    },
-    {
-      label: "Tuesday",
-      value: "tues"
-    },
-    {
-      label: "Wednesday",
-      value: "wed"
-    },
-    {
-      label: "Thursday",
-      value: "thur"
-    }
+    { label: "Saturday", value: "sat" },
+    { label: "Sunday", value: "sun" },
+    { label: "Monday", value: "mon" },
+    { label: "Tuesday", value: "tues" },
+    { label: "Wednesday", value: "wed" },
+    { label: "Thursday", value: "thur" }
   ]
   const levels = [
-    {
-      value: "Freshman"
-    },
-    {
-      value: "Sophomore"
-    },
-    {
-      value: "Junior"
-    },
-    {
-      value: "Senior 1"
-    },
-    {
-      value: "Senior 2"
-    }
+    { value: "Freshman" },
+    { value: "Sophomore" },
+    { value: "Junior" },
+    { value: "Senior 1" },
+    { value: "Senior 2" }
   ]
   const majors = [
-    {
-      value: "Freshman"
-    },
-    {
-      value: "General Electrical"
-    },
-    {
-      value: "General Mechanical"
-    },
-    {
-      value: "CSE (Computer and Systems Engineering)"
-    },
-    {
-      value: "ECE (Electronics and Communications Engineering)"
-    },
-    {
-      value: "EPM (Electrical Power and Machines)"
-    },
-    {
-      value: "CESS (Computer Engineering Software Systems)"
-    },
-    {
-      value: "CIS (Computer and Information Science)"
-    },
-    {
-      value: "Mechatronics"
-    },
-    {
-      value: "Other"
-    }
+    { value: "Freshman" },
+    { value: "General Electrical" },
+    { value: "General Mechanical" },
+    { value: "CSE (Computer and Systems Engineering)" },
+    { value: "ECE (Electronics and Communications Engineering)" },
+    { value: "EPM (Electrical Power and Machines)" },
+    { value: "CESS (Computer Engineering Software Systems)" },
+    { value: "CIS (Computer and Information Science)" },
+    { value: "Mechatronics" },
+    { value: "Other" }
   ]
 
   const [{ loadingRegister, registration, loading }, dispatch] =
@@ -185,11 +137,12 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateCheckboxes()) {
-      registerUser()
-    } else {
-      toast.warning("Please select at least one day to attend sessions")
-    }
+    registerUser();
+    // if (validateCheckboxes()) {
+    //   registerUser()
+    // } else {
+    //   toast.warning("Please select at least one day to attend sessions")
+    // }
   };
   const updateCheckbox = ({ checked, value }) => {
     availDays[value] = checked
@@ -340,7 +293,7 @@ function Register() {
                     />
                   </div>
                 </div>
-                <div className="flex flex-col">
+                {/* <div className="flex flex-col">
                   <label className="inputlabel"> On which day(s) do you prefer to attend sessions?*</label>
                   <div className="inputCont" required>
                     {days.map(({ label, value }) => (
@@ -355,7 +308,7 @@ function Register() {
                       </label>
                     ))}
                   </div>
-                </div>
+                </div> */}
                 <div className="flex flex-col mt-4 mb-4">
                   {loadingRegister ? (
                     <button
