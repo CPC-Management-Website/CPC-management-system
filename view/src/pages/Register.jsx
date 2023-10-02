@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { LOGIN } from "../urls/frontend_urls";
+import SelectWithOther from "../components/SelectWithOther";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -64,15 +65,39 @@ function Register() {
   ]
   const majors = [
     { value: "Freshman" },
-    { value: "General Electrical" },
-    { value: "General Mechanical" },
-    { value: "CSE (Computer and Systems Engineering)" },
-    { value: "ECE (Electronics and Communications Engineering)" },
-    { value: "EPM (Electrical Power and Machines)" },
-    { value: "CESS (Computer Engineering Software Systems)" },
-    { value: "CIS (Computer and Information Science)" },
-    { value: "Mechatronics" },
-    { value: "Other" }
+    { value: "Architectural Engineering" },
+    { value: "Automotive Engineering" },
+    { value: "Building Engineering" },
+    { value: "Civil Infrastructure Engineerin" },
+    { value: "Communication Systems Engineering" },
+    { value: "Computer Engineering and Software Systems" },
+    { value: "Computer and Systems Engineering" },
+    { value: "Design and Production Engineering" },
+    { value: "Electrical Power and Machines Engineering" },
+    { value: "Electronics and Communications Engineering" },
+    { value: "Energy and Renewable Energy Engineering" },
+    { value: "Environmental Architecture and Urbanism" },
+    { value: "Housing Architecture and Urban Development" },
+    { value: "Landscape Architecture" },
+    { value: "Manufacturing Engineering" },
+    { value: "Materials Engineering" },
+    { value: "Mechanical Power Engineering" },
+    { value: "Mechatronics Engineering" },
+    { value: "Mechatronics Engineering and Automation" },
+    { value: "Structural Engineering" },
+    { value: "Utilities and Infrastructure" },
+    { value: "Water Engineering and Hydraulic Structures" }
+  ]
+
+  const universities = [
+    { value: "Ain Shams University" },
+    { value: "Cairo University" },
+    { value: "Helwan University" }
+  ]
+
+  const faculties = [
+    { value: "Engineering" },
+    { value: "Computer Science"}
   ]
 
   const [{ loadingRegister, registration, loading }, dispatch] =
@@ -216,25 +241,15 @@ function Register() {
                 </div>
                 <div className="flex flex-col">
                   <label className="inputlabel">University*</label>
-                  <div className="inputCont">
-                    <input
-                      placeholder="University"
-                      className="input"
-                      onChange={(e) => setUniversity(e.target.value)}
-                      required
-                    />
-                  </div>
+                  <SelectWithOther items={ universities } setValue={ setUniversity } placeholder={ "University" }/>
                 </div>
                 <div className="flex flex-col">
                   <label className="inputlabel">Faculty*</label>
-                  <div className="inputCont">
-                    <input
-                      placeholder="Faculty"
-                      className="input"
-                      onChange={(e) => setFaculty(e.target.value)}
-                      required
-                    />
-                  </div>
+                  <SelectWithOther items={ faculties } setValue={ setFaculty } placeholder={ "Faculty" }/>
+                </div>
+                <div className="flex flex-col">
+                  <label className="inputlabel">Major*</label>
+                  <SelectWithOther items={ majors } setValue={ setMajor } placeholder={ "Major" }/>
                 </div>
                 <div className="flex flex-col w-full">
                   <label className="inputlabel">Level*</label>
@@ -252,29 +267,6 @@ function Register() {
                         {""}
                       </option>
                       {levels?.map(({ value }) => (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <label className="inputlabel">Major*</label>
-                  <div className="inputCont">
-                    <select
-                      onChange={(e) =>
-                        setMajor(e.target.value === "NULL" ? null : e.target.value)
-                      }
-                      type="string"
-                      placeholder="Major"
-                      className="input"
-                      required
-                    >
-                      <option key={null} value={undefined}>
-                        {""}
-                      </option>
-                      {majors?.map(({ value }) => (
                         <option key={value} value={value}>
                           {value}
                         </option>
