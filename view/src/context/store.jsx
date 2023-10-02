@@ -13,6 +13,9 @@ const initialState = {
     levels: sessionStorage.getItem("levels")
         ? JSON.parse(sessionStorage.getItem("levels"))
         :null,
+    registrationAvailable: sessionStorage.getItem("registrationAvailable")
+        ? parseInt(sessionStorage.getItem("registrationAvailable"))
+        :null,
 };
 
 function reducer(state, action) {
@@ -25,12 +28,15 @@ function reducer(state, action) {
             return { ...state, seasonID:action.payload};
         case "GET_LEVELS":
             return { ...state, levels:action.payload};
+        case "GET_REGISTRATIONAVAILABLE":
+            return { ...state, registrationAvailable:action.payload};
         case "USER_SIGNOUT":
             return {
                 ...state,
                 userInfo: null,
                 seasons: null,
                 levels: null,
+                registrationAvailable: null,
                 seasonID: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
             };
         default:

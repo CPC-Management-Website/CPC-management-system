@@ -44,19 +44,22 @@ export default function SignIn() {
         email,
         password,
       });
-      const seasons = await axios.get(URLS.SEASONS);
-      ctxDispatch({ type: "GET_SEASONS", payload: seasons.data });
-      sessionStorage.setItem("seasons",JSON.stringify(seasons.data))
+      // const seasons = await axios.get(URLS.SEASONS);
+      ctxDispatch({ type: "GET_SEASONS", payload: data.seasons });
+      sessionStorage.setItem("seasons",JSON.stringify(data.seasons))
 
-      const levels = await axios.get(URLS.LEVELS);
-      ctxDispatch({ type: "GET_LEVELS", payload: levels.data });
-      sessionStorage.setItem("levels",JSON.stringify(levels.data))
+      // const levels = await axios.get(URLS.LEVELS);
+      ctxDispatch({ type: "GET_LEVELS", payload: data.levels });
+      sessionStorage.setItem("levels",JSON.stringify(data.levels))
 
       ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID) });
       sessionStorage.setItem("seasonID",import.meta.env.VITE_CURRENT_SEASON_ID)
 
-      ctxDispatch({ type: "USER_SIGNIN", payload: data });
-      sessionStorage.setItem("userInfo", JSON.stringify(data));
+      ctxDispatch({ type: "USER_SIGNIN", payload: data.userInfo });
+      sessionStorage.setItem("userInfo", JSON.stringify(data.userInfo));
+
+      ctxDispatch({ type: "GET_REGISTRATIONAVAILABLE", payload: parseInt(data.registrationAvailable.value) });
+      sessionStorage.setItem("registrationAvailable", data.registrationAvailable.value)
       console.log(data)
       
       dispatch({ type: "LOGIN_SUCCESS" });

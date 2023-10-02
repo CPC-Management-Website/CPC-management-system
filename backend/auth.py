@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import secrets
 from urls import urls
-from models import User, Permissions, AvailableDays, Enrollment, Levels
+from models import User, Permissions, AvailableDays, Enrollment, Levels, Vars, Seasons
 from APIs.email_api import sendPasswordEmails
 
 auth = Blueprint("auth", __name__)
@@ -36,10 +36,16 @@ def login():
         #enrollment = Enrollment.getEnrollment(user_id=user.id)
         latestEnrollmentSeason = Enrollment.getLatestEnrollmentSeason(user_id=user.id)
         user_json = json.dumps(user.__dict__)
+        seasons = Seasons.getAllSeasons()
+        levels = Levels.getAllLevels()
+        registrationStatus = Vars.getVariableValue(varname="registration")
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    return {"email" : email,"password" : password, "permissions": perm, "id" : user.id, "latestEnrollmentSeason":latestEnrollmentSeason}
+    return {"userInfo":{ "email" : email,"password" : password, "permissions": perm, "id" : user.id, "latestEnrollmentSeason":latestEnrollmentSeason},
+            "seasons":seasons,
+            "levels":levels,
+            "registrationAvailable":registrationStatus}
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register_admin():
