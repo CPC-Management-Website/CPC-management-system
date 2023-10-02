@@ -57,19 +57,21 @@ function NavBar() {
 
   const list = () => (
     <ul className="text-black flex flex-col p-6 space-y-6 text-xl font-medium w-[80vw] bg-[f7f7f7]">
-      <select
-        value={seasonID}
-        onChange={(e) =>changeSeasonHandler(e.target.value)}
-        type="string"
-        placeholder="Level"
-        className="input"
-      >
-      {seasons?.map(({ season_id, name }) => (
-        <option key={season_id} value={season_id}>
-          {name}
-        </option>
-      ))}
-      </select>
+      {userInfo ? (
+        <select
+          value={seasonID}
+          onChange={(e) =>changeSeasonHandler(e.target.value)}
+          type="string"
+          placeholder="Level"
+          className="input"
+        >
+        {seasons?.map(({ season_id, name }) => (
+          <option key={season_id} value={season_id}>
+            {name}
+          </option>
+        ))}
+        </select>
+      ):null}
       <ul className="flex felx-row justify-between">
       {userInfo ? (
         <li className="nav-item">
