@@ -9,7 +9,7 @@ import axios from "../hooks/axios";
 
 function Home() {
   const { state } = useContext(Store);
-  const { userInfo, seasons } = state;
+  const { userInfo, seasons, registrationAvailable } = state;
   const reducer = (state, action) => {
     switch (action.type) {
       case "REGISTER_REQUEST":
@@ -57,7 +57,7 @@ function Home() {
     <div className="flex bg-white justify-center min-h-[90vh]">
       <div className="flex lg:flex-row flex-col items-center justify-center lg:px-32">
         <div className="flex flex-col p-2">
-          {userInfo?.latestEnrollmentSeason < import.meta.env.VITE_CURRENT_SEASON_ID && seasons ? 
+          {userInfo?.latestEnrollmentSeason < import.meta.env.VITE_CURRENT_SEASON_ID && registrationAvailable  && seasons ? 
             <div className="flex flex-col my-10 justify-center">
             {loading ? (
               <button
