@@ -115,7 +115,7 @@ function Register() {
       console.log(response);
       dispatch({ type: "REGISTER_SUCCESS" });
       navigate(LOGIN);
-      toast.success("Registration Successfull");
+      toast.success(<div>Registration Successful<br/>Please check your email for your temporary password</div>,{autoClose:false});
     } catch (error) {
       if (!error?.response) {
         toast.error("Internal Server Error");
