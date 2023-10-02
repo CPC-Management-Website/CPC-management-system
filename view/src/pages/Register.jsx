@@ -216,12 +216,15 @@ function Register() {
                   </div>
                 </div>
                 <div className="flex flex-col">
-                  <label className="inputlabel">Vjudge Handle*</label>
+                  <label className="inputlabel">Vjudge Handle (Username)*</label>
                   <div className="inputCont">
                     <input
                       placeholder="Vjudge Handle"
                       className="input"
                       onChange={(e) => setVjudgeHandle(e.target.value)}
+                      minLength={2}
+                      maxLength={16}
+                      pattern="[a-zA-Z0-9_]*"
                       required
                     />
                   </div>
