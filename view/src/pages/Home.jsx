@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import axios from "../hooks/axios";
 
 function Home() {
-  const { state } = useContext(Store);
+  const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo, seasons, registrationAvailable } = state;
   const reducer = (state, action) => {
     switch (action.type) {
@@ -40,7 +40,15 @@ function Home() {
       );
       console.log(response);
       dispatch({ type: "REGISTER_SUCCESS" });
-      userInfo.latestEnrollmentSeason = import.meta.env.VITE_CURRENT_SEASON_ID
+      ctxDispatch({ type: "USER_SIGNIN", payload: {...userInfo, 
+        latestEnrollmentSeason: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
+        enrolledSeasons: response.data.enrolledSeasons
+      }});
+      sessionStorage.setItem("userInfo", JSON.stringify({...userInfo,
+        latestEnrollmentSeason: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
+        enrolledSeasons: response.data.enrolledSeasons
+      }));
+      // userInfo.latestEnrollmentSeason = import.meta.env.VITE_CURRENT_SEASON_ID
       console.log(userInfo.latestEnrollmentSeason)
       toast.success("Registration Successfull");
     } catch (error) {

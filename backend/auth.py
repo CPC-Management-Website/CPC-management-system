@@ -39,10 +39,11 @@ def login():
         seasons = Seasons.getAllSeasons()
         levels = Levels.getAllLevels()
         registrationStatus = Vars.getVariableValue(varname="registration")
+        enrolledSeasons = Seasons.getEnrolledSeasons(user_id=user.id)
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    return {"userInfo":{ "email" : email,"password" : password, "permissions": perm, "id" : user.id, "latestEnrollmentSeason":latestEnrollmentSeason},
+    return {"userInfo":{ "email" : email,"password" : password, "permissions": perm, "id" : user.id, "latestEnrollmentSeason":latestEnrollmentSeason, "enrolledSeasons":enrolledSeasons},
             "seasons":seasons,
             "levels":levels,
             "registrationAvailable":registrationStatus}
@@ -191,4 +192,5 @@ def enroll():
         return errors.user_already_enrolled(werkzeug.exceptions.BadRequest)
     print(f"Enrolling {email} in new season")
     Enrollment.enrollFromRegistration(email=email)
-    return " "
+    registeredSeasons = Seasons.getEnrolledSeasons(user_id=user_id)
+    return {"enrolledSeasons":registeredSeasons}

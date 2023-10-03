@@ -65,7 +65,7 @@ function NavBar() {
           placeholder="Level"
           className="input"
         >
-        {seasons?.map(({ season_id, name }) => (
+        {userInfo?.enrolledSeasons.map(({ season_id, name }) => (
           <option key={season_id} value={season_id}>
             {name}
           </option>
@@ -217,6 +217,7 @@ function NavBar() {
 
   return (
     <nav className="sticky top-0 z-50">
+      {console.log(userInfo)}
       <div className="flex flex-row py-2 justify-between px-4 lg:justify-center items-center bg-white text-black drop-shadow whitespace-nowrap">
         <span className="flex lg:hidden mr-4">
           <img
@@ -338,7 +339,7 @@ function NavBar() {
                 placeholder="Level"
                 className="inputNavbar mr-4"
               >
-              {seasons?.map(({ season_id, name }) => (
+              {userInfo?.enrolledSeasons.map(({ season_id, name }) => (
                 <option key={season_id} value={season_id}>
                   {name}
                 </option>

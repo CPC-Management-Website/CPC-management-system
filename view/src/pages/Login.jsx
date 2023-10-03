@@ -52,8 +52,8 @@ export default function SignIn() {
       ctxDispatch({ type: "GET_LEVELS", payload: data.levels });
       sessionStorage.setItem("levels",JSON.stringify(data.levels))
 
-      ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID) });
-      sessionStorage.setItem("seasonID",import.meta.env.VITE_CURRENT_SEASON_ID)
+      ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(data.userInfo.latestEnrollmentSeason) });
+      sessionStorage.setItem("seasonID",data.userInfo.latestEnrollmentSeason)
 
       ctxDispatch({ type: "USER_SIGNIN", payload: data.userInfo });
       sessionStorage.setItem("userInfo", JSON.stringify(data.userInfo));

@@ -679,6 +679,24 @@ class Seasons():
         for record in records:
             seasons.append(record)
         return seasons
+    
+    def getEnrolledSeasons(user_id):
+        mycursor = g.db.cursor(dictionary=True)
+        query = '''
+                SELECT `season_id`, `name`
+                FROM seasons
+                WHERE season_id IN (
+                    SELECT `season_id`
+                    FROM enrollment
+                    WHERE user_id = %s
+                );
+                '''
+        mycursor.execute(query,(user_id,))
+        records = mycursor.fetchall()
+        seasons = []
+        for record in records:
+            seasons.append(record)
+        return seasons
 
 class Enrollment():
     @staticmethod
