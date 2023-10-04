@@ -1,89 +1,25 @@
 import React, { useContext, useReducer, useState } from "react";
 import HERO from "../assets/developer.svg";
-import URLS from "../urls/server_urls.json";
 import AlertDialog from "../components/AlertDialog";
 import { Store } from "../context/store";
-import CircularProgress from "@mui/material/CircularProgress";
-import { toast } from "react-toastify";
-import axios from "../hooks/axios";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import NewSeasonWindow from "../components/NewSeasonWindow";
 
 function Home() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo, seasons, registrationAvailable } = state;
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "REGISTER_REQUEST":
-        return { ...state, loading: true };
-      case "REGISTER_SUCCESS":
-        return { ...state, loading: false };
-      case "REGISTER_FAIL":
-        return { ...state, loading: false };
-      default:
-        return state;
-    }
+  const { userInfo, seasons, registrationAvailable, newSeasonWindowOpen } = state;
+
+  const handleClosePopup = () => {
+    ctxDispatch({ type: "CLOSE_NEWSEASONWINDOW"});
+    sessionStorage.setItem("newSeasonWindowOpen", false);
   };
-  const [{ loading }, dispatch] = useReducer(reducer, {
-    loading: false,
-  });
-  const registerHandler = async () => {
-    try {
-      dispatch({ type: "REGISTER_REQUEST" });
-      const email = userInfo.email
-      const user_id = userInfo.id
-      console.log(email)
-      const response = await axios.post(
-        URLS.ENROLL,
-        JSON.stringify({user_id, email,}),
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      console.log(response);
-      dispatch({ type: "REGISTER_SUCCESS" });
-      ctxDispatch({ type: "USER_SIGNIN", payload: {...userInfo, 
-        latestEnrollmentSeason: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
-        enrolledSeasons: response.data.enrolledSeasons
-      }});
-      sessionStorage.setItem("userInfo", JSON.stringify({...userInfo,
-        latestEnrollmentSeason: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
-        enrolledSeasons: response.data.enrolledSeasons
-      }));
-      // userInfo.latestEnrollmentSeason = import.meta.env.VITE_CURRENT_SEASON_ID
-      console.log(userInfo.latestEnrollmentSeason)
-      toast.success("Registration Successfull");
-    } catch (error) {
-      if (!error?.response) {
-        toast.error("Internal Server Error");
-      } else {
-        toast.error(error.response.data.Error);
-      }
-      console.log(error);
-      dispatch({ type: "REGISTER_FAIL" })
-    }
-  };
+
   return (
-    <div className="flex bg-white justify-center min-h-[90vh]">
+    <>
+    <div className="flex bg-white justify-center min-h-[5vh]">
       <div className="flex lg:flex-row flex-col items-center justify-center lg:px-32">
         <div className="flex flex-col p-2">
-          {userInfo?.latestEnrollmentSeason < import.meta.env.VITE_CURRENT_SEASON_ID && registrationAvailable  && seasons ? 
-            <div className="flex flex-col my-10 justify-center">
-            {loading ? (
-              <button
-                className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center self-center"
-              >
-                <CircularProgress size={23} thickness={4} color="inherit" />
-              </button>
-            ) : (
-              <button
-                className="bg-violet-800 hover:bg-violet-500 text-white justify-center self-center py-2 px-6 rounded"
-                onClick={()=>registerHandler()}
-              >
-                {console.log(seasons)}
-                Register Level 1 - {seasons[0]["name"]}
-              </button>
-            )}
-          </div>
-          : null}
           <div className="text-violet-500 text-4xl lg:text-7xl lg:text-left text-center font-bold pb-5 whitespace-nowrap">
             Welcome back!
           </div>
@@ -97,6 +33,34 @@ function Home() {
         </div>
       </div>
     </div>
+    {userInfo?.latestEnrollmentSeason < import.meta.env.VITE_CURRENT_SEASON_ID && registrationAvailable  && seasons ?
+    <>
+      <div className="flex flex-col justify-center">
+        <div>
+          <Dialog
+            fullWidth
+            open={newSeasonWindowOpen}
+            onClose={handleClosePopup}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogContent>
+              <NewSeasonWindow/>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+      <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
+        
+        <div className="flex flex-col  lg:w-[50%] mb-0 lg:mb-4">
+            <div className="flex flex-col sm:text-xl border-2 border-gray-200 rounded-xl p-6">
+              <NewSeasonWindow/>
+            </div>
+        </div>
+      </div>
+      </>
+    : null}
+    </>
   );
 }
 

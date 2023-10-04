@@ -16,6 +16,9 @@ const initialState = {
     registrationAvailable: sessionStorage.getItem("registrationAvailable")
         ? parseInt(sessionStorage.getItem("registrationAvailable"))
         :null,
+    newSeasonWindowOpen: sessionStorage.getItem("newSeasonWindowOpen")
+        ? JSON.parse(sessionStorage.getItem("newSeasonWindowOpen"))
+        : true,
 };
 
 function reducer(state, action) {
@@ -30,6 +33,8 @@ function reducer(state, action) {
             return { ...state, levels:action.payload};
         case "GET_REGISTRATIONAVAILABLE":
             return { ...state, registrationAvailable:action.payload};
+        case "CLOSE_NEWSEASONWINDOW":
+            return { ...state, newSeasonWindowOpen:false}
         case "USER_SIGNOUT":
             return {
                 ...state,
@@ -37,6 +42,7 @@ function reducer(state, action) {
                 seasons: null,
                 levels: null,
                 registrationAvailable: null,
+                newSeasonWindowOpen: true,
                 seasonID: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
             };
         default:
