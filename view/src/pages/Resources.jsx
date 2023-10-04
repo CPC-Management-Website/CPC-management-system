@@ -9,6 +9,7 @@ import {
   UPDATE_RESOURCES,
   ADD_RESOURCES,
 } from "../permissions/permissions";
+import ResourceContainer from "../components/ResourceContainer";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -48,8 +49,8 @@ const reducer = (state, action) => {
 
 export default function Resources() {
   const { state } = useContext(Store);
-  const { userInfo,seasons,levels,seasonID } = state;
-  const [{ loading, loadingAdd,loadingUpdate, loadingDelete, resources}, dispatch] =
+  const { userInfo, levels, seasonID } = state;
+  const [{ loading, loadingAdd, resources}, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: "",
@@ -120,27 +121,6 @@ export default function Resources() {
     }
   };
 
-  const deleteHandler = async (resource) => {
-    if (window.confirm("Are you sure to delete?")) {
-      try {
-        dispatch({ type: "DELETE_REQUEST" });
-        await axios.delete(URLS.RESOURCES, {
-          params: {
-            resource_id: resource.resource_id,
-          },
-        });
-        dispatch({ type: "DELETE_SUCCESS" });
-        toast.success("Resource deleted successfully");
-        getMyResources();
-      } catch (err) {
-        toast.error(err);
-        dispatch({
-          type: "DELETE_FAIL",
-        });
-      }
-    }
-  };
-
   useEffect(() => {
     userInfo?.permissions.find((perm) => perm === (ADD_RESOURCES || UPDATE_RESOURCES || DELETE_RESOURCES))?
       getAllResources()
@@ -208,7 +188,7 @@ export default function Resources() {
         </form>
       ) : null}
 
-      {loading || loadingDelete ? (
+      {loading ? (
         <div className="flex justify-center py-32">
           <CircularProgress size={50} thickness={4} color="inherit" />
         </div>
@@ -219,48 +199,11 @@ export default function Resources() {
           </div>
           <div className="flex-col flex space-y-4 mt-4 ">
             {resources?.map((resource) => (
-              <div
+              <ResourceContainer
                 key={resource.resource_id}
-                className="flex flex-col lg:flex-row lg:justify-between border-2 rounded-xl p-4 space-y-4 lg:space-y-0"
-              >
-                <div className="flex flex-col space-y-2">
-                  <span>
-                    Topic:{" "}
-                    <a
-                      href={resource.link}
-                      target="_blank"
-                      className="underline text-blue-800"
-                    >
-                      {resource.topic}
-                    </a>
-                  </span>
-                  <span className="flex flex-row">Level: {resource.level}</span>
-                </div>
-                <div className="flex flex-row space-x-4 items-center">
-                  {userInfo?.permissions.find(
-                    (perm) => perm === UPDATE_RESOURCES
-                  ) ? (
-                    <button
-                      className="bg-violet-800 text-white  hover:bg-violet-500 py-2 px-6 rounded flex h-fit"
-                      type="submit"
-                      onClick={() => editResource(resource)}
-                    >
-                      edit
-                    </button>
-                  ) : null}
-                  {userInfo?.permissions.find(
-                    (perm) => perm === DELETE_RESOURCES
-                  ) ? (
-                    <button
-                      className="bg-red-800 hover:bg-red-500 text-white py-2 px-6 rounded flex h-fit"
-                      type="submit"
-                      onClick={() => deleteHandler(resource)}
-                    >
-                      delete
-                    </button>
-                  ) : null}
-                </div>
-              </div>
+                resource={resource}
+                permissions={userInfo.permissions}
+                refreshResources={getAllResources}/>
             ))}
           </div>
         </div>
