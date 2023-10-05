@@ -77,6 +77,8 @@ export default function NewSeasonWindow(){
           latestEnrollmentSeason: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
           enrolledSeasons: response.data.enrolledSeasons
         }));
+        ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID) });
+        sessionStorage.setItem("seasonID",import.meta.env.VITE_CURRENT_SEASON_ID)
         // userInfo.latestEnrollmentSeason = import.meta.env.VITE_CURRENT_SEASON_ID
         console.log(userInfo.latestEnrollmentSeason)
         toast.success("Registration Successfull");
