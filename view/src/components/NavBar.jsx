@@ -334,19 +334,21 @@ function NavBar() {
           </ul>
           {userInfo ? (
             <div className="hidden lg:flex flex-row items-center">
-              <select
-                value={seasonID}
-                onChange={(e) =>changeSeasonHandler(e.target.value)}
-                type="string"
-                placeholder="Level"
-                className="inputNavbar mr-4"
-              >
-              {userInfo?.enrolledSeasons.map(({ season_id, name }) => (
-                <option key={season_id} value={season_id}>
-                  {name}
-                </option>
-              ))}
-              </select>
+              {userInfo.enrolledSeasons.length ?(
+                <select
+                  value={seasonID}
+                  onChange={(e) =>changeSeasonHandler(e.target.value)}
+                  type="string"
+                  placeholder="Season"
+                  className="inputNavbar mr-4"
+                >
+                {userInfo?.enrolledSeasons.map(({ season_id, name }) => (
+                  <option key={season_id} value={season_id}>
+                    {name}
+                  </option>
+                ))}
+                </select>
+              ):null}
               <AccountCircleIcon
                 className="cursor-pointer text-violet-800"
                 sx={{ fontSize: 30 }}
