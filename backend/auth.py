@@ -107,7 +107,7 @@ def register():
     print("User added successfully")
     AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
     print("Available days added successfully")
-    Enrollment.enrollFromRegistration(email=email)
+    #Enrollment.enrollFromRegistration(email=email)
     sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
 
