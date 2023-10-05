@@ -33,8 +33,7 @@ function Home() {
         </div>
       </div>
     </div>
-    {userInfo?.latestEnrollmentSeason < import.meta.env.VITE_CURRENT_SEASON_ID && registrationAvailable  && seasons ?
-    <>
+      {userInfo && userInfo.latestEnrollmentSeason < import.meta.env.VITE_CURRENT_SEASON_ID && registrationAvailable ?
       <div className="flex flex-col justify-center">
         <div>
           <Dialog
@@ -50,8 +49,11 @@ function Home() {
           </Dialog>
         </div>
       </div>
+      : null}
       <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
-        
+        <p className="text-3xl font-semibold lg:my-10 mb-4">
+          Available Levels
+        </p>
         <div className="flex flex-col  lg:w-[50%] mb-0 lg:mb-4">
             <div className="flex flex-col sm:text-xl border-2 border-gray-200 rounded-xl p-6">
               <NewSeasonWindow/>
@@ -59,8 +61,6 @@ function Home() {
         </div>
       </div>
       </>
-    : null}
-    </>
   );
 }
 

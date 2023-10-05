@@ -188,6 +188,9 @@ def assignMentors():
 def enroll():
     user_id = request.json["user_id"]
     email = request.json["email"]
+    registrationStatus = Vars.getVariableValue(varname="registration")
+    if not int(registrationStatus["value"]):
+        return errors.registrationClosed(werkzeug.exceptions.BadRequest)
     if Enrollment.getEnrollment(user_id=user_id):
         return errors.user_already_enrolled(werkzeug.exceptions.BadRequest)
     print(f"Enrolling {email} in new season")
