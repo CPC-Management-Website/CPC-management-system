@@ -16,5 +16,7 @@ export const VIEW_MY_TRANSCRIPT = "read_my_transcript"
 export const VIEW_ALL_TRANSCRIPTS = "read_all_transcripts"
 
 export const ADD_CONTESTS = "add_contests"
+export const UPDATE_CONTESTS = "update_contests"
+export const DELETE_CONTESTS = "delete_contests"
 
 export const EDIT_REGISTRATION_STATUS = "edit_registration_status"

@@ -433,6 +433,20 @@ class ProgressPerContest():
         mycursor.execute(query)
         contests = mycursor.fetchall()
         return contests
+    
+    @staticmethod
+    def getContestsAdmin(season = current_season_id):
+        mycursor = g.db.cursor(dictionary=True)
+        query  = '''
+                SELECT c.*, l.name as level
+                from (contest c)
+                inner join training_levels l on (l.level_id = c.level_id)
+                where season_id = %s;
+                '''
+        mycursor.execute(query,(season,))
+        contests = mycursor.fetchall()
+        return contests
+    
     @staticmethod
     def getContestsFiltered(level_id,season_id = current_season_id):
         mycursor = g.db.cursor(dictionary=True)
@@ -492,6 +506,30 @@ class ProgressPerContest():
                  greenThreshold, topic, week_number,0, levelID, current_season_id))
         g.db.commit()
         return "Success"
+
+    @staticmethod
+    def deleteContest(contest_id):
+        mycursor = g.db.cursor()
+        query = "DELETE FROM contest WHERE (`contest_id` = %s);"
+        mycursor.execute(query,(int(contest_id),))
+        g.db.commit()
+    
+    @staticmethod
+    def updateContest(new_contest_id, topic, yellow_threshold, green_threshold, total, week_number, level_id, old_contest_id):
+        mycursor = g.db.cursor()
+        query = '''
+                UPDATE contest SET 
+                contest_id = %s,
+                topic = %s,
+                yellow_threshold = %s,
+                green_threshold = %s,
+                total_problems = %s,
+                week_number = %s,
+                level_id = %s
+                WHERE contest_id = %s;
+                '''
+        mycursor.execute(query,(new_contest_id,topic,yellow_threshold,green_threshold,total,week_number,level_id,old_contest_id,))
+        g.db.commit()
 
     @staticmethod
     def initContestProgress_contest(contest_id):

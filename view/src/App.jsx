@@ -32,6 +32,8 @@ import {
   VIEW_MY_TRANSCRIPT,
   VIEW_ADMINS,
   VIEW_MENTORS,
+  UPDATE_CONTESTS,
+  DELETE_CONTESTS,
 } from "./permissions/permissions";
 
 function App() {
@@ -89,7 +91,7 @@ function App() {
         <Route
           path={CONTEST}
           element={
-            <ProtectedRoute allowedPermissions={[ADD_CONTESTS]}>
+            <ProtectedRoute allowedPermissions={[ADD_CONTESTS,UPDATE_CONTESTS,DELETE_CONTESTS]}>
               <Contest />
             </ProtectedRoute>
           }

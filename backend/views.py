@@ -132,6 +132,34 @@ def addContest():
     # ProgressPerContest.addProgress(contestID)
     return {"add contest": "in add contest"}
 
+@views.route(urls['CONTEST'], methods = ["GET"], strict_slashes = False)
+def getContests():
+    season = request.args.get("season")
+    return ProgressPerContest.getContestsAdmin(season=season)
+
+@views.route(urls['CONTEST'], methods = ["PATCH"], strict_slashes = False)
+def updateContest():
+    new_contest_id = request.json["contest_id"]
+    topic = request.json["topic"]
+    yellow_threshold = request.json["yellow_threshold"]
+    green_threshold = request.json["green_threshold"]
+    total_problems = request.json["total_problems"]
+    week_number = request.json["week_number"]
+    level_id = request.json["level_id"]
+    old_contest_id = request.json["old_contest_id"]
+    try:
+        ProgressPerContest.updateContest(new_contest_id,topic,yellow_threshold,green_threshold,total_problems,week_number,level_id,old_contest_id)
+    except Exception as e:
+        print(e)
+        return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
+    return "Success"
+
+@views.route(urls['CONTEST'], methods = ["DELETE"], strict_slashes = False)
+def deleteContest():
+    contest_id = request.args.get("contest_id")
+    ProgressPerContest.deleteContest(contest_id=contest_id)
+    return "Success"
+
 @views.route(urls["RESOURCES"], methods = ["POST"], strict_slashes = False)
 def addResource():
     resourceTopic = request.json["resourceTopic"]

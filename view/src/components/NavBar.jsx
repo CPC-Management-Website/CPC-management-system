@@ -18,6 +18,8 @@ import {
   VIEW_MY_TRANSCRIPT,
   VIEW_ADMINS,
   VIEW_MENTORS,
+  UPDATE_CONTESTS,
+  DELETE_CONTESTS,
 } from "../permissions/permissions";
 import {
   USERS,
@@ -136,7 +138,7 @@ function NavBar() {
         </li>
       ) : null}
 
-      {userInfo?.permissions?.find((perm) => perm === ADD_CONTESTS) ? (
+      {userInfo?.permissions?.find((perm) => perm === ADD_CONTESTS || perm === UPDATE_CONTESTS || perm === DELETE_CONTESTS) ? (
         <li className="nav-item">
           <NavLink
             onClick={toggleDrawer(false)}
@@ -291,7 +293,7 @@ function NavBar() {
             </li>
           ) : null}
 
-          {userInfo?.permissions?.find((perm) => perm === ADD_CONTESTS) ? (
+          {userInfo?.permissions?.find((perm) => perm === ADD_CONTESTS || perm === UPDATE_CONTESTS || perm === DELETE_CONTESTS) ? (
             <li className="nav-item">
               <NavLink
                 end

@@ -4,15 +4,23 @@ import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
+import ContestContainer from "../components/ContestContainer";
+import { ADD_CONTESTS } from "../permissions/permissions";
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "GET_CONTESTS_REQUEST":
+      return { ...state, loadingContests: true };
+    case "GET_CONTESTS_SUCCESS":
+      return { ...state, contests: action.payload, loadingContests: false };
+    case "GET_CONTESTS_FAIL":
+      return { ...state, loadingContests: false, error: action.payload };
     case "ADD_REQUEST":
-      return { ...state, loading: true };
+      return { ...state, loadingAdd: true };
     case "ADD_SUCCESS":
-      return { ...state, loading: false};
+      return { ...state, loadingAdd: false};
     case "ADD_FAIL":
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loadingAdd: false, error: action.payload };
     default:
       return state;
   }
@@ -20,7 +28,7 @@ const reducer = (state, action) => {
 
 function ContestDetails() {
   const { state } = useContext(Store);
-  const { levels } = state;
+  const { levels, userInfo, seasonID } = state;
   const [contestID, setContestID] = useState("");
   const [numOfProblems, setNumOfProblems] = useState("");
   const [yellowThreshold, setYellowThreshold] = useState("");
@@ -29,8 +37,9 @@ function ContestDetails() {
   const [weekNum, setWeekNum] = useState("");
   const [levelID, setLevelID] = useState("");
 
-  const [{ loading, loadingUpdate }, dispatch] = useReducer(reducer, {
-    loading: false,
+  const [{ loadingAdd, loadingContests,contests }, dispatch] = useReducer(reducer, {
+    loadingAdd: false,
+    loadingContests: true,
     error: "",
   });
 
@@ -56,6 +65,7 @@ function ContestDetails() {
         }
       );
       dispatch({ type: "ADD_SUCCESS" });
+      getAllContests();
       toast.success("Contest Added Successfully")
     } catch (error) {
       if (!error?.response) {
@@ -67,12 +77,30 @@ function ContestDetails() {
     }
   };
 
+  const getAllContests = async () => {
+    try {
+      const params = new URLSearchParams([["season",seasonID]]);
+      dispatch({ type: "GET_CONTESTS_REQUEST" });
+      const response = await axios.get(URLS.CONTEST,{params});
+      dispatch({ type: "GET_CONTESTS_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_CONTESTS_FAIL" });
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getAllContests()
+  }, [seasonID]);
+
   return (
-    <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
-      <p className="text-3xl font-semibold lg:my-10 mb-4">
-        Add Contest Details
-      </p>
-        <form className="flex flex-col lg:w-[40%]" onSubmit={addContest}>
+    <div className="flex flex-col lg:items-center p-4 lg:p-0 my-5">
+      {userInfo.permissions.find((perm) => perm === ADD_CONTESTS) ?
+      (
+        <>
+        <p className="text-3xl font-semibold lg:my-10 mb-4">
+          Add Contest Details
+        </p>
+        <form className="flex flex-col lg:w-[50%] " onSubmit={addContest}>
           <div className="flex flex-col">
             <label className="inputlabel">Contest ID*</label>
             <div className="inputCont">
@@ -179,7 +207,7 @@ function ContestDetails() {
             </div>
           </div>
           <div className="flex flex-col mt-4">
-            {loading ? (
+            {loadingAdd ? (
               <button
                 className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
                 type="submit"
@@ -196,6 +224,30 @@ function ContestDetails() {
             )}
           </div>
         </form>
+        </>
+      ):
+      null}
+      {loadingContests? (
+          <div className="flex justify-center py-32">
+            <CircularProgress size={50} thickness={4} color="inherit" />
+          </div>
+        ) : (
+          <>
+          <p className="text-3xl font-semibold my-10">
+            Current season's contests
+          </p>
+          <div className="flex flex-col space-y-4 lg:w-[50%]">
+            {contests?.map((contest) => (
+              <ContestContainer
+                key={contest.contest_id}
+                contest={contest}
+                permissions={userInfo.permissions}
+                refreshContests={getAllContests}
+              />
+            ))}
+          </div>
+          </> 
+        )}
     </div>
   );
 }
