@@ -67,6 +67,7 @@ export default function ResourceEdit({ resource, isOpened, setIsOpened, refreshR
                   <input
                     value={tempResource.topic}
                     className="input"
+                    required
                     onChange={(e) =>
                       updatetempResource({ ...tempResource, topic: e.target.value })
                     }
@@ -80,6 +81,7 @@ export default function ResourceEdit({ resource, isOpened, setIsOpened, refreshR
                     value={tempResource.link}
                     className="input"
                     type="url"
+                    required
                     onChange={(e) =>
                       updatetempResource({ ...tempResource, link: e.target.value })
                     }
