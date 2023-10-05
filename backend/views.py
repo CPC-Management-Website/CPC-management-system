@@ -157,10 +157,10 @@ def getMyResources():
 @views.route(urls['RESOURCES'], methods = ["PATCH"], strict_slashes=False)
 def editResource():
     id = request.json["resource_id"]
-    topic = request.json["newTopic"]
-    level = request.json["newLevel"]
-    link = request.json["newLink"]
-    Resources.updateResource(id=id,topic=topic,level=level,link=link)
+    topic = request.json["topic"]
+    level_id = request.json["level_id"]
+    link = request.json["link"]
+    Resources.updateResource(id=id,topic=topic,level_id=level_id,link=link)
     return "Success"
 
 @views.route(urls['RESOURCES'], methods = ["DELETE"], strict_slashes=False)

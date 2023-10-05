@@ -147,6 +147,7 @@ export default function Resources() {
           <input
             className="w-full p-2 border-2 border-gray-500 rounded"
             placeholder="Link.."
+            type="url"
             required
             onChange={(e) => setResourceLink(e.target.value)}
           ></input>
@@ -193,7 +194,7 @@ export default function Resources() {
           <CircularProgress size={50} thickness={4} color="inherit" />
         </div>
       ) : (
-        <div className="flex lg:w-[50%] flex-col">
+        <div className="flex lg:w-[50%] flex-col mb-5">
           <div>
             <p className="text-xl font-semibold">Your Current Resources: </p>
           </div>

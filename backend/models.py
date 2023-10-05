@@ -583,7 +583,8 @@ class Resources():
                 r.topic,\
                 r.link,\
                 r.season_id,\
-                l.name as level\
+                l.name as level,\
+                l.level_id\
                 from (resource r) \
                 left join training_levels l on (r.level_id = l.level_id) \
                 where (season_id = %s)"
@@ -616,10 +617,10 @@ class Resources():
         return resources
     
     @staticmethod
-    def updateResource(id, topic, level, link):
+    def updateResource(id, topic, level_id, link):
         mycursor = g.db.cursor()
-        query = "UPDATE resource SET topic=%s, level=%s, link=%s WHERE resource_id=%s;"
-        mycursor.execute(query, (topic,int(level),link,int(id),))
+        query = "UPDATE resource SET topic=%s, level_id=%s, link=%s WHERE resource_id=%s;"
+        mycursor.execute(query, (topic,int(level_id),link,int(id),))
         g.db.commit()
     
     @staticmethod

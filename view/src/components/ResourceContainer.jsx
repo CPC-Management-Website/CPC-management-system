@@ -1,18 +1,13 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { DELETE_RESOURCES, UPDATE_RESOURCES } from "../permissions/permissions";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
+import ResourceEdit from "./ResourceEdit";
 
 const reducer = (state, action) => {
     switch (action.type) {
-      case "UPDATE_REQUEST":
-        return { ...state, loadingUpdate: true };
-      case "UPDATE_SUCCESS":
-        return { ...state, loadingUpdate: false };
-      case "UPDATE_FAIL":
-        return { ...state, loadingUpdate: false };
       case "DELETE_REQUEST":
         return { ...state, loadingDelete: true, successDelete: false };
       case "DELETE_SUCCESS":
@@ -30,11 +25,9 @@ const reducer = (state, action) => {
 
 export default function ResourceContainer({ resource, permissions, refreshResources }){
 
-  const [{ loadingUpdate, loadingDelete }, dispatch] =
-  useReducer(reducer, {
-    loadingUpdate: false,
-    loadingDelete: false
-  });
+  const [{ loadingDelete }, dispatch] = useReducer(reducer, { loadingDelete: false });
+
+  const [editWindowOpened,setEditWindowOpened] = useState(false)
 
   const deleteHandler = async (resource) => {
     if (window.confirm("Are you sure to delete?")) {
@@ -60,7 +53,7 @@ export default function ResourceContainer({ resource, permissions, refreshResour
   };
 
   return (
-    <div className="flex-col flex space-y-4 mt-4 ">
+    <div className="flex-col flex space-y-4">
       {console.log(permissions)}
       {console.log(resource)}
       <div className="flex flex-col lg:flex-row lg:justify-between border-2 rounded-xl p-4 space-y-4 lg:space-y-0">
@@ -80,13 +73,23 @@ export default function ResourceContainer({ resource, permissions, refreshResour
         <div className="flex flex-row space-x-4 items-center">
           {permissions.find((perm) => perm === UPDATE_RESOURCES) ?
           (
+            <>
             <button
               className="bg-violet-800 text-white  hover:bg-violet-500 py-2 px-6 rounded flex h-fit"
               type="submit"
-              onClick={() => editResource(resource)}
+              onClick={() => setEditWindowOpened(true)}
             >
               Edit
             </button>
+            { editWindowOpened && 
+              <ResourceEdit
+                resource={resource}
+                isOpened={editWindowOpened}
+                setIsOpened={setEditWindowOpened}
+                refreshResources={refreshResources}
+                />
+            }
+            </>
           ) : null}
           {permissions.find((perm) => perm === DELETE_RESOURCES) ?
           (
