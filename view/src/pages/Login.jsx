@@ -89,7 +89,7 @@ export default function SignIn() {
         </div>
 
         <form onSubmit={submitHandler} className="w-[70%] md:w-[30%]">
-          <p className="text-5xl font-bold text-gray-400 mb-10">SIGN IN</p>
+          <p className="text-5xl font-bold text-gray-400 mb-10">LOG IN</p>
           <div className="flex flex-col">
             <label className="inputlabel">E-mail</label>
             <div className="inputCont">

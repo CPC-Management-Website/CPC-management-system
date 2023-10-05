@@ -96,7 +96,7 @@ export default function NewSeasonWindow(){
     const registerHandler = async () => {
       if(userInfo)register();
       else{
-        toast.warning(<div>You need to be signed in!<br/>Please sign up if you don't have an account.</div>)
+        toast.warning(<div>You need to be logged in!<br/>Please sign up if you don't have an account.</div>)
         navigate(LOGIN);
       }
     };

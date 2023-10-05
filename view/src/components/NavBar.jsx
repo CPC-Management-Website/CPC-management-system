@@ -421,7 +421,7 @@ function NavBar() {
                   navData.isActive ? "active" : "nav-links"
                 }
               >
-                Login
+                Log In
               </NavLink>
             </li>
             <li className="nav-item">
