@@ -217,6 +217,7 @@ function SignUp() {
               minLength={2}
               maxLength={16}
               pattern="[a-zA-Z0-9_]*"
+              title="Handle contains only digits, letters, or _"
               required
             />
           </div>
