@@ -388,7 +388,7 @@ class ProgressPerContest():
         mycursor = g.db.cursor()
         query  = "INSERT INTO progress_per_contest \
                 (`user_id`, `contest_id`,\
-                `solved_problems`, `rank`, `zone`) \
+                `solved_problems`, `ranking`, `zone`) \
                 VALUES (%s,%s,%s,%s,%s);"
         mycursor.execute(query,(user_id,int(contest_id),solved_problems,0,zone,))
         g.db.commit()
@@ -397,7 +397,7 @@ class ProgressPerContest():
     def updateProgressPerContestBulk(progressList):
         mycursor = g.db.cursor()
         query  = "UPDATE progress_per_contest SET \
-                solved_problems=%s, rank=%s, zone=%s \
+                solved_problems=%s, ranking=%s, zone=%s \
                 WHERE user_id=%s AND contest_id=%s;"
 
         mycursor.executemany(query,progressList)
@@ -408,7 +408,7 @@ class ProgressPerContest():
         mycursor = g.db.cursor()
         query  = "INSERT INTO progress_per_contest \
                 (`user_id`, `contest_id`,\
-                `solved_problems`, `rank`, `zone`) \
+                `solved_problems`, `ranking`, `zone`) \
                 VALUES (%s,%s,%s,%s,%s);"
         mycursor.executemany(query,toBeRegistered_List)
         g.db.commit()
@@ -452,7 +452,7 @@ class ProgressPerContest():
         query  = "SELECT distinct\
                 p.contest_id,\
                 p.solved_problems,\
-                p.rank,\
+                p.ranking,\
                 p.zone,\
                 c.level_id,\
                 c.season_id,\
@@ -539,6 +539,7 @@ class ProgressPerContest():
     @staticmethod
     def updateProgressBulk(progress, contestParameters):
         id = User.getIDsByVjudgeHandles()
+        print(id)
         try:
             progressList = []
             for contest_id in progress:
@@ -552,9 +553,11 @@ class ProgressPerContest():
                         zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved, yellowThreshold=yellowThreshold, greenThreshold=greenThreshold)      
                         progressList.append((numSolved,0,zone,id[vjudge_handle],contest_id)) #the zero here is a temporary number for user rank in contest
                         # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
+            print(progressList)
             ProgressPerContest.updateProgressPerContestBulk(progressList = progressList)
             print("Successfully updated progress for all contests")
-        except:
+        except Exception as e:
+            print(e)
             print("Couldn't update progress")
         return " "
 
