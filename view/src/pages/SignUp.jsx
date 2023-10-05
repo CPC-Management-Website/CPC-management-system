@@ -242,10 +242,13 @@ function SignUp() {
           <label className="inputlabel">Faculty*</label>
           <SelectWithOther items={ faculties } setValue={ setFaculty } placeholder={ "Faculty" }/>
         </div>
-        <div className="flex flex-col">
-          <label className="inputlabel">Major*</label>
-          <SelectWithOther items={ majors } setValue={ setMajor } placeholder={ "Major" }/>
-        </div>
+        {console.log(faculty)}
+        {faculty === "Engineering" &&
+          <div className="flex flex-col">
+            <label className="inputlabel">Major*</label>
+            <SelectWithOther items={ majors } setValue={ setMajor } placeholder={ "Major" }/>
+          </div>
+        }
         <div className="flex flex-col w-full">
           <label className="inputlabel">Level*</label>
           <div className="inputCont">
