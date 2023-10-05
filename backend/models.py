@@ -539,7 +539,6 @@ class ProgressPerContest():
     @staticmethod
     def updateProgressBulk(progress, contestParameters):
         id = User.getIDsByVjudgeHandles()
-        print(id)
         try:
             progressList = []
             for contest_id in progress:
@@ -553,7 +552,6 @@ class ProgressPerContest():
                         zone = ProgressPerContest.getZone(problemCount=problemCount,solved=numSolved, yellowThreshold=yellowThreshold, greenThreshold=greenThreshold)      
                         progressList.append((numSolved,0,zone,id[vjudge_handle],contest_id)) #the zero here is a temporary number for user rank in contest
                         # ProgressPerContest.addProgressPerContest(id,contest_id,numSolved,zone)
-            print(progressList)
             ProgressPerContest.updateProgressPerContestBulk(progressList = progressList)
             print("Successfully updated progress for all contests")
         except Exception as e:

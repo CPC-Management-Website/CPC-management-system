@@ -307,7 +307,6 @@ def getProgressBulk(contests):
             print("Couldn't get data for contest {contest_id}")
             continue
         progress[contest_id]=curr_progress
-    print(progress)
     return progress
 
 
