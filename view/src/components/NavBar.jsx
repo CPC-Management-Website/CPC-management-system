@@ -302,7 +302,7 @@ function NavBar() {
                   navData.isActive ? "active" : "nav-links"
                 }
               >
-                Add Contest
+                Contests
               </NavLink>
             </li>
           ) : null}

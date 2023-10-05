@@ -98,7 +98,7 @@ function ContestDetails() {
       (
         <>
         <p className="text-3xl font-semibold lg:my-10 mb-4">
-          Add Contest Details
+          Add Contest
         </p>
         <form className="flex flex-col lg:w-[50%] " onSubmit={addContest}>
           <div className="flex flex-col">
