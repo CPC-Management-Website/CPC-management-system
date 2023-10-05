@@ -30,7 +30,7 @@ import {
   HOMEPAGE,
   PROFILE,
   LOGIN,
-  REGISTER,
+  SIGNUP,
 } from "../urls/frontend_urls";
 
 function NavBar() {
@@ -202,10 +202,10 @@ function NavBar() {
         <li className="nav-item">
           <NavLink
             onClick={toggleDrawer(false)}
-            to={REGISTER}
+            to={SIGNUP}
             className={(navData) => (navData.isActive ? "active" : "nav-links")}
           >
-            Register
+            Sign Up
           </NavLink>
         </li>
       )}
@@ -427,12 +427,12 @@ function NavBar() {
             <li className="nav-item">
               <NavLink
                 end
-                to={REGISTER}
+                to={SIGNUP}
                 className={(navData) =>
                   navData.isActive ? "active" : "nav-links"
                 }
               >
-                Register
+                Sign Up
               </NavLink>
             </li>
         </ul>

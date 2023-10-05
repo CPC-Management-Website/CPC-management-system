@@ -15,6 +15,7 @@
     "RESOURCES" : "/backend/resources",
     "MYRESOURCES" : "/backend/myresources",
     "REGISTER" : "/backend/register",
+    "SIGNUP" : "/backend/signup",
     "LEVELS" : "/backend/levels",
     "SEASONS" : "/backend/seasons",
     "REGISTRATION" : "/backend/registrationstatus",

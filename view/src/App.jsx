@@ -14,7 +14,7 @@ import {
   PROFILE,
   CONTEST,
   USERS,
-  REGISTER,
+  SIGNUP,
   LOGIN,
 } from "../src/urls/frontend_urls";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -22,7 +22,7 @@ import NavBar from "./components/NavBar";
 import { ToastContainer } from "react-toastify";
 import Contest from "./pages/Contest.jsx";
 import Users from "./pages/Users.jsx";
-import Register from "./pages/Register"
+import SignUp from "./pages/SignUp.jsx"
 import NotFound from "./pages/NotFound.jsx";
 import {
   ADD_CONTESTS,
@@ -105,9 +105,9 @@ function App() {
           }
         />
         <Route
-          path={REGISTER}
+          path={SIGNUP}
           element={
-            <Register />
+            <SignUp />
           }
         />
         <Route

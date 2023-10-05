@@ -72,8 +72,8 @@ def register_admin():
     sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return {"email" : email,"password" : password}
 
-@auth.route(urls['REGISTER'], methods=["POST"], strict_slashes=False)
-def register():
+@auth.route(urls['SIGNUP'], methods=["POST"], strict_slashes=False)
+def signUp():
     name = request.json["fullName"]
     email = request.json["email"]
     vjudge = request.json["vjudgeHandle"]
