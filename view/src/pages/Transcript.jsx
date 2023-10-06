@@ -80,21 +80,21 @@ export default function Transcript() {
   // };
 
   useEffect(() => {
-    getTrainee();
+    // getTrainee();
     
     // getProgressList();
   }, []);
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
-      <p className="text-3xl font-semibold lg:my-10 mb-4">Transcript</p>
-      {loading ? (
+      <p className="text-3xl font-semibold lg:my-10 mb-4">Progress</p>
+      {/* {loading ? (
         <div className="flex justify-center py-32">
           <CircularProgress size={50} thickness={4} color="inherit" />
         </div>
-      ) : (
+      ) : ( */}
         <div className="flex flex-col space-y-4 lg:w-[50%] mb-0 lg:mb-4">
-          <div className="flex flex-col sm:text-xl space-y-4 border-2 border-gray-200 rounded-xl p-6">
+          {/* <div className="flex flex-col sm:text-xl space-y-4 border-2 border-gray-200 rounded-xl p-6">
             <div className="flex flex-row ">
               <strong className="mr-2">Name:</strong> {trainee.name}
             </div>
@@ -105,12 +105,12 @@ export default function Transcript() {
               <strong className="mr-2">Vjudge Handle:</strong>
               {trainee.vjudge_handle}
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-col space-y-4 border-2 border-gray-200 rounded-xl p-6">
             <ProgressList email={userInfo.email} level_id = {userInfo.enrollment?.level_id} season={seasonID} />
           </div>
         </div>
-      )}
+      {/* )} */}
       {/* {loading_transcript ? (
         <div className="py-32">
           <CircularProgress size={50} thickness={4} color="inherit" />
