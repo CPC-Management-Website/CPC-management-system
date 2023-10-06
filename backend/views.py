@@ -217,3 +217,12 @@ def setRegistrationStatus():
     value = request.json["registration"]
     Vars.setVariableValue("registration",value=value)
     return "Success"
+
+@views.route(urls["MENTOR"], methods = ["GET"], strict_slashes = False)
+def getMentor():
+    user_id = request.args.get("user_id")
+    season = request.args.get("season_id")
+    mentor = User.getMentorInfo(user_id=user_id,season_id=season)
+    if mentor is not None:
+        return mentor
+    return ""

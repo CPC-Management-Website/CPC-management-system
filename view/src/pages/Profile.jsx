@@ -4,6 +4,7 @@ import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 import { Store } from "../context/store";
 import CircularProgress from "@mui/material/CircularProgress";
+import MentorProfile from "../components/MentorProfile";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -83,13 +84,13 @@ export default function EditProfile() {
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
-      <p className="text-3xl font-semibold lg:my-10 mb-4">Profile</p>
+      <p className="text-3xl font-semibold lg:my-10 my-4">Profile</p>
       {loading ? (
         <div className="flex justify-center py-32">
           <CircularProgress size={50} thickness={4} color="inherit" />
         </div>
       ) : (
-        <form className="flex flex-col lg:w-[40%]" onSubmit={handleSubmit}>
+        <form className="flex flex-col lg:w-[40%] border-2 border-gray-200 rounded-xl p-6" onSubmit={handleSubmit} >
           <div className="flex flex-col">
             <label className="inputlabel">Name</label>
             <div className="inputCont">
@@ -161,6 +162,7 @@ export default function EditProfile() {
           </div>
         </form>
       )}
+      <MentorProfile/>
     </div>
   );
 }

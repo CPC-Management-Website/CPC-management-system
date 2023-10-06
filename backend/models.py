@@ -305,6 +305,27 @@ class User(UserMixin):
         query = "DELETE FROM user WHERE (`email` = %s);"
         mycursor.execute(query,(email,))
         g.db.commit()
+
+    @staticmethod
+    def getMentorInfo(user_id,season_id):
+        mycursor = g.db.cursor(dictionary=True)
+        query = '''
+                SELECT 
+                    m.name,
+                    m.email,
+                    m.vjudge_handle,
+                    m.phone_number,
+                    m.discord_handle
+                from (user u)
+                inner join enrollment e on (e.user_id = u.user_id)
+                inner join user m on (e.mentor_id = m.user_id)
+                where u.user_id = %s AND e.season_id = %s;
+                '''
+        mycursor.execute(query,(user_id,season_id,))
+        mentorInfo = mycursor.fetchone()
+        if (mentorInfo is not None):
+            return mentorInfo
+        return None
     
 class Permissions():
 

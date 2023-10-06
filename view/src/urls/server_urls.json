@@ -19,5 +19,6 @@
     "LEVELS" : "/backend/levels",
     "SEASONS" : "/backend/seasons",
     "REGISTRATION" : "/backend/registrationstatus",
-    "ENROLL" : "/backend/enroll"
+    "ENROLL" : "/backend/enroll",
+    "MENTOR" : "/backend/mentor"
 }
