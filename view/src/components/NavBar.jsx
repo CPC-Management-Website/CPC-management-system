@@ -59,7 +59,7 @@ function NavBar() {
 
   const list = () => (
     <ul className="text-black flex flex-col p-6 space-y-6 text-xl font-medium w-[80vw] bg-[f7f7f7]">
-      {userInfo ? (
+      {userInfo && userInfo.enrolledSeasons.length ? (
         <select
           value={seasonID}
           onChange={(e) =>changeSeasonHandler(e.target.value)}
