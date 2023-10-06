@@ -35,7 +35,6 @@ export default function MentorProfile() {
       const response = await axios.get(URLS.MENTOR, {
         params,
       });
-      console.log(response)
       setMentor(response.data)
       dispatch({ type: "FETCH_SUCCESS" });
     } catch (error) {
