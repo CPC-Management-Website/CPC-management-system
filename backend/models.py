@@ -792,10 +792,18 @@ class Enrollment():
         return enrollment
 
     @staticmethod
-    def updateEnrollment(enrollment_id, level_id, season_id, mentor_id, enrolled):
+    def updateEnrollment(enrollment_id, level_id, mentor_id, enrolled,season_id=current_season_id):
         mycursor = g.db.cursor()
         query = "UPDATE enrollment SET level_id=%s, season_id=%s, mentor_id=%s, enrolled=%s WHERE enrollment_id=%s;"
         mycursor.execute(query, (level_id, season_id, mentor_id, enrolled, enrollment_id,))
+        g.db.commit()
+    
+    #TODO make merge these two functions
+    @staticmethod
+    def updateEnrollmentFile(enrollment_id, level_id, mentor_id, enrolled, role_id, season_id=current_season_id):
+        mycursor = g.db.cursor()
+        query = "UPDATE enrollment SET level_id=%s, season_id=%s, mentor_id=%s, enrolled=%s, role_id = %s WHERE enrollment_id=%s;"
+        mycursor.execute(query, (level_id, season_id, mentor_id, enrolled, role_id, enrollment_id,))
         g.db.commit()
     
     @staticmethod

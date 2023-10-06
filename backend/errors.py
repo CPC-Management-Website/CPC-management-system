@@ -41,6 +41,14 @@ def emails_do_not_exist(nonexistant_emails,e):
     return {"Error":message}, 405
 
 @errors.errorhandler(werkzeug.exceptions.BadRequest)
+def emails_do_not_exist_register_file(nonexistant_emails,e):
+    message = "These emails do not exist:\n"
+    for email in nonexistant_emails:
+        message+=email+"\n"
+    print(message)
+    return {"Error":message}, 405
+
+@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def contest_already_registered(e):
     return {"Error":'This contest ID is already registered'}, 406
 

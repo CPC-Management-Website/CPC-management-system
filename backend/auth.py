@@ -197,3 +197,37 @@ def enroll():
     Enrollment.enrollFromRegistration(email=email)
     registeredSeasons = Seasons.getEnrolledSeasons(user_id=user_id)
     return {"enrolledSeasons":registeredSeasons}
+
+@auth.route(urls['USER_REGISTER_FILE'], methods=["POST"], strict_slashes=False)
+def registerUsers():
+    roles = Permissions.getAllRoles()
+    levels  = Levels.getAllLevels()
+    file = request.files.get("excel-file")
+    df = pd.DataFrame(pd.read_excel(file))
+    nonexistant_emails = []
+    for index, row in df.iterrows():
+        index+=2
+        email  = row["Email"]
+        roleName = row["Role"]
+        res = [role for role in roles if role['user_role'] == roleName]
+        roleID = res[0]["role_id"]
+        levelName = row["Level"]
+        res2 = [level for level in levels if level['name'] == levelName]
+        levelID = res2[0]["level_id"]
+        # print(name,email,password)
+        if User.email_exists(email=email)==False:
+            nonexistant_emails.append(email)
+            continue
+        user = User(email)
+        enrollment = Enrollment.getEnrollment(user_id=user.id)
+        print(enrollment)
+        print(levelName)
+        print(levelID)
+        if enrollment is not None:
+            Enrollment.updateEnrollmentFile(enrollment["enrollment_id"],level_id=levelID,mentor_id=None,enrolled=True,role_id=roleID)
+        else:
+            Enrollment.enroll(user_id=user.id,level_id=levelID,role_id=roleID)
+
+    if len(nonexistant_emails)>0:
+        return errors.emails_do_not_exist_register_file(nonexistant_emails,werkzeug.exceptions.BadRequest)
+    return " "
