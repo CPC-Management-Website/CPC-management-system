@@ -70,7 +70,7 @@ function Home() {
       </div>
       : null}
       <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
-        <p className="text-5xl font-semibold lg:my-10 mb-4">
+        <p className="text-5xl font-semibold lg:my-10 mb-4 text-center">
           Fall 2023 Training
         </p>
         <div className="flex flex-col lg:flex-row">
