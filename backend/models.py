@@ -111,7 +111,7 @@ class User(UserMixin):
         User.addUser_admin(vjudge_handle,name,email,points,password,discord)
         user_id = User.getUserID(email=email)
         print("Registering",email,"in contests")
-        Enrollment.enroll(user_id=user_id,level_id=level_id)
+        Enrollment.enroll(user_id=user_id,level_id=level_id,role_id=roleID)
         ProgressPerContest.initContestProgress_contestant(user_id)
 
     @staticmethod
