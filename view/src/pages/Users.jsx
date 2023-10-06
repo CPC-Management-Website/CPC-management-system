@@ -712,7 +712,7 @@ export default function User() {
                             </button>
                           </Tooltip>
                         )}
-                        <Tooltip placement="bottom" title="View Transcript">
+                        <Tooltip placement="bottom" title="View Progress">
                           <button>
                             <AlertDialog email={item.email} level_id={item.level_id} season={seasonID} />
                           </button>
@@ -763,7 +763,7 @@ export default function User() {
                         </button>
                       </Tooltip>
                     )}
-                    <Tooltip placement="bottom" title="View Transcript">
+                    <Tooltip placement="bottom" title="View Progress">
                       <button>
                         <AlertDialog email={item.email} level_id={item.level_id} season={seasonID}/>
                       </button>
