@@ -15,7 +15,7 @@ function Home() {
     {value:"Complexity Analysis and Array Techniques"},
     {value:"Functions and Built-in Functions"},
     {value:"STLs (Vector, Set, Map, Queue, etc.)"},
-    {value:"Elementray Number Theory & Sieve of Eratosthenes"},
+    {value:"Elementary Number Theory & Sieve of Eratosthenes"},
     {value:"Binary Search"}
   ]
 
