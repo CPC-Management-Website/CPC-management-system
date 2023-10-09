@@ -821,6 +821,13 @@ class Enrollment():
         if mycursor.rowcount ==1:
             return True
         return False
+    
+    @staticmethod
+    def getEnrollmentLevel(user_id,season_id=current_season_id):
+        mycursor = g.db.cursor()
+        query = "SELECT level_id FROM enrollment where user_id=%s and season_id=%s;"
+        mycursor.execute(query,(user_id,season_id,))
+        return mycursor.fetchone()[0]
 
 class Vars():
     def getVariableValue(varname):

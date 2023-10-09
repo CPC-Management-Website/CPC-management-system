@@ -1,14 +1,20 @@
-import React, { useContext, useReducer, useState } from "react";
+import React, { useContext, useReducer, useState, useEffect } from "react";
 import HERO from "../assets/developer.svg";
 import AlertDialog from "../components/AlertDialog";
 import { Store } from "../context/store";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import CourseContent from "../components/CourseContent";
+import { toast } from "react-toastify";
+import axios from "../hooks/axios";
+import URLS from "../urls/server_urls.json";
+import { useNavigate } from "react-router-dom";
+import { LOGIN } from "../urls/frontend_urls";
 
 function Home() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo, seasons, registrationAvailable, newSeasonWindowOpen } = state;
+  const { userInfo, seasons, newSeasonWindowOpen } = state;
+  const navigate = useNavigate();
 
   const level1Content = [
     {value:"C++ Fundamentals (Intro to C++, Data Types, Control Flow, etc.)"},
@@ -29,13 +35,125 @@ function Home() {
     {value:"Introduction to Dynamic Programming"}
   ]
 
+  const registerLevel1 = async () =>{
+    try {
+      dispatch({ type: "REGISTER_REQUEST" });
+      const email = userInfo.email
+      const user_id = userInfo.id
+      console.log(email)
+      const response = await axios.post(
+        URLS.ENROLL,
+        JSON.stringify({user_id, email,}),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log(response);
+      dispatch({ type: "REGISTER_SUCCESS" });
+      ctxDispatch({ type: "USER_SIGNIN", payload: {...userInfo, 
+        latestEnrollmentSeason: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
+        enrolledSeasons: response.data.enrolledSeasons
+      }});
+      sessionStorage.setItem("userInfo", JSON.stringify({...userInfo,
+        latestEnrollmentSeason: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID),
+        enrolledSeasons: response.data.enrolledSeasons
+      }));
+      ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(import.meta.env.VITE_CURRENT_SEASON_ID) });
+      sessionStorage.setItem("seasonID",import.meta.env.VITE_CURRENT_SEASON_ID)
+      // userInfo.latestEnrollmentSeason = import.meta.env.VITE_CURRENT_SEASON_ID
+      console.log(userInfo.latestEnrollmentSeason)
+      toast.success("Registration Successfull");
+    } catch (error) {
+      if (!error?.response) {
+        toast.error("Internal Server Error");
+      } else {
+        toast.error(error.response.data.Error);
+      }
+      console.log(error);
+      dispatch({ type: "REGISTER_FAIL" })
+    }
+  }
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "REGISTER_REQUEST":
+        return { ...state, loadingLevel1: true };
+      case "REGISTER_SUCCESS":
+        return { ...state, loadingLevel1: false };
+      case "REGISTER_FAIL":
+        return { ...state, loadingLevel1: false };
+      case "GET_REGISTRATION_REQUEST":
+        return { ...state, loadingLevel1: true, loadingLevel2: true };
+      case "GET_REGISTRATION_SUCCESS":
+        return { ...state, registrationAvailable: action.payload, loadingLevel1: false, loadingLevel2: false };
+      case "GET_REGISTRATION_FAIL":
+        return { ...state, error: action.payload, loadingLevel1: false, loadingLevel2:false };
+      case "GET_REGISTRATION_LEVEL_REQUEST":
+        return { ...state, loadingLevel1: true, loadingLevel2: true };
+      case "GET_REGISTRATION_LEVEL_SUCCESS":
+        return { ...state, registeredLevel: parseInt(action.payload), loadingLevel1: false, loadingLevel2: false };
+      case "GET_REGISTRATION_LEVEL_FAIL":
+        return { ...state, error: action.payload, loadingLevel1: false, loadingLevel2:false };
+      default:
+        return state;
+    }
+  };
+  const [{ loadingLevel1, loadingLevel2, registrationAvailable, registeredLevel }, dispatch] = useReducer(reducer, {
+      loadingLevel1: false,
+      loadingLevel2: false,
+      registrationAvailable: false,
+      registeredLevel: 0
+  });
+
+  const registerLevel1Handler = async () => {
+    if(userInfo)registerLevel1();
+    else{
+      toast.warning(<div>You need to be logged in!<br/>Please sign up if you don't have an account.</div>)
+      navigate(LOGIN);
+    }
+  };
+  const registerLevel2Handler = async () => {
+    window.open("https://forms.gle/MAMnhMEfrA1mVvSz5", "_blank");
+  };
+
+  const getRegistrationStatus = async () => {
+    try {
+      dispatch({ type: "GET_REGISTRATION_REQUEST" });
+      const response = await axios.get(URLS.REGISTRATION);
+      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data.value == 1 ? true : false });
+    } catch (error) {
+      dispatch({ type: "GET_REGISTRATION_FAIL" });
+      console.log(error);
+    }
+  };
+  const getRegistrationLevel = async () => {
+    try {
+      dispatch({ type: "GET_REGISTRATION_LEVEL_REQUEST" });
+      const params = new URLSearchParams([["user_id",userInfo.id]]);
+      const response = await axios.get(URLS.REGISTRATION_LEVEL,{params});
+      dispatch({ type: "GET_REGISTRATION_LEVEL_SUCCESS", payload: response.data });
+    } catch (error) {
+      dispatch({ type: "GET_REGISTRATION_LEVEL_FAIL" });
+      console.log(error);
+    }
+  };
   const handleClosePopup = () => {
     ctxDispatch({ type: "CLOSE_NEWSEASONWINDOW"});
     sessionStorage.setItem("newSeasonWindowOpen", false);
   };
 
+  useEffect(() => {
+    dispatch({ type: "GET_REGISTRATION_LEVEL_SUCCESS", payload: 0 });
+    getRegistrationStatus()
+    {userInfo && userInfo.latestEnrollmentSeason == import.meta.env.VITE_CURRENT_SEASON_ID?
+      getRegistrationLevel()
+      :
+      null
+    }
+  }, [userInfo]);
+
   return (
     <>
+    {console.log(registeredLevel)}
     <div className="flex bg-white justify-center min-h-[5vh]">
       <div className="flex lg:flex-row flex-col items-center justify-center lg:px-32">
         <div className="flex flex-col p-2">
@@ -63,7 +181,13 @@ function Home() {
             aria-describedby="alert-dialog-description"
           >
             <DialogContent>
-            <CourseContent title={"Level 1 - Fall 2023"} contentList={level1Content} registrationEnabled={true}/>
+            <CourseContent
+              title={"Level 1 - Fall 2023"}
+              contentList={level1Content}
+              registrationEnabled={registrationAvailable? true : false}
+              registerHandler={registerLevel1Handler}
+              loading={loadingLevel1}
+              buttonText={registeredLevel == 1? "Registered":"Register"}/>
             </DialogContent>
           </Dialog>
         </div>
@@ -76,12 +200,28 @@ function Home() {
         <div className="flex flex-col lg:flex-row">
           <div className="flex flex-col  lg:w-[50%] mb-0 lg:mb-4 m-4">
               <div className="flex flex-col sm:text-xl border-2 border-gray-200 rounded-xl p-6">
-                <CourseContent title={"Level 1"} contentList={level1Content} registrationEnabled={true}/>
+                <CourseContent 
+                  title={"Level 1"}
+                  contentList={level1Content}
+                  registrationEnabled={registrationAvailable?
+                    registeredLevel > 0 ? false:true
+                    : false}
+                  registerHandler={registerLevel1Handler}
+                  loading={loadingLevel1}
+                  buttonText={registeredLevel == 1? "Registered":"Register"}/>
               </div>
           </div>
           <div className="flex flex-col  lg:w-[50%] mb-0 lg:mb-4 m-4">
               <div className="flex flex-col sm:text-xl border-2 border-gray-200 rounded-xl p-6">
-                <CourseContent title={"Level 2"} contentList={level2Content} registrationEnabled={false}/>
+                <CourseContent
+                  title={"Level 2"}
+                  contentList={level2Content}
+                  registrationEnabled={registrationAvailable?
+                    registeredLevel > 0 ? false:true
+                    : false}
+                  registerHandler={registerLevel2Handler}
+                  loading={loadingLevel2}
+                  buttonText={registeredLevel === 2? "Registered":"Register"} />
                 {/* <p className="text-3xl font-semibold mb-4 text-center">Level 2</p>
                 <label className="text-xl font-semibold mb-4">Content:</label>
                 <ol className="list-disc list-inside">

@@ -226,3 +226,9 @@ def getMentor():
     if mentor is not None:
         return mentor
     return ""
+
+@views.route(urls["REGISTRATION_LEVEL"], methods = ["GET"], strict_slashes = False)
+def getRegistrationLevel():
+    user_id = request.args.get("user_id")
+    level = Enrollment.getEnrollmentLevel(user_id=user_id)
+    return json.dumps(level)
