@@ -9,6 +9,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { toast } from "react-toastify";
 import UsersTable from "../components/UsersTable";
+import FileInput from "../components/FileInput";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -195,12 +196,11 @@ export default function User() {
     }
   }
 
-  const enterAssignMentorsFile = async (e) => {
-    e.preventDefault();
+  const assignMentorsFile = async (file) => {
     try {
       dispatch({ type: "ASSIGN_MENTORS_REQUEST" });
       const data = new FormData();
-      data.append("excel-file", selectedFileAssignMentors, "file.xlsx");
+      data.append("excel-file", file, "file.xlsx");
       const response = await axios.post(URLS.ASSIGN_MENTORS, data);
       console.log(response);
       dispatch({ type: "ASSIGN_MENTORS_SUCCESS" });
@@ -217,12 +217,11 @@ export default function User() {
     }
   };
 
-  const enterRegisterUsersFile = async (e) => {
-    e.preventDefault();
+  const registerUsersFile = async (file) => {
     try {
       dispatch({ type: "REGISTER_USERS_REQUEST" });
       const data = new FormData();
-      data.append("excel-file", selectedFileRegisterUsers, "file.xlsx");
+      data.append("excel-file", file, "file.xlsx");
       const response = await axios.post(URLS.USER_REGISTER_FILE, data);
       console.log(response);
       dispatch({ type: "REGISTER_USERS_SUCCESS" });
@@ -310,106 +309,9 @@ export default function User() {
         {userInfo?.permissions?.find((perm) => perm === UPDATE_USERS) ?(
           <>
             <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">Assign Mentors</p>
-            <form className="flex flex-col lg:w-[40%]" onSubmit={enterAssignMentorsFile}>
-              <div className="flex flex-col">
-                <p className="inputlabel">Upload file</p>
-                <div className="flex flex-col">
-                  <label
-                    className="flex flex-row text-xl w-full justify-center items-center text-white py-1 px-6 bg-green-800 hover:bg-green-700 rounded mb-4 cursor-pointer"
-                    htmlFor="Image"
-                  >
-                    <div className="flex mr-4">
-                      <img src="https://img.icons8.com/ios-glyphs/30/ffffff/ms-excel.png" />
-                    </div>
-                    Add Excel File
-                  </label>
-                  <input
-                    id="Image"
-                    style={{ display: "none" }}
-                    type="file"
-                    accept=".xls,.xlsx"
-                    onChange={(e) => setSelectedFileAssignMentors(e.target.files[0])}
-                    required
-                  />
-                </div>
-                {selectedFileAssignMentors?.length === 0 ? (
-                  <strong>No files added</strong>
-                ) : (
-                  <div className="flex">
-                    <strong>{selectedFileAssignMentors?.name}</strong>
-                  </div>
-                )}
-                {console.log(selectedFileAssignMentors?.name)}
-              </div>
-              <div className="flex flex-col mt-4 mb-4">
-                {loadingAssignMentors ? (
-                  <button
-                    className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
-                    type="submit"
-                  >
-                    <CircularProgress size={23} thickness={4} color="inherit" />
-                  </button>
-                ) : (
-                  <button
-                    className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
-                    type="submit"
-                  >
-                    Assign Mentors
-                  </button>
-                )}
-              </div>
-            </form>
-
+            <FileInput title={"Assign Mentors"} loading={loadingAssignMentors} submitHandler={assignMentorsFile}/>
             <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">Register Users</p>
-            <form className="flex flex-col lg:w-[40%]" onSubmit={enterRegisterUsersFile}>
-              <div className="flex flex-col">
-                <p className="inputlabel">Upload file</p>
-                <div className="flex flex-col">
-                  <label
-                    className="flex flex-row text-xl w-full justify-center items-center text-white py-1 px-6 bg-green-800 hover:bg-green-700 rounded mb-4 cursor-pointer"
-                    htmlFor="Image1"
-                  >
-                    <div className="flex mr-4">
-                      <img src="https://img.icons8.com/ios-glyphs/30/ffffff/ms-excel.png" />
-                    </div>
-                    Add Excel File
-                  </label>
-                  <input
-                    id="Image1"
-                    style={{ display: "none" }}
-                    type="file"
-                    accept=".xls,.xlsx"
-                    onChange={(e) => setSelectedFileRegisterUsers(e.target.files[0])}
-                    required
-                  />
-                </div>
-                {selectedFileRegisterUsers?.length === 0 ? (
-                  <strong>No files added</strong>
-                ) : (
-                  <div className="flex">
-                    <strong>{selectedFileRegisterUsers?.name}</strong>
-                  </div>
-                )}
-                {console.log(selectedFileRegisterUsers?.name)}
-              </div>
-              <div className="flex flex-col mt-4 mb-4">
-                {loadingRegisterUsers ? (
-                  <button
-                    className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
-                    type="submit"
-                  >
-                    <CircularProgress size={23} thickness={4} color="inherit" />
-                  </button>
-                ) : (
-                  <button
-                    className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
-                    type="submit"
-                  >
-                    Register Users
-                  </button>
-                )}
-              </div>
-            </form>
+            <FileInput title={"Register Users"} loading={loadingRegisterUsers} submitHandler={registerUsersFile}/>
           </>
           ):
           null
