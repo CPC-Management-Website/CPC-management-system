@@ -1,23 +1,61 @@
 import * as React from "react";
+import { useState, useReducer } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
+import axios from "../hooks/axios";
+import URLS from "../urls/server_urls.json";
+import { toast } from "react-toastify";
 
-export default function Edit(props) {
-  let isOpened = props.opened;
-  let user = props.user;
-  let mentors = props.mentors;
-  let loadingUpdate = props.loadingUpdate;
-  let loading = false;
-  let levels = props.levels
-  console.log(levels)
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "UPDATE_REQUEST":
+      return { ...state, loading: true };
+    case "UPDATE_SUCCESS":
+      return { ...state, loading: false };
+    case "UPDATE_FAIL":
+      return { ...state, loading: false };
+    default:
+      return state;
+  }
+};
 
-  const updateUser = props.updateUser;
-  const submitEdit = props.submitEdit;
-  const handleClose = props.handleClose;
+export default function Edit({user, mentors, levels, isOpened, setIsOpened, refresh}) {
+  const [ tempUser, updateTempUser ] = useState(user);
 
-  const handleSubmit = async (e) => {
-    submitEdit(e);
+  const [{ loading }, dispatch] = useReducer(reducer, {loading: false,error: ""});
+
+  const editHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "UPDATE_REQUEST" });
+      await axios.post(
+        URLS.PROFILE_ADMIN,
+        JSON.stringify({
+          userID: tempUser.user_id,
+          name: tempUser.name,
+          vjudgeHandle: tempUser.vjudge_handle,
+          email: tempUser.email,
+          levelID: tempUser.level_id,
+          mentorID: tempUser.mentor_id,
+          enrolled: tempUser.enrolled,
+          seasonID: tempUser.season_id,
+          enrollmentID: tempUser.enrollment_id,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      dispatch({ type: "UPDATE_SUCCESS" });
+      toast.success("Profile updated");
+      refresh();
+      setIsOpened(false);
+    } catch (error) {
+      console.log(error)
+      dispatch({ type: "UPDATE_FAIL" });
+      toast.error(error.response.data.Error);
+    }
   };
 
   return (
@@ -26,27 +64,22 @@ export default function Edit(props) {
       <Dialog
         fullWidth
         open={isOpened}
-        onClose={handleClose}
+        onClose={()=>{setIsOpened(false)}}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogContent>
           <div className="flex flex-col lg:items-center p-4">
             <p className="text-3xl font-semibold lg:mb-10 mb-4">Profile</p>
-            {loading ? (
-              <div className="flex justify-center py-32">
-                <CircularProgress size={50} thickness={4} color="inherit" />
-              </div>
-            ) : (
-              <form className="flex flex-col" onSubmit={handleSubmit}>
+              <form className="flex flex-col" onSubmit={editHandler}>
                 <div className="flex flex-col">
                   <label className="inputlabel">Name</label>
                   <div className="inputCont">
                     <input
-                      value={user?.name}
+                      value={tempUser.name}
                       className="input"
                       onChange={(e) =>
-                        updateUser({ ...user, name: e.target.value })
+                        updateTempUser({ ...tempUser, name: e.target.value })
                       }
                     />
                   </div>
@@ -55,10 +88,10 @@ export default function Edit(props) {
                   <label className="inputlabel">Vjudge Handle</label>
                   <div className="inputCont">
                     <input
-                      value={user?.vjudge_handle}
+                      value={tempUser.vjudge_handle}
                       className="input"
                       onChange={(e) =>
-                        updateUser({ ...user, vjudge_handle: e.target.value })
+                        updateTempUser({ ...tempUser, vjudge_handle: e.target.value })
                       }
                     />
                   </div>
@@ -67,10 +100,10 @@ export default function Edit(props) {
                   <label className="inputlabel">Email</label>
                   <div className="inputCont">
                     <input
-                      value={user?.email}
+                      value={tempUser.email}
                       className="input"
                       onChange={(e) =>
-                        updateUser({ ...user, email: e.target.value })
+                        updateTempUser({ ...tempUser, email: e.target.value })
                       }
                     />
                   </div>
@@ -79,10 +112,10 @@ export default function Edit(props) {
                   <label className="inputlabel">Level</label>
                   <div className="inputCont">
                     <select
-                      value={user?.level_id ? user.level_id : undefined}
+                      value={tempUser.level_id ? tempUser.level_id : undefined}
                       onChange={(e) =>
-                        updateUser({
-                          ...user,
+                        updateTempUser({
+                          ...tempUser,
                           level_id:
                             e.target.value === "NULL" ? null : e.target.value,
                         })
@@ -108,10 +141,10 @@ export default function Edit(props) {
                   <label className="inputlabel">Mentor</label>
                   <div className="inputCont">
                     <select
-                      value={user?.mentor_id ? user.mentor_id : undefined}
+                      value={tempUser.mentor_id ? tempUser.mentor_id : undefined}
                       onChange={(e) =>
-                        updateUser({
-                          ...user,
+                        updateTempUser({
+                          ...tempUser,
                           mentor_id:
                             e.target.value === "NULL" ? null : e.target.value,
                         })
@@ -141,10 +174,10 @@ export default function Edit(props) {
                             name="enrolled"
                             type="radio"
                             value={1}
-                            checked={user?.enrolled === 1}
+                            checked={tempUser.enrolled === 1}
                             onChange={(e) =>
-                              updateUser({
-                                ...user,
+                              updateTempUser({
+                                ...tempUser,
                                 enrolled: Number(e.target.value),
                               })
                             }
@@ -158,10 +191,10 @@ export default function Edit(props) {
                             name="enrolled"
                             type="radio"
                             value={0}
-                            checked={user?.enrolled === 0}
+                            checked={tempUser.enrolled === 0}
                             onChange={(e) =>
-                              updateUser({
-                                ...user,
+                              updateTempUser({
+                                ...tempUser,
                                 enrolled: Number(e.target.value),
                               })
                             }
@@ -173,7 +206,7 @@ export default function Edit(props) {
                   </div>
                 </div>
                 <div className="flex flex-col mt-4">
-                  {loadingUpdate ? (
+                  {loading ? (
                     <button
                       className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
                       type="submit"
@@ -194,7 +227,6 @@ export default function Edit(props) {
                   )}
                 </div>
               </form>
-            )}
           </div>
         </DialogContent>
       </Dialog>

@@ -20,6 +20,7 @@ import {
   VIEW_MENTORS,
   UPDATE_CONTESTS,
   DELETE_CONTESTS,
+  VIEW_MENTEES,
 } from "../permissions/permissions";
 import {
   USERS,
@@ -321,13 +322,23 @@ function NavBar() {
                   navData.isActive ? "active" : "nav-links"
                 }
               >
-                {userInfo?.permissions?.find(
-                  (perm) => perm === VIEW_ADMINS
-                ) ? (
-                  <span>Users</span>
-                ) : (
-                  <span>Mentees</span>
-                )}
+              <span>Users</span>
+              </NavLink>
+            </li>
+          ) : null}
+          {userInfo?.permissions?.find(
+            (perm) =>
+              perm === VIEW_MENTEES
+          ) ? (
+            <li className="nav-item">
+              <NavLink
+                end
+                to={USERS}
+                className={(navData) =>
+                  navData.isActive ? "active" : "nav-links"
+                }
+              >
+              <span>Mentees</span>
               </NavLink>
             </li>
           ) : null}

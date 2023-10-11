@@ -34,6 +34,7 @@ import {
   VIEW_MENTORS,
   UPDATE_CONTESTS,
   DELETE_CONTESTS,
+  VIEW_MENTEES,
 } from "./permissions/permissions";
 
 function App() {
@@ -99,7 +100,7 @@ function App() {
         <Route
           path={USERS}
           element={
-            <ProtectedRoute allowedPermissions={[VIEW_ADMINS, VIEW_MENTORS, VIEW_TRAINEES]}>
+            <ProtectedRoute allowedPermissions={[VIEW_ADMINS, VIEW_MENTORS, VIEW_TRAINEES, VIEW_MENTEES]}>
               <Users />
             </ProtectedRoute>
           }
