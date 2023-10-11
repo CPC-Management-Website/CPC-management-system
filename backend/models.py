@@ -154,6 +154,14 @@ class User(UserMixin):
         return role_id
     
     @staticmethod
+    def getUserRoleID(user_id,season=current_season_id):
+        mycursor = g.db.cursor()
+        query = "SELECT role_id FROM enrollment where user_id=%s AND season_id=%s;"
+        mycursor.execute(query,(user_id,season,))
+        roleName =  mycursor.fetchone()[0]
+        return roleName
+    
+    @staticmethod
     def getRoleName(roleID):
         mycursor = g.db.cursor()
         query = "SELECT user_role FROM role where role_id=%s;"
@@ -163,7 +171,8 @@ class User(UserMixin):
 
     @staticmethod
     def getUserRoleName(email):
-        roleID = User.getUserRoleID(email)
+        user = User(email=email)
+        roleID = User.getUserRoleID(user.id)
         return User.getRoleName(roleID)
 
     @staticmethod
