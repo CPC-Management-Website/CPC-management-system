@@ -63,9 +63,6 @@ export default function User() {
   const { state } = useContext(Store);
   const { seasonID,levels } = state;
 
-  const [selectedFileAssignMentors, setSelectedFileAssignMentors] = useState("");
-  const [selectedFileRegisterUsers, setSelectedFileRegisterUsers] = useState("");
-
   const { userInfo } = state;
   const [
     {
@@ -309,9 +306,9 @@ export default function User() {
         {userInfo?.permissions?.find((perm) => perm === UPDATE_USERS) ?(
           <>
             <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">Assign Mentors</p>
-            <FileInput title={"Assign Mentors"} loading={loadingAssignMentors} submitHandler={assignMentorsFile}/>
+            <FileInput identifier={"assignMentors"} title={"Assign Mentors"} loading={loadingAssignMentors} submitHandler={assignMentorsFile} />
             <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">Register Users</p>
-            <FileInput title={"Register Users"} loading={loadingRegisterUsers} submitHandler={registerUsersFile}/>
+            <FileInput identifier={"registerUsers"} title={"Register Users"} loading={loadingRegisterUsers} submitHandler={registerUsersFile} />
           </>
           ):
           null

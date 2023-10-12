@@ -229,7 +229,7 @@ function UserEntry() {
         </div>
       </form>
       <p className="flex text-lg font-semibold justify-center py-6">OR</p>
-      <FileInput title={"Add Users"} loading={loadingAddBulk} submitHandler={enterFile}/>
+      <FileInput identifier={"addUsers"} title={"Add Users"} loading={loadingAddBulk} submitHandler={enterFile}/>
     </div>
   );
 }
