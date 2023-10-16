@@ -313,7 +313,14 @@ class User(UserMixin):
         g.db.commit()
     
     @staticmethod
-    def updateDataAdmin(name,email,vjudge_handle,phone,university,faculty,university_level,major,discord):
+    def updateDataAdmin(id, name, vjudge_handle, email):
+        mycursor = g.db.cursor()
+        query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s WHERE user_id=%s;"
+        mycursor.execute(query, (name,vjudge_handle,email,id,))
+        g.db.commit()
+
+    @staticmethod
+    def updateDataAdminFile(name,email,vjudge_handle,phone,university,faculty,university_level,major,discord):
         mycursor = g.db.cursor()
         query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s WHERE user_id=%s;"
         query = """

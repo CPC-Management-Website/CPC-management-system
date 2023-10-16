@@ -155,7 +155,7 @@ def registerfile():
                 add_already_registered(email)
                 continue
 
-            User.updateDataAdmin(
+            User.updateDataAdminFile(
                 name=name,
                 email=email,
                 vjudge_handle=vjudge,
