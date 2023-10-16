@@ -55,6 +55,16 @@ class User(UserMixin):
         return email
     
     @staticmethod
+    def getUserEmailbyVjudgeHandle(vjudge_handle):
+        mycursor = g.db.cursor()
+        query = "SELECT email FROM user where vjudge_handle=%s;"
+        mycursor.execute(query,(vjudge_handle,))
+        email =  mycursor.fetchone()
+        if (email is not None):
+            return email[0]
+        return None
+
+    @staticmethod
     def getVjudgeHandle(user_id):
         mycursor = g.db.cursor()
         query = "SELECT vjudge_handle FROM user where user_id=%s;"
@@ -95,6 +105,7 @@ class User(UserMixin):
         return False
         # return bool(mycursor.rowcount)
 
+    #depricated
     @staticmethod
     def addUser_admin(vjudge_handle,name,email,points,password,discord):
         mycursor = g.db.cursor()
@@ -107,11 +118,11 @@ class User(UserMixin):
         g.db.commit()
 
     @staticmethod
-    def registerUser_admin(vjudge_handle,name,email,level_id,roleID,points,password,discord):
-        User.addUser_admin(vjudge_handle,name,email,points,password,discord)
+    def registerUser_admin(name,email,vjudge_handle,phone,university,faculty,university_level,major,discord,password,role_id,level_id):
+        User.addUser(name,email,vjudge_handle,phone,university,faculty,university_level,major,discord,password)
         user_id = User.getUserID(email=email)
         print("Registering",email,"in contests")
-        Enrollment.enroll(user_id=user_id,level_id=level_id,role_id=roleID)
+        Enrollment.enroll(user_id=user_id,level_id=level_id,role_id=role_id)
         ProgressPerContest.initContestProgress_contestant(user_id)
 
     @staticmethod
@@ -302,10 +313,22 @@ class User(UserMixin):
         g.db.commit()
     
     @staticmethod
-    def updateDataAdmin(id, name, vjudge_handle, email):
+    def updateDataAdmin(name,email,vjudge_handle,phone,university,faculty,university_level,major,discord):
         mycursor = g.db.cursor()
         query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s WHERE user_id=%s;"
-        mycursor.execute(query, (name,vjudge_handle,email,id,))
+        query = """
+                UPDATE user SET
+                name=%s,
+                vjudge_handle=%s,
+                phone_number=%s,
+                university=%s,
+                faculty=%s,
+                university_level=%s,
+                major=%s,
+                discord_handle=%s
+                WHERE email=%s;
+                """
+        mycursor.execute(query, (name,vjudge_handle,phone,university,faculty,university_level,major,discord,email,))
         g.db.commit()
     
     @staticmethod

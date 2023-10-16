@@ -65,7 +65,7 @@ def register_admin():
         print("vjudge handle already registered")
         return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
     User.registerUser_admin(vjudge_handle = vjudge,name = name,
-                email = email, level_id = levelID,roleID = roleID,
+                email = email, level_id = levelID,role_id = roleID,
                 points = 0,discord=discord,
                 password = generate_password_hash(password, method='sha256'))
     print("User added successfully")
@@ -121,33 +121,71 @@ def registerfile():
     roles = Permissions.getAllRoles()
     levels  = Levels.getAllLevels()
     file = request.files.get("excel-file")
-    df = pd.DataFrame(pd.read_excel(file))
+    df = pd.DataFrame(pd.read_excel(file,dtype=str,na_filter=False))
     emails = []
     already_registered = []
     for index, row in df.iterrows():
         index+=2
-        vjudge = row["Vjudge Handle"]
-        email  = row["Email"]
+        name = row["name"]
+        email  = row["email"]
+        vjudge = row["vjudge_handle"]
+        phone = row["phone_number"]
+        university = row["university"]
+        faculty = row["faculty"]
+        university_level = row["university_level"]
+        major = row["major"]
+        discord = row["discord_handle"]
         password = secrets.token_urlsafe(password_length)
-        name = row["Name"]
         roleName = row["Role"]
+        levelName = row["Level"]
         res = [role for role in roles if role['user_role'] == roleName]
         roleID = res[0]["role_id"]
-        levelName = row["Level"]
         res2 = [level for level in levels if level['name'] == levelName]
         levelID = res2[0]["level_id"]
-        discord = row["Discord"]
         # print(name,email,password)
-        if User.email_exists(email) or User.vjudge_handle_exists(vjudge):
+
+        def add_already_registered(email):
+            already_registered.append(email)
             print(email)
             print("user already registered")
-            already_registered.append(email)
+
+        if User.email_exists(email):
+            emailForVjudgeHandle = User.getUserEmailbyVjudgeHandle(vjudge) #the email associated with the given vjudge handle
+            if (emailForVjudgeHandle is not None) and (emailForVjudgeHandle != email):
+                add_already_registered(email)
+                continue
+
+            User.updateDataAdmin(
+                name=name,
+                email=email,
+                vjudge_handle=vjudge,
+                phone=phone,
+                university=university,
+                faculty=faculty,
+                university_level=university_level,
+                major=major,
+                discord=discord
+            )
+            
         else:
-            User.registerUser_admin(vjudge_handle = vjudge,name = name,
-                    email = email, level_id = levelID, roleID = roleID,
-                    points = 0,
-                    discord=discord,
-                    password = generate_password_hash(password, method='sha256'))
+            if User.vjudge_handle_exists(vjudge):
+                add_already_registered(email)
+                continue
+
+            User.registerUser_admin(
+                name=name,
+                email=email,
+                vjudge_handle=vjudge,
+                phone=phone,
+                university=university,
+                faculty=faculty,
+                university_level=university_level,
+                major=major,
+                discord=discord,
+                password= generate_password_hash(password, method='sha256'),
+                role_id=roleID,
+                level_id=levelID
+            )
             print(email, " added successfully")
             emails.append({"email":email,"name":name,"password":password})
     sendPasswordEmails(emails)    
