@@ -498,11 +498,16 @@ class ProgressPerContest():
     def getContestsAdmin(season = current_season_id):
         mycursor = g.db.cursor(dictionary=True)
         query  = '''
-                SELECT c.*, l.name as level
-                from (contest c)
-                inner join training_levels l on (l.level_id = c.level_id)
-                where season_id = %s;
-                '''
+            SELECT 
+                c.*, l.name AS level
+            FROM
+                (contest c)
+                    INNER JOIN
+                training_levels l ON (l.level_id = c.level_id)
+            WHERE
+                season_id = %s
+            order by level_id, week_number
+        '''
         mycursor.execute(query,(season,))
         contests = mycursor.fetchall()
         return contests
@@ -677,16 +682,22 @@ class Resources():
     @staticmethod
     def getAllResources(season_id = current_season_id):
         mycursor = g.db.cursor(dictionary=True)
-        query  = "SELECT distinct\
-                r.resource_id,\
-                r.topic,\
-                r.link,\
-                r.season_id,\
-                l.name as level,\
-                l.level_id\
-                from (resource r) \
-                left join training_levels l on (r.level_id = l.level_id) \
-                where (season_id = %s)"
+        query = '''
+            SELECT DISTINCT
+                r.resource_id,
+                r.topic,
+                r.link,
+                r.season_id,
+                l.name AS level,
+                l.level_id
+            FROM
+                (resource r)
+                    LEFT JOIN
+                training_levels l ON (r.level_id = l.level_id)
+            WHERE
+                (season_id = %s)
+            ORDER BY level_id
+        '''
         mycursor.execute(query,(season_id,))
         records = mycursor.fetchall()
         resources = []
