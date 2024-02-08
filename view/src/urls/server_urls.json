@@ -22,5 +22,6 @@
     "REGISTRATION" : "/backend/registrationstatus",
     "REGISTRATION_LEVEL" : "/backend/registrationlevel",
     "ENROLL" : "/backend/enroll",
-    "MENTOR" : "/backend/mentor"
+    "MENTOR" : "/backend/mentor",
+    "UPDATE_PASSSWORD" : "/backend/update_password"
 }

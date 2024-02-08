@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { Store } from "../context/store";
 import CircularProgress from "@mui/material/CircularProgress";
 import MentorProfile from "../components/MentorProfile";
+import UpdatePassword from "../components/UpdatePassword";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,7 +39,8 @@ export default function EditProfile() {
   const [name, setName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
   const [password, setPassword] = useState(userInfo.password);
-
+  const [updatePasswordWindowOpened, setUpdatePasswordWindowOpened] = useState(false);
+  
   const displayProfile = async () => {
     const params = new URLSearchParams([["email", userInfo.email]]);
     try {
@@ -64,7 +66,7 @@ export default function EditProfile() {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.post(
         URLS.PROFILE,
-        JSON.stringify({ userID, email, name, password, vjudgeHandle }),
+        JSON.stringify({ userID, email, name, vjudgeHandle }),
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -83,6 +85,14 @@ export default function EditProfile() {
   }, []);
 
   return (
+    <>
+    {updatePasswordWindowOpened && 
+      <UpdatePassword
+      user_id={userInfo.id}
+      isOpened={updatePasswordWindowOpened}
+      setIsOpened={setUpdatePasswordWindowOpened}
+      />
+    }
     <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
       <p className="text-3xl font-semibold lg:my-10 my-4">Profile</p>
       {loading ? (
@@ -130,19 +140,6 @@ export default function EditProfile() {
             </div>
           </div>
 
-          <div className="flex flex-col">
-            <label className="inputlabel">Password</label>
-            <div className="inputCont">
-              <input
-                placeholder="*******"
-                className="input"
-                type="password"
-                minLength={8}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
           <div className="flex flex-col mt-4">
             {loadingUpdate ? (
               <button
@@ -156,13 +153,24 @@ export default function EditProfile() {
                 className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
                 type="submit"
               >
-                Update
+                Update Profile
               </button>
             )}
           </div>
+          <div className="flex flex-col mt-4">
+            <button
+              className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
+              type="button"
+              onClick={()=>setUpdatePasswordWindowOpened(true)}
+            >
+              Update Password
+            </button>
+          </div>
         </form>
+        
       )}
       <MentorProfile/>
     </div>
+  </>
   );
 }

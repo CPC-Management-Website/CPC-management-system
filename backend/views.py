@@ -41,14 +41,24 @@ def editProfile():
     email = request.json["email"]
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]
-    password = request.json["password"]
+    # password = request.json["password"]
     
     error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
     if error:
         return error
-    User.updateData(id,email,name, vjudge_handle, password)
+    User.updateData(id,email,name, vjudge_handle)
 
-    return {"hereeee": "here"}
+    return "Success"
+
+@views.route(urls['UPDATE_PASSSWORD'], methods = ["POST"], strict_slashes=False)
+def updatePassword():
+    id = request.json["userID"]
+    oldPassword = request.json["oldPassword"]
+    newPassword = request.json["newPassword"]
+    if not User.checkPassword(id, oldPassword):
+        return "Wrong password", 401
+    User.updatePassword(id, newPassword)
+    return "Success"
 
 @views.route(urls['PROFILE_ADMIN'], methods = ["POST"], strict_slashes=False)
 def editProfileAdmin():

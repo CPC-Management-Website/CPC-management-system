@@ -72,6 +72,13 @@ class User(UserMixin):
         vjudge_handle =  mycursor.fetchone()[0]
         return vjudge_handle
 
+    @staticmethod
+    def checkPassword(user_id, password):
+        mycursor = g.db.cursor()
+        query = "SELECT password FROM user where user_id=%s;"
+        mycursor.execute(query,(user_id,))
+        true_password = mycursor.fetchone()[0]
+        return check_password_hash(true_password,password)
     @staticmethod    
     def email_exists(email):
         mycursor = g.db.cursor()
@@ -305,8 +312,8 @@ class User(UserMixin):
         sendPasswordResetEmail(email,password)
     
     @staticmethod
-    def updateData(id,email, name, vjudge_handle, password):
-        User.updatePassword(user_id = id, newPassword = password)
+    def updateData(id,email, name, vjudge_handle):
+        # User.updatePassword(user_id = id, newPassword = password)
         mycursor = g.db.cursor()
         query = "UPDATE user SET email = %s, vjudge_handle=%s, name=%s WHERE user_id=%s;"
         mycursor.execute(query, (email, vjudge_handle, name, id,))
