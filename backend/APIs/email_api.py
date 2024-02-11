@@ -18,21 +18,28 @@ def initEmail():
     server.login(sender_email, sender_password)
     return server
 
-def getMessage(name,recepient,password):
+def getMessage(subject, recepient, body):
     message = email.message.EmailMessage()
-    message.add_header("Subject", "ASUFE CPC Account Password")
-    message.add_header("To",recepient)
-    body = "Dear " + name + ", your ASUFE CPC Account Password is " + password
+    message.add_header("Subject", subject)
+    message.add_header("To", recepient)
     message.set_content(body)
     return message.as_string()
 
-def getResetMessage(recepient,password):
-    message = email.message.EmailMessage()
-    message.add_header("Subject", "ASUFE CPC Account Password Reset")
-    message.add_header("To",recepient)
-    body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
-    message.set_content(body)
-    return message.as_string()
+# def getMessage(name,recepient,password):
+#     message = email.message.EmailMessage()
+#     message.add_header("Subject", "ASUFE CPC Account Password")
+#     message.add_header("To",recepient)
+#     body = "Dear " + name + ", your ASUFE CPC Account Password is " + password
+#     message.set_content(body)
+#     return message.as_string()
+
+# def getResetMessage(recepient,password):
+#     message = email.message.EmailMessage()
+#     message.add_header("Subject", "ASUFE CPC Account Password Reset")
+#     message.add_header("To",recepient)
+#     body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
+#     message.set_content(body)
+#     return message.as_string()
 
 def sendPasswordEmails(emails : list[dict[str, str]]):
     server = initEmail()
@@ -40,13 +47,17 @@ def sendPasswordEmails(emails : list[dict[str, str]]):
         name = em["name"]
         recepient = em["email"]
         password = em["password"]
-        message = getMessage(name,recepient,password)
+        subject = "ASUFE CPC Account Password"
+        body =  "Dear " + name + ", your ASUFE CPC Account Password is " + password
+        message = getMessage(subject,recepient,body)
         server.sendmail(sender_email, recepient, message)
     # message = getMessage(name,password)
 
 def sendPasswordResetEmail(recepient,password):
     server = initEmail()
-    message = getResetMessage(recepient,password)
+    subject = "ASUFE CPC Account Password Reset"
+    body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
+    message = getMessage(subject,recepient,body)
     server.sendmail(sender_email, recepient, message)
 
 
