@@ -72,7 +72,7 @@ export default function UpdatePassword({user_id, isOpened, setIsOpened}) {
             <p className="text-3xl font-semibold lg:mb-10 mb-4">Update Password</p>
               <form className="flex flex-col" onSubmit={submitHandler}>
                 <div className="flex flex-col">
-                  <label className="inputlabel">Old Password</label>
+                  <label className="inputlabel">Old Password*</label>
                   <div className="inputCont">
                     <input
                       className="input"
@@ -80,11 +80,12 @@ export default function UpdatePassword({user_id, isOpened, setIsOpened}) {
                       onChange={(e) =>
                         setOldPassword(e.target.value)
                       }
+                      required
                     />
                   </div>
                 </div>
                 <div className="flex flex-col">
-                  <label className="inputlabel">New Password</label>
+                  <label className="inputlabel">New Password*</label>
                   <div className="inputCont">
                     <input
                       className="input"
@@ -93,11 +94,12 @@ export default function UpdatePassword({user_id, isOpened, setIsOpened}) {
                       onChange={(e) =>
                         setNewPassword(e.target.value)
                       }
+                      required
                     />
                   </div>
                 </div>
                 <div className="flex flex-col">
-                  <label className="inputlabel">Confirm New Password</label>
+                  <label className="inputlabel">Confirm New Password*</label>
                   <div className="inputCont">
                     <input
                       className="input"
@@ -106,6 +108,7 @@ export default function UpdatePassword({user_id, isOpened, setIsOpened}) {
                       onChange={(e) =>
                         setConfirmPassword(e.target.value)
                       }
+                      required
                     />
                   </div>
                 </div>
