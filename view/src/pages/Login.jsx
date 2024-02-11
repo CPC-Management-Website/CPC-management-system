@@ -5,8 +5,9 @@ import { useContext, useEffect, useState, useReducer } from "react";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Store } from "../context/store";
-import { HOMEPAGE } from "../urls/frontend_urls";
+import { HOMEPAGE, FORGOT_PASSWORD } from "../urls/frontend_urls";
 import LOGIN from "../assets/login.jpg";
+import { Link } from 'react-router-dom';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -113,6 +114,8 @@ export default function SignIn() {
               />
             </div>
           </div>
+          
+          <Link to={FORGOT_PASSWORD}>Forgot password?</Link>
           <div className="flex flex-col mt-4">
             {loading ? (
               <button

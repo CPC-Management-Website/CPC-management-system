@@ -16,6 +16,8 @@ import {
   USERS,
   SIGNUP,
   LOGIN,
+  FORGOT_PASSWORD,
+  RESET_PASSWORD,
 } from "../src/urls/frontend_urls";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NavBar from "./components/NavBar";
@@ -23,6 +25,7 @@ import { ToastContainer } from "react-toastify";
 import Contest from "./pages/Contest.jsx";
 import Users from "./pages/Users.jsx";
 import SignUp from "./pages/SignUp.jsx"
+import Forgot_Password from "./pages/ForgotPassword.jsx"
 import NotFound from "./pages/NotFound.jsx";
 import {
   ADD_CONTESTS,
@@ -36,6 +39,7 @@ import {
   DELETE_CONTESTS,
   VIEW_MENTEES,
 } from "./permissions/permissions";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 function App() {
   const location = useLocation();
@@ -109,6 +113,18 @@ function App() {
           path={SIGNUP}
           element={
             <SignUp />
+          }
+        />
+        <Route
+          path={FORGOT_PASSWORD}
+          element={
+            <Forgot_Password/>
+          }
+        />
+        <Route
+          path={RESET_PASSWORD}
+          element={
+            <ResetPassword/>
           }
         />
         <Route

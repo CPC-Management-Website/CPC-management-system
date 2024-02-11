@@ -24,5 +24,6 @@
     "ENROLL" : "/backend/enroll",
     "MENTOR" : "/backend/mentor",
     "UPDATE_PASSSWORD" : "/backend/update_password",
-    "FORGOT_PASSWORD" : "/backend/forgot_password"
+    "FORGOT_PASSWORD" : "/backend/forgot_password",
+    "RESET_PASSWORD" : "/backend/reset_password"
 }

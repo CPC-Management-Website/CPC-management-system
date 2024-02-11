@@ -286,14 +286,16 @@ def forgotPassword():
     sendPasswordResetLink(email,link)
     return "",200
 
-@auth.route("/backend/reset_password/<token>", methods=["GET"], strict_slashes=False)
-def checkPasswordResetLink(token):
+@auth.route(f"{urls['RESET_PASSWORD']}", methods=["GET"], strict_slashes=False)
+def checkPasswordResetLink():
+    token=request.args.get("token")
     if User.checkPasswordResetToken(token):
         return "Valid Token", 200
     return "Invalid or Expired Token", 404
 
-@auth.route("/backend/reset_password/<token>", methods=["POST"], strict_slashes=False)
-def resetPassword(token):
+@auth.route(urls['RESET_PASSWORD'], methods=["POST"], strict_slashes=False)
+def resetPassword():
+    token=request.json["token"]
     password = request.json["password"]
     if User.resetPasswordWithToken(token, password):
         return "Password updated Successfully", 200

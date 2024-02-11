@@ -9,3 +9,5 @@ export const USERS = "/users";
 export const LOGIN = "/login";
 export const REGISTER = "/register"
 export const SIGNUP = "/signup"
+export const FORGOT_PASSWORD = "/forgot_password"
+export const RESET_PASSWORD = "/reset_password"
