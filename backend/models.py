@@ -6,6 +6,9 @@ import datetime
 from APIs.vjudge_api import getProgress, getProgressBulk
 from flask import g
 import os
+import hashlib
+from datetime import datetime, timedelta
+import mysql.connector
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -13,6 +16,8 @@ current_season_id = os.getenv("CURRENT_SEASON_ID")
 print(f"Current season ID: {current_season_id}")
 
 password_length = 10
+TOKEN_LENGTH = 16
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 class User(UserMixin):
     id = None
@@ -195,6 +200,7 @@ class User(UserMixin):
 
     @staticmethod
     def updatePassword(user_id,newPassword):       
+        #TODO invalidate session when session authentication is implemented
         def isSamePassword(id,newPassword):
             mycursor = g.db.cursor(dictionary=True)
             query = "SELECT password FROM user where user_id=%s;"
@@ -224,6 +230,95 @@ class User(UserMixin):
                 # print(mycursor.rowcount)
         else:
             print("Email doesn't exist")
+
+    @staticmethod
+    def generatePasswordResetToken(user_id):
+        while True:
+            token = secrets.token_urlsafe(TOKEN_LENGTH)
+            hashed_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
+            expiry_time = datetime.now() + timedelta(minutes=10)
+            try:
+                mycursor = g.db.cursor()
+                query = '''
+                    INSERT INTO password_reset_tokens 
+                    VALUES (%s, %s, %s) ON DUPLICATE KEY 
+                    UPDATE 
+                        token = %s, 
+                        expires_at = %s
+                '''
+                mycursor.execute(query,(user_id,hashed_token,expiry_time,hashed_token,expiry_time,))
+                g.db.commit()
+                break
+            except mysql.connector.IntegrityError:
+                print("Duplicate reset token, trying again")
+        return token
+
+    @staticmethod
+    def checkPasswordResetToken(token) -> bool:
+        hashed_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        mycursor = g.db.cursor()
+        query = '''
+            SELECT 
+                expires_at
+            FROM
+                password_reset_tokens
+            WHERE
+                token = %s
+        '''
+        mycursor.execute(query,(hashed_token,))
+        result = mycursor.fetchone()
+
+        if result is None:
+            return False
+
+        date = result[0]
+
+        if date < datetime.now():
+            return False
+        
+        return True
+
+    @staticmethod
+    def deletePasswordResetToken(user_id):
+        mycursor = g.db.cursor()
+        query = '''
+            DELETE FROM password_reset_tokens 
+            WHERE
+                (`user_id` = %s);
+        '''
+        mycursor.execute(query,(user_id,))
+        g.db.commit()
+    
+    @staticmethod
+    def cleanupExpiredPasswordResetTokens():
+        mycursor = g.db.cursor()
+        query = '''
+            DELETE FROM password_reset_tokens 
+            WHERE
+                (`expires_at` < %s);
+        '''
+        mycursor.execute(query,(datetime.now(),))
+        g.db.commit()
+
+    @staticmethod
+    def resetPasswordWithToken(token, newPassword):
+        if not User.checkPasswordResetToken(token):
+            return False
+        hashed_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        mycursor = g.db.cursor()
+        query = '''
+            SELECT 
+                user_id
+            FROM
+                password_reset_tokens
+            WHERE
+                token = %s
+        '''
+        mycursor.execute(query,(hashed_token,))
+        user_id = mycursor.fetchone()[0]
+        User.updatePassword(user_id,newPassword)
+        User.deletePasswordResetToken(user_id)
+        return True
 
     @staticmethod
     def getVjudge_Handles():

@@ -8,15 +8,18 @@ import werkzeug
 import pandas as pd
 import os
 import secrets
+from dotenv import load_dotenv
 from urls import urls
 from models import User, Permissions, AvailableDays, Enrollment, Levels, Vars, Seasons
-from APIs.email_api import sendPasswordEmails
+from APIs.email_api import sendPasswordEmails, sendPasswordResetLink
 
 auth = Blueprint("auth", __name__)
 
+load_dotenv()
+
 remember_logins = False     # consider changing this to true
 password_length = 10
-
+DOMAIN = os.getenv('DOMAIN_NAME')
 
 
 @auth.route(urls['LOGIN'], methods=["POST"], strict_slashes=False)
@@ -269,3 +272,29 @@ def registerUsers():
     if len(nonexistant_emails)>0:
         return errors.emails_do_not_exist_register_file(nonexistant_emails,werkzeug.exceptions.BadRequest)
     return " "
+
+@auth.route(urls['FORGOT_PASSWORD'], methods=["POST"], strict_slashes=False)
+def forgotPassword():
+    email = request.json["email"]
+    if not User.email_exists(email):
+        print("Password reset request issued for non-existent email" + email)
+        return "", 200
+    
+    user = User(email)
+    token = User.generatePasswordResetToken(user.id)
+    link = f"{DOMAIN}/reset_password?token={token}"
+    sendPasswordResetLink(email,link)
+    return "",200
+
+@auth.route("/backend/reset_password/<token>", methods=["GET"], strict_slashes=False)
+def checkPasswordResetLink(token):
+    if User.checkPasswordResetToken(token):
+        return "Valid Token", 200
+    return "Invalid or Expired Token", 404
+
+@auth.route("/backend/reset_password/<token>", methods=["POST"], strict_slashes=False)
+def resetPassword(token):
+    password = request.json["password"]
+    if User.resetPasswordWithToken(token, password):
+        return "Password updated Successfully", 200
+    return "Invalid or Expired Token", 404

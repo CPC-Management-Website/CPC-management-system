@@ -60,5 +60,11 @@ def sendPasswordResetEmail(recepient,password):
     message = getMessage(subject,recepient,body)
     server.sendmail(sender_email, recepient, message)
 
+def sendPasswordResetLink(recepient, link):
+    server = initEmail()
+    subject = "ASUFE CPC Account Password Reset Link"
+    body = f"Visit {link} to reset your password. The link expires in 10 minutes."
+    message = getMessage(subject,recepient,body)
+    server.sendmail(sender_email,recepient,message)
 
 # sendPasswordEmails(emails = [{"name":"Mohamed Ayman","password":"yourpassword","email":"mohameddalash01@gmail.com"}])
