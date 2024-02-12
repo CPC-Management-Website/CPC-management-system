@@ -182,7 +182,7 @@ function Home() {
           >
             <DialogContent>
             <CourseContent
-              title={"Level 1 - Fall 2024"}
+              title={"Level 1 - Spring 2024"}
               contentList={level1Content}
               registrationEnabled={registrationAvailable? true : false}
               registerHandler={registerLevel1Handler}
@@ -195,7 +195,7 @@ function Home() {
       : null}
       <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
         <p className="text-5xl font-semibold lg:my-10 mb-4 text-center">
-          Fall 2024 Training
+          Spring 2024 Training
         </p>
         <div className="flex flex-col lg:flex-row">
           <div className="flex flex-col  lg:w-[50%] mb-0 lg:mb-4 m-4">
