@@ -30,6 +30,8 @@ function SignUp() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -117,6 +119,10 @@ function SignUp() {
     }
   };
   const signUp = async (e) => {
+    if (password !== confirmPassword){
+      toast.error("The two passwords aren't the same")
+      return;
+    }
     try {
       dispatch({ type: "SIGNUP_REQUEST" });
       const response = await axios.post(
@@ -124,6 +130,7 @@ function SignUp() {
         JSON.stringify({
           fullName,
           email,
+          password,
           vjudgeHandle,
           phoneNumber,
           university,
@@ -140,7 +147,7 @@ function SignUp() {
       console.log(response);
       dispatch({ type: "SIGNUP_SUCCESS" });
       navigate(LOGIN);
-      toast.success(<div>Sign up successful<br/>Please check your email for your temporary password</div>,{autoClose:false});
+      toast.success(<div>Sign up successful</div>);
     } catch (error) {
       if (!error?.response) {
         toast.error("Internal Server Error");
@@ -203,6 +210,32 @@ function SignUp() {
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="useremail@gmail.com"
+              required
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <label className="inputlabel">Password*</label>
+          <div className="inputCont">
+            <input
+              placeholder="Password"
+              className="input"
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              minLength={8}
+              required
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <label className="inputlabel">Confirm Password*</label>
+          <div className="inputCont">
+            <input
+              placeholder="Confirm Password"
+              className="input"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              type="password"
+              minLength={8}
               required
             />
           </div>

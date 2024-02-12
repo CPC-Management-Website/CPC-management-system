@@ -87,7 +87,7 @@ def signUp():
     major = request.json["major"]
     discordHandle = request.json["discordHandle"]
     availableDays = request.json["availDays"]
-    password = secrets.token_urlsafe(password_length)
+    password = request.json["password"]
 
     if User.email_exists(email):
         print("email already registered")
@@ -111,8 +111,8 @@ def signUp():
     AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
     print("Available days added successfully")
     #Enrollment.enrollFromRegistration(email=email)
-    sendPasswordEmails([{"name":name,"password":password,"email":email}])
-    return {"email" : email,"password" : password}
+    # sendPasswordEmails([{"name":name,"password":password,"email":email}])
+    return "Signup successful", 200
 
 @auth.route(urls['USER_ENTRY'], methods=["GET"], strict_slashes=False)
 def getRoles():
