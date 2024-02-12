@@ -277,12 +277,12 @@ def registerUsers():
 def forgotPassword():
     email = request.json["email"]
     if not User.email_exists(email):
-        print("Password reset request issued for non-existent email" + email)
+        print("Password reset request issued for non-existent email " + email)
         return "", 200
     
     user = User(email)
     token = User.generatePasswordResetToken(user.id)
-    link = f"{DOMAIN}/reset_password?token={token}"
+    link = f"https://{DOMAIN}/reset_password?token={token}"
     sendPasswordResetLink(email,link)
     return "",200
 
