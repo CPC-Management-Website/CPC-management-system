@@ -1,154 +1,165 @@
+import json
+
+import werkzeug.exceptions
 from flask import Blueprint
 from flask import request
-from urls import urls
-import json
-# import sys
-# # sys.path.append("..") 
 
-from models import ProgressPerContest
 import errors
-import werkzeug
-
+from models import ProgressPerContest
 from models import User, Resources, Levels, Enrollment, Vars, Seasons
+from urls import urls
 
+# import sys
+# # sys.path.append("..")
 
 views = Blueprint("views", __name__)
 
-@views.route(urls['PROFILE'], methods = ["GET"], strict_slashes=False)
-def displayProfile():
+
+@views.route(urls['PROFILE'], methods=["GET"], strict_slashes=False)
+def display_profile():
     email = request.args.get("email")
     # if(User.exists(email)==False):
     #     return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
-    print (email)
-    user = User(email = email)
+    print(email)
+    user = User(email=email)
 
     return json.dumps(user.__dict__)
 
 
-def checkAvailablity(id,email,vjudge_handle):
-    old_email = User.getUserEmail(user_id=id)
-    if old_email!=email and User.email_exists(email=email):
+def check_availability(user_id, email, vjudge_handle):
+    old_email = User.get_user_email(user_id=user_id)
+    if old_email != email and User.email_exists(email=email):
         return errors.email_already_registered(werkzeug.exceptions.BadRequest)
 
-    old_vjudge_handle = User.getVjudgeHandle(user_id=id)
-    if old_vjudge_handle!=vjudge_handle and User.vjudge_handle_exists(vjudge_handle=vjudge_handle):
+    old_vjudge_handle = User.get_vjudge_handle(user_id=user_id)
+    if old_vjudge_handle != vjudge_handle and User.vjudge_handle_exists(vjudge_handle=vjudge_handle):
         return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
 
-@views.route(urls['PROFILE'], methods = ["POST"], strict_slashes=False)
-def editProfile():
 
-    id = request.json["userID"]
+@views.route(urls['PROFILE'], methods=["POST"], strict_slashes=False)
+def edit_profile():
+    user_id = request.json["userID"]
     email = request.json["email"]
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]
     # password = request.json["password"]
-    
-    error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
+
+    error = check_availability(user_id=user_id, email=email, vjudge_handle=vjudge_handle)
     if error:
         return error
-    User.updateData(id,email,name, vjudge_handle)
+    User.update_data(user_id, email, name, vjudge_handle)
 
     return "Success"
 
-@views.route(urls['UPDATE_PASSSWORD'], methods = ["POST"], strict_slashes=False)
-def updatePassword():
-    id = request.json["userID"]
-    oldPassword = request.json["oldPassword"]
-    newPassword = request.json["newPassword"]
-    if not User.checkPassword(id, oldPassword):
+
+@views.route(urls['UPDATE_PASSSWORD'], methods=["POST"], strict_slashes=False)
+def update_password():
+    user_id = request.json["userID"]
+    old_password = request.json["oldPassword"]
+    new_password = request.json["newPassword"]
+    if not User.check_password(user_id, old_password):
         return "Wrong password", 401
-    User.updatePassword(id, newPassword)
+    User.update_password(user_id, new_password)
     return "Success"
 
-@views.route(urls['PROFILE_ADMIN'], methods = ["POST"], strict_slashes=False)
-def editProfileAdmin():
 
-    id = request.json["userID"]
+@views.route(urls['PROFILE_ADMIN'], methods=["POST"], strict_slashes=False)
+def edit_profile_admin():
+    user_id = request.json["userID"]
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]
     email = request.json["email"]
-    mentorID = request.json["mentorID"]
-    enrollmentID = request.json["enrollmentID"]
-    levelID = request.json["levelID"]
-    seasonID = request.json["seasonID"]
+    mentor_id = request.json["mentorID"]
+    enrollment_id = request.json["enrollmentID"]
+    level_id = request.json["levelID"]
+    season_id = request.json["seasonID"]
     enrolled = request.json["enrolled"]
 
-    error = checkAvailablity(id=id,email=email,vjudge_handle=vjudge_handle)
+    error = check_availability(user_id=user_id, email=email, vjudge_handle=vjudge_handle)
     if error:
         return error
-    User.updateDataAdmin(id, name, vjudge_handle, email)
-    if(enrollmentID):
-        Enrollment.updateEnrollment(enrollment_id=enrollmentID,level_id=levelID, season_id=seasonID, mentor_id = mentorID, enrolled=enrolled)
+    User.update_data_by_admin(user_id, name, vjudge_handle, email)
+    if enrollment_id:
+        Enrollment.update_enrollment(enrollment_id=enrollment_id, level_id=level_id, season_id=season_id,
+                                     mentor_id=mentor_id, enrolled=enrolled)
     else:
-        Enrollment.enroll(user_id=id,level_id=levelID)
+        Enrollment.enroll(user_id=user_id, level_id=level_id)
 
     return {"hereeee": "here"}
 
-@views.route(urls['USERS'], methods = ["GET"], strict_slashes=False)
-def getUsers():
+
+@views.route(urls['USERS'], methods=["GET"], strict_slashes=False)
+def get_users():
     role = request.args.get("role")
     season = request.args.get("season")
-    users = User.getAllUsers(role = role, season_id=season)
+    users = User.get_all_users(role=role, season_id=season)
 
     return json.dumps(users)
 
-@views.route(urls['MENTEES'], methods = ["GET"], strict_slashes=False)
-def getMentees():
+
+@views.route(urls['MENTEES'], methods=["GET"], strict_slashes=False)
+def get_mentees():
     mentor_id = request.args.get("mentor_id")
     season = request.args.get("season")
     print(mentor_id)
-    users = User.getMentees(mentorID=mentor_id,season_id=season)
+    users = User.get_mentees(mentor_id=mentor_id, season_id=season)
 
     return json.dumps(users)
 
-@views.route(urls['USERS'], methods = ["PATCH"], strict_slashes=False)
-def restUserPassword():
+
+@views.route(urls['USERS'], methods=["PATCH"], strict_slashes=False)
+def rest_user_password():
     user_id = request.json["user_id"]
-    User.resetPassword(user_id)
-    print("Reset password for ",user_id)
+    User.reset_password(user_id)
+    print("Reset password for ", user_id)
     return "Success"
 
-@views.route(urls['USERS'], methods = ["DELETE"], strict_slashes=False)
-def deletUser():
+
+@views.route(urls['USERS'], methods=["DELETE"], strict_slashes=False)
+def delete_user():
     email = request.args.get("email")
-    User.deleteUser(email)
-    print("Deleted user",email)
+    User.delete_user(email)
+    print("Deleted user", email)
     return "Success"
 
-@views.route(urls['TRANSCRIPT'], methods = ["GET"], strict_slashes=False)
-def displayTranscript():
+
+@views.route(urls['TRANSCRIPT'], methods=["GET"], strict_slashes=False)
+def display_transcript():
     email = request.args.get("email")
     season = request.args.get("season")
-    return ProgressPerContest.getUserProgress(email = email,season_id=season)
+    return ProgressPerContest.get_user_progress(email=email, season_id=season)
 
 
-@views.route(urls['CONTEST'], methods = ["POST"], strict_slashes = False)
-def addContest():
-    contestID = request.json["contestID"]
-    numOfProblems = request.json["numOfProblems"]
-    yellowThreshold = request.json["yellowThreshold"]
-    greenThreshold = request.json["greenThreshold"]
+@views.route(urls['CONTEST'], methods=["POST"], strict_slashes=False)
+def add_contest():
+    contest_id = request.json["contestID"]
+    num_of_problems = request.json["numOfProblems"]
+    yellow_threshold = request.json["yellowThreshold"]
+    green_threshold = request.json["greenThreshold"]
     topic = request.json["topic"]
-    weekNum = request.json["weekNum"]
-    levelID = request.json["levelID"]
-    status = ProgressPerContest.addContest(contestID, numOfProblems, yellowThreshold, greenThreshold, topic, weekNum, levelID)
+    week_num = request.json["weekNum"]
+    level_id = request.json["levelID"]
+    status = ProgressPerContest.add_contest(contest_id, num_of_problems, yellow_threshold, green_threshold, topic,
+                                            week_num, level_id)
     print(status)
     if status == 'Contest already registered':
         return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
     elif status == 'Incorrect date format':
         return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
-    ProgressPerContest.initContestProgress_contest(contest_id=contestID)
+    ProgressPerContest.init_contest_progress_contest(contest_id=contest_id)
     # ProgressPerContest.updateProgress(contest_id=contestID)
     # ProgressPerContest.addProgress(contestID)
     return {"add contest": "in add contest"}
 
-@views.route(urls['CONTEST'], methods = ["GET"], strict_slashes = False)
-def getContests():
-    season = request.args.get("season")
-    return ProgressPerContest.getContestsAdmin(season=season)
 
-@views.route(urls['CONTEST'], methods = ["PATCH"], strict_slashes = False)
-def updateContest():
+@views.route(urls['CONTEST'], methods=["GET"], strict_slashes=False)
+def get_contests():
+    season = request.args.get("season")
+    return ProgressPerContest.get_contests_admin(season=season)
+
+
+@views.route(urls['CONTEST'], methods=["PATCH"], strict_slashes=False)
+def update_contest():
     new_contest_id = request.json["contest_id"]
     topic = request.json["topic"]
     yellow_threshold = request.json["yellow_threshold"]
@@ -158,87 +169,100 @@ def updateContest():
     level_id = request.json["level_id"]
     old_contest_id = request.json["old_contest_id"]
     try:
-        ProgressPerContest.updateContest(new_contest_id,topic,yellow_threshold,green_threshold,total_problems,week_number,level_id,old_contest_id)
+        ProgressPerContest.update_contest(new_contest_id, topic, yellow_threshold, green_threshold, total_problems,
+                                          week_number, level_id, old_contest_id)
     except Exception as e:
         print(e)
         return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
     return "Success"
 
-@views.route(urls['CONTEST'], methods = ["DELETE"], strict_slashes = False)
-def deleteContest():
+
+@views.route(urls['CONTEST'], methods=["DELETE"], strict_slashes=False)
+def delete_contest():
     contest_id = request.args.get("contest_id")
-    ProgressPerContest.deleteContest(contest_id=contest_id)
+    ProgressPerContest.delete_contest(contest_id=contest_id)
     return "Success"
 
-@views.route(urls["RESOURCES"], methods = ["POST"], strict_slashes = False)
-def addResource():
-    resourceTopic = request.json["resourceTopic"]
-    resourceLink = request.json["resourceLink"]
-    resourceLevel = request.json["resourceLevel"]
-    resourceSeason = request.json["seasonID"]
-    Resources.addResource(topic=resourceTopic, link=resourceLink, level=resourceLevel,season_id=resourceSeason)
+
+@views.route(urls["RESOURCES"], methods=["POST"], strict_slashes=False)
+def add_resource():
+    resource_topic = request.json["resourceTopic"]
+    resource_link = request.json["resourceLink"]
+    resource_level = request.json["resourceLevel"]
+    resource_season = request.json["seasonID"]
+    Resources.add_resource(topic=resource_topic, link=resource_link, level=resource_level, season_id=resource_season)
     return ""
 
-@views.route(urls["RESOURCES"], methods = ["GET"], strict_slashes = False)
-def getAllResources():
+
+@views.route(urls["RESOURCES"], methods=["GET"], strict_slashes=False)
+def get_all_resources():
     season = request.args.get("season")
-    resources = Resources.getAllResources(season_id=season)
+    resources = Resources.get_all_resources(season_id=season)
     return json.dumps(resources)
 
-@views.route(urls["MYRESOURCES"], methods = ["GET"], strict_slashes = False)
-def getMyResources():
+
+@views.route(urls["MYRESOURCES"], methods=["GET"], strict_slashes=False)
+def get_my_resources():
     user_id = request.args.get("user_id")
     season = request.args.get("season")
-    resources = Resources.getResources(user_id=user_id,season_id=season)
+    resources = Resources.get_resources(user_id=user_id, season_id=season)
     return json.dumps(resources)
 
-@views.route(urls['RESOURCES'], methods = ["PATCH"], strict_slashes=False)
-def editResource():
-    id = request.json["resource_id"]
+
+@views.route(urls['RESOURCES'], methods=["PATCH"], strict_slashes=False)
+def edit_resource():
+    resource_id = request.json["resource_id"]
     topic = request.json["topic"]
     level_id = request.json["level_id"]
     link = request.json["link"]
-    Resources.updateResource(id=id,topic=topic,level_id=level_id,link=link)
+    Resources.update_resource(resource_id=resource_id, topic=topic, level_id=level_id, link=link)
     return "Success"
 
-@views.route(urls['RESOURCES'], methods = ["DELETE"], strict_slashes=False)
-def deleteResource():
-    id = request.args.get("resource_id")
-    Resources.deleteResource(id=id)
+
+@views.route(urls['RESOURCES'], methods=["DELETE"], strict_slashes=False)
+def delete_resource():
+    resource_id = request.args.get("resource_id")
+    Resources.delete_resource(resource_id=resource_id)
     return "Success"
 
-@views.route(urls["LEVELS"], methods = ["GET"], strict_slashes=False)
-def getLevels():
-    levels = Levels.getAllLevels()
+
+@views.route(urls["LEVELS"], methods=["GET"], strict_slashes=False)
+def get_levels():
+    levels = Levels.get_all_levels()
     return json.dumps(levels)
 
-@views.route(urls["SEASONS"], methods = ["GET"], strict_slashes=False)
-def getSeasons():
-    seasons = Seasons.getAllSeasons()
+
+@views.route(urls["SEASONS"], methods=["GET"], strict_slashes=False)
+def get_seasons():
+    seasons = Seasons.get_all_seasons()
     return json.dumps(seasons)
 
-@views.route(urls["REGISTRATION"], methods = ["GET"], strict_slashes=False)
-def getRegistrationStatus():
-    res = Vars.getVariableValue("registration")
+
+@views.route(urls["REGISTRATION"], methods=["GET"], strict_slashes=False)
+def get_registration_status():
+    res = Vars.get_variable_value("registration")
     return res
 
-@views.route(urls["REGISTRATION"], methods = ["POST"], strict_slashes=False)
-def setRegistrationStatus():
+
+@views.route(urls["REGISTRATION"], methods=["POST"], strict_slashes=False)
+def set_registration_status():
     value = request.json["registration"]
-    Vars.setVariableValue("registration",value=value)
+    Vars.set_variable_value("registration", value=value)
     return "Success"
 
-@views.route(urls["MENTOR"], methods = ["GET"], strict_slashes = False)
-def getMentor():
+
+@views.route(urls["MENTOR"], methods=["GET"], strict_slashes=False)
+def get_mentor():
     user_id = request.args.get("user_id")
     season = request.args.get("season_id")
-    mentor = User.getMentorInfo(user_id=user_id,season_id=season)
+    mentor = User.get_mentor_info(user_id=user_id, season_id=season)
     if mentor is not None:
         return mentor
     return ""
 
-@views.route(urls["REGISTRATION_LEVEL"], methods = ["GET"], strict_slashes = False)
-def getRegistrationLevel():
+
+@views.route(urls["REGISTRATION_LEVEL"], methods=["GET"], strict_slashes=False)
+def get_registration_level():
     user_id = request.args.get("user_id")
-    level = Enrollment.getEnrollmentLevel(user_id=user_id)
+    level = Enrollment.get_enrollment_level(user_id=user_id)
     return json.dumps(level)

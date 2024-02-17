@@ -1,24 +1,25 @@
 import json
-
-from flask import Blueprint, request
-from flask_login import current_user, login_required, login_user, logout_user
-import errors
-from werkzeug.security import check_password_hash, generate_password_hash
-import werkzeug
-import pandas as pd
 import os
 import secrets
+
+import pandas as pd
+import werkzeug
 from dotenv import load_dotenv
-from urls import urls
+from flask import Blueprint, request
+from flask_login import login_user
+from werkzeug.security import check_password_hash, generate_password_hash
+
+import errors
+from APIs.email_api import send_password_emails, send_password_reset_link
 from models import User, Permissions, AvailableDays, Enrollment, Levels, Vars, Seasons
-from APIs.email_api import sendPasswordEmails, sendPasswordResetLink
+from urls import urls
 
 auth = Blueprint("auth", __name__)
 
 load_dotenv()
 
-remember_logins = False     # consider changing this to true
-password_length = 10
+REMEMBER_LOGINS = False  # consider changing this to true
+PASSWORD_LENGTH = 10
 DOMAIN = os.getenv('DOMAIN_NAME')
 
 
@@ -26,36 +27,38 @@ DOMAIN = os.getenv('DOMAIN_NAME')
 def login():
     email = request.json["email"]
     password = request.json["password"]
-    
-    if(User.email_exists(email)==False):
+
+    if not User.email_exists(email):
         return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
 
-    user = User(email = email)
+    user = User(email=email)
 
     if check_password_hash(user.password, password):
         print("Logged in!")
-        login_user(user,remember = remember_logins)
-        perm = Permissions(user).getAllowedPermissions()
-        #enrollment = Enrollment.getEnrollment(user_id=user.id)
-        latestEnrollmentSeason = Enrollment.getLatestEnrollmentSeason(user_id=user.id)
+        login_user(user, remember=REMEMBER_LOGINS)
+        perm = Permissions(user).get_allowed_permissions()
+        # enrollment = Enrollment.getEnrollment(user_id=user.id)
+        latestEnrollmentSeason = Enrollment.get_latest_enrollment_season(user_id=user.id)
         user_json = json.dumps(user.__dict__)
-        seasons = Seasons.getAllSeasons()
-        levels = Levels.getAllLevels()
-        registrationStatus = Vars.getVariableValue(varname="registration")
-        enrolledSeasons = Seasons.getEnrolledSeasons(user_id=user.id)
+        seasons = Seasons.get_all_seasons()
+        levels = Levels.get_all_levels()
+        registrationStatus = Vars.get_variable_value(variable_name="registration")
+        enrolledSeasons = Seasons.get_enrolled_seasons(user_id=user.id)
     else:
         print("Password incorrect!")
         return errors.incorrect_password(werkzeug.exceptions.BadRequest)
-    return {"userInfo":{ "email" : email,"password" : password, "permissions": perm, "id" : user.id, "latestEnrollmentSeason":latestEnrollmentSeason, "enrolledSeasons":enrolledSeasons},
-            "seasons":seasons,
-            "levels":levels,
-            "registrationAvailable":registrationStatus}
+    return {"userInfo": {"email": email, "password": password, "permissions": perm, "id": user.id,
+                         "latestEnrollmentSeason": latestEnrollmentSeason, "enrolledSeasons": enrolledSeasons},
+            "seasons": seasons,
+            "levels": levels,
+            "registrationAvailable": registrationStatus}
+
 
 @auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
 def register_admin():
-    name = request.json["firstName"]+" "+request.json["lastName"]
+    name = request.json["firstName"] + " " + request.json["lastName"]
     email = request.json["email"]
-    password = secrets.token_urlsafe(password_length)
+    password = secrets.token_urlsafe(PASSWORD_LENGTH)
     vjudge = request.json["vjudgeHandle"]
     discord = request.json["discordHandle"]
     roleID = request.json["platformRole"]
@@ -67,13 +70,14 @@ def register_admin():
     if User.vjudge_handle_exists(vjudge_handle=vjudge):
         print("vjudge handle already registered")
         return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
-    User.registerUser_admin(vjudge_handle = vjudge,name = name,
-                email = email, level_id = levelID,role_id = roleID,
-                points = 0,discord=discord,
-                password = generate_password_hash(password, method='sha256'))
+    User.register_user_by_admin(vjudge_handle=vjudge, name=name,
+                                email=email, level_id=levelID, role_id=roleID,
+                                points=0, discord=discord,
+                                password=generate_password_hash(password, method='sha256'))
     print("User added successfully")
-    sendPasswordEmails([{"name":name,"password":password,"email":email}])
-    return {"email" : email,"password" : password}
+    send_password_emails([{"name": name, "password": password, "email": email}])
+    return {"email": email, "password": password}
+
 
 @auth.route(urls['SIGNUP'], methods=["POST"], strict_slashes=False)
 def signUp():
@@ -95,7 +99,7 @@ def signUp():
     if User.vjudge_handle_exists(vjudge_handle=vjudge):
         print("Vjudge handle already registered")
         return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
-    User.registerUser(
+    User.register_user(
         name=name,
         email=email,
         vjudge=vjudge,
@@ -108,29 +112,31 @@ def signUp():
         password=generate_password_hash(password, method='sha256')
     )
     print("User added successfully")
-    AvailableDays.addAvailableDays(email=email,availableDays=availableDays)
+    AvailableDays.add_available_days(email=email, available_days=availableDays)
     print("Available days added successfully")
-    #Enrollment.enrollFromRegistration(email=email)
+    # Enrollment.enrollFromRegistration(email=email)
     # sendPasswordEmails([{"name":name,"password":password,"email":email}])
     return "Signup successful", 200
 
+
 @auth.route(urls['USER_ENTRY'], methods=["GET"], strict_slashes=False)
 def getRoles():
-    roles = Permissions.getAllRoles()
+    roles = Permissions.get_all_roles()
     return json.dumps(roles)
+
 
 @auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
 def registerfile():
-    roles = Permissions.getAllRoles()
-    levels  = Levels.getAllLevels()
+    roles = Permissions.get_all_roles()
+    levels = Levels.get_all_levels()
     file = request.files.get("excel-file")
-    df = pd.DataFrame(pd.read_excel(file,dtype=str,na_filter=False))
+    df = pd.DataFrame(pd.read_excel(file, dtype=str, na_filter=False))
     emails = []
     already_registered = []
     for index, row in df.iterrows():
-        index+=2
+        index += 2
         name = row["name"]
-        email  = row["email"]
+        email = row["email"]
         vjudge = row["vjudge_handle"]
         phone = row["phone_number"]
         university = row["university"]
@@ -138,13 +144,14 @@ def registerfile():
         university_level = row["university_level"]
         major = row["major"]
         discord = row["discord_handle"]
-        password = secrets.token_urlsafe(password_length)
+        password = secrets.token_urlsafe(PASSWORD_LENGTH)
         roleName = row["Role"]
         levelName = row["Level"]
         res = [role for role in roles if role['user_role'] == roleName]
         roleID = res[0]["role_id"]
         res2 = [level for level in levels if level['name'] == levelName]
         levelID = res2[0]["level_id"]
+
         # print(name,email,password)
 
         def add_already_registered(email):
@@ -153,12 +160,13 @@ def registerfile():
             print("user already registered")
 
         if User.email_exists(email):
-            emailForVjudgeHandle = User.getUserEmailbyVjudgeHandle(vjudge) #the email associated with the given vjudge handle
+            emailForVjudgeHandle = User.get_user_email_by_vjudge_handle(
+                vjudge)  # the email associated with the given vjudge handle
             if (emailForVjudgeHandle is not None) and (emailForVjudgeHandle != email):
                 add_already_registered(email)
                 continue
 
-            User.updateDataAdminFile(
+            User.update_data_by_admin_from_file(
                 name=name,
                 email=email,
                 vjudge_handle=vjudge,
@@ -169,13 +177,13 @@ def registerfile():
                 major=major,
                 discord=discord
             )
-            
+
         else:
             if User.vjudge_handle_exists(vjudge):
                 add_already_registered(email)
                 continue
 
-            User.registerUser_admin(
+            User.register_user_by_admin(
                 name=name,
                 email=email,
                 vjudge_handle=vjudge,
@@ -185,17 +193,18 @@ def registerfile():
                 university_level=university_level,
                 major=major,
                 discord=discord,
-                password= generate_password_hash(password, method='sha256'),
+                password=generate_password_hash(password, method='sha256'),
                 role_id=roleID,
                 level_id=levelID
             )
             print(email, " added successfully")
-            emails.append({"email":email,"name":name,"password":password})
-    sendPasswordEmails(emails)    
+            emails.append({"email": email, "name": name, "password": password})
+    send_password_emails(emails)
 
-    if len(already_registered)>0:
-        return errors.user_already_registered_bulk(already_registered,werkzeug.exceptions.BadRequest)
+    if len(already_registered) > 0:
+        return errors.user_already_registered_bulk(already_registered, werkzeug.exceptions.BadRequest)
     return " "
+
 
 @auth.route(urls['ASSIGN_MENTORS'], methods=["POST"], strict_slashes=False)
 def assignMentors():
@@ -203,52 +212,53 @@ def assignMentors():
     df = pd.DataFrame(pd.read_excel(file))
     nonexistant_emails = []
     for index, row in df.iterrows():
-        index+=2
-        trainee_email  = row["Email"]
+        index += 2
+        trainee_email = row["Email"]
         mentor_email = row["Mentor Email"]
         # print(name,email,password)
-        if User.email_exists(email=trainee_email)==False:
+        if User.email_exists(email=trainee_email) == False:
             nonexistant_emails.append(trainee_email)
-        elif User.email_exists(email=mentor_email)==False:
+        elif User.email_exists(email=mentor_email) == False:
             nonexistant_emails.append(mentor_email)
-        elif User.getUserRoleName(email = mentor_email) != "Mentor":
+        elif User.get_user_role_name(email=mentor_email) != "Mentor":
             nonexistant_emails.append(mentor_email)
-        elif Enrollment.isEnrolled(User.getUserID(email=trainee_email))==False:
+        elif Enrollment.is_enrolled(User.get_user_id(email=trainee_email)) == False:
             nonexistant_emails.append(trainee_email)
-        elif Enrollment.isEnrolled(User.getUserID(email=mentor_email))==False:
+        elif Enrollment.is_enrolled(User.get_user_id(email=mentor_email)) == False:
             nonexistant_emails.append(mentor_email)
         else:
-            User.assignMentor(traineeEmail=trainee_email,mentorEmail=mentor_email)
+            User.assign_mentor(trainee_email=trainee_email, mentor_email=mentor_email)
 
-        
-    if len(nonexistant_emails)>0:
-        return errors.emails_do_not_exist(nonexistant_emails,werkzeug.exceptions.BadRequest)
+    if len(nonexistant_emails) > 0:
+        return errors.emails_do_not_exist(nonexistant_emails, werkzeug.exceptions.BadRequest)
     return " "
+
 
 @auth.route(urls['ENROLL'], methods=["POST"], strict_slashes=False)
 def enroll():
     user_id = request.json["user_id"]
     email = request.json["email"]
-    registrationStatus = Vars.getVariableValue(varname="registration")
+    registrationStatus = Vars.get_variable_value(variable_name="registration")
     if not int(registrationStatus["value"]):
         return errors.registrationClosed(werkzeug.exceptions.BadRequest)
-    if Enrollment.getEnrollment(user_id=user_id):
+    if Enrollment.get_enrollment(user_id=user_id):
         return errors.user_already_enrolled(werkzeug.exceptions.BadRequest)
     print(f"Enrolling {email} in new season")
-    Enrollment.enrollFromRegistration(email=email)
-    registeredSeasons = Seasons.getEnrolledSeasons(user_id=user_id)
-    return {"enrolledSeasons":registeredSeasons}
+    Enrollment.enroll_from_registration(email=email)
+    registeredSeasons = Seasons.get_enrolled_seasons(user_id=user_id)
+    return {"enrolledSeasons": registeredSeasons}
+
 
 @auth.route(urls['USER_REGISTER_FILE'], methods=["POST"], strict_slashes=False)
 def registerUsers():
-    roles = Permissions.getAllRoles()
-    levels  = Levels.getAllLevels()
+    roles = Permissions.get_all_roles()
+    levels = Levels.get_all_levels()
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
     nonexistant_emails = []
     for index, row in df.iterrows():
-        index+=2
-        email  = row["Email"]
+        index += 2
+        email = row["Email"]
         roleName = row["Role"]
         res = [role for role in roles if role['user_role'] == roleName]
         roleID = res[0]["role_id"]
@@ -256,22 +266,24 @@ def registerUsers():
         res2 = [level for level in levels if level['name'] == levelName]
         levelID = res2[0]["level_id"]
         # print(name,email,password)
-        if User.email_exists(email=email)==False:
+        if User.email_exists(email=email) == False:
             nonexistant_emails.append(email)
             continue
         user = User(email)
-        enrollment = Enrollment.getEnrollment(user_id=user.id)
+        enrollment = Enrollment.get_enrollment(user_id=user.id)
         print(enrollment)
         print(levelName)
         print(levelID)
         if enrollment is not None:
-            Enrollment.updateEnrollmentFile(enrollment["enrollment_id"],level_id=levelID,mentor_id=None,enrolled=True,role_id=roleID)
+            Enrollment.update_enrollment_from_file(enrollment["enrollment_id"], level_id=levelID, mentor_id=None,
+                                                   enrolled=True, role_id=roleID)
         else:
-            Enrollment.enroll(user_id=user.id,level_id=levelID,role_id=roleID)
+            Enrollment.enroll(user_id=user.id, level_id=levelID, role_id=roleID)
 
-    if len(nonexistant_emails)>0:
-        return errors.emails_do_not_exist_register_file(nonexistant_emails,werkzeug.exceptions.BadRequest)
+    if len(nonexistant_emails) > 0:
+        return errors.emails_do_not_exist_register_file(nonexistant_emails, werkzeug.exceptions.BadRequest)
     return " "
+
 
 @auth.route(urls['FORGOT_PASSWORD'], methods=["POST"], strict_slashes=False)
 def forgotPassword():
@@ -279,24 +291,26 @@ def forgotPassword():
     if not User.email_exists(email):
         print("Password reset request issued for non-existent email " + email)
         return "", 200
-    
+
     user = User(email)
-    token = User.generatePasswordResetToken(user.id)
+    token = User.generate_password_reset_token(user.id)
     link = f"https://{DOMAIN}/reset_password?token={token}"
-    sendPasswordResetLink(email,link)
-    return "",200
+    send_password_reset_link(email, link)
+    return "", 200
+
 
 @auth.route(f"{urls['RESET_PASSWORD']}", methods=["GET"], strict_slashes=False)
 def checkPasswordResetLink():
-    token=request.args.get("token")
-    if User.checkPasswordResetToken(token):
+    token = request.args.get("token")
+    if User.check_password_reset_token(token):
         return "Valid Token", 200
     return "Invalid or Expired Token", 404
 
+
 @auth.route(urls['RESET_PASSWORD'], methods=["POST"], strict_slashes=False)
 def resetPassword():
-    token=request.json["token"]
+    token = request.json["token"]
     password = request.json["password"]
-    if User.resetPasswordWithToken(token, password):
+    if User.reset_password_with_token(token, password):
         return "Password updated Successfully", 200
     return "Invalid or Expired Token", 404

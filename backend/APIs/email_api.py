@@ -1,70 +1,77 @@
-import smtplib, ssl
 import email
 import os
+import smtplib
+import ssl
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-port = 465  # For SSL
-smtp_server = "smtp.gmail.com"
-sender_email = os.getenv('EMAIL_ADDR')
-sender_password = os.getenv('EMAIL_PASSWD')
-context = ssl.create_default_context()
-server = None
+PORT = 465  # For SSL
+SMTP_SERVER = "smtp.gmail.com"
+SENDER_EMAIL = os.getenv('EMAIL_ADDR')
+SENDER_PASSWORD = os.getenv('EMAIL_PASSWD')
+CONTEXT = ssl.create_default_context()
 
 
-def initEmail():
-    server = smtplib.SMTP_SSL(smtp_server, port, context = context)
-    server.login(sender_email, sender_password)
+def init_email():
+    server = smtplib.SMTP_SSL(SMTP_SERVER, PORT, context=CONTEXT)
+    server.login(SENDER_EMAIL, SENDER_PASSWORD)
     return server
 
-def getMessage(subject, recepient, body):
+
+def get_message(subject, recipient, body):
     message = email.message.EmailMessage()
     message.add_header("Subject", subject)
-    message.add_header("To", recepient)
+    message.add_header("To", recipient)
     message.set_content(body)
     return message.as_string()
 
-# def getMessage(name,recepient,password):
+
+# def getMessage(name,recipient,password):
 #     message = email.message.EmailMessage()
 #     message.add_header("Subject", "ASUFE CPC Account Password")
-#     message.add_header("To",recepient)
+#     message.add_header("To",recipient)
 #     body = "Dear " + name + ", your ASUFE CPC Account Password is " + password
 #     message.set_content(body)
 #     return message.as_string()
 
-# def getResetMessage(recepient,password):
+# def getResetMessage(recipient,password):
 #     message = email.message.EmailMessage()
 #     message.add_header("Subject", "ASUFE CPC Account Password Reset")
-#     message.add_header("To",recepient)
+#     message.add_header("To",recipient)
 #     body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
 #     message.set_content(body)
 #     return message.as_string()
 
-def sendPasswordEmails(emails : list[dict[str, str]]):
-    server = initEmail()
+def send_password_emails(emails: list[dict[str, str]]):
+    server = init_email()
     for em in emails:
         name = em["name"]
-        recepient = em["email"]
+        recipient = em["email"]
         password = em["password"]
         subject = "ASUFE CPC Account Password"
-        body =  "Dear " + name + ", your ASUFE CPC Account Password is " + password
-        message = getMessage(subject,recepient,body)
-        server.sendmail(sender_email, recepient, message)
+        body = "Dear " + name + ", your ASUFE CPC Account Password is " + password
+        message = get_message(subject, recipient, body)
+        server.sendmail(SENDER_EMAIL, recipient, message)
     # message = getMessage(name,password)
 
-def sendPasswordResetEmail(recepient,password):
-    server = initEmail()
+
+def send_password_reset_email(recipient, password):
+    server = init_email()
     subject = "ASUFE CPC Account Password Reset"
     body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
-    message = getMessage(subject,recepient,body)
-    server.sendmail(sender_email, recepient, message)
+    message = get_message(subject, recipient, body)
+    server.sendmail(SENDER_EMAIL, recipient, message)
 
-def sendPasswordResetLink(recepient, link):
-    server = initEmail()
+
+def send_password_reset_link(recipient, link):
+    server = init_email()
     subject = "ASUFE CPC Account Password Reset Link"
     body = f"Visit {link} to reset your password. The link expires in 10 minutes."
-    message = getMessage(subject,recepient,body)
-    server.sendmail(sender_email,recepient,message)
+    message = get_message(subject, recipient, body)
+    server.sendmail(SENDER_EMAIL, recipient, message)
 
-# sendPasswordEmails(emails = [{"name":"Mohamed Ayman","password":"yourpassword","email":"mohameddalash01@gmail.com"}])
+
+send_password_emails(
+    emails=[{"name": "Mohamed Ayman", "password": "yourpassword", "email": "mohameddalash01@gmail.com"}])
