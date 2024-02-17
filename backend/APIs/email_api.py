@@ -73,5 +73,6 @@ def send_password_reset_link(recipient, link):
     server.sendmail(SENDER_EMAIL, recipient, message)
 
 
-send_password_emails(
-    emails=[{"name": "Mohamed Ayman", "password": "yourpassword", "email": "mohameddalash01@gmail.com"}])
+# send_password_emails(
+#     emails=[{"name": "Mohamed Ayman", "password": "yourpassword",
+#              "email": "mohameddalash01@gmail.com"}])
