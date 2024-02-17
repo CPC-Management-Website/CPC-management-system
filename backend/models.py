@@ -36,8 +36,8 @@ class User(UserMixin):
         cursor = g.db.cursor(dictionary=True)
         query = """
             SELECT user_id, vjudge_handle, name, email, points, password
-            from user
-            where email = %s;
+            FROM user
+            WHERE email = %s;
         """
         cursor.execute(query, (email,))
         record = cursor.fetchone()
@@ -52,7 +52,7 @@ class User(UserMixin):
     @staticmethod
     def get_user_id(email):
         cursor = g.db.cursor()
-        query = "SELECT user_id FROM user where email = %s;"
+        query = "SELECT user_id FROM user WHERE email = %s;"
         cursor.execute(query, (email,))
         user_id = cursor.fetchone()[0]
         return user_id
@@ -60,7 +60,7 @@ class User(UserMixin):
     @staticmethod
     def get_user_email(user_id):
         cursor = g.db.cursor()
-        query = "SELECT email FROM user where user_id = %s;"
+        query = "SELECT email FROM user WHERE user_id = %s;"
         cursor.execute(query, (user_id,))
         email = cursor.fetchone()[0]
         return email
@@ -68,7 +68,7 @@ class User(UserMixin):
     @staticmethod
     def get_user_email_by_vjudge_handle(vjudge_handle):
         cursor = g.db.cursor()
-        query = "SELECT email FROM user where vjudge_handle = %s;"
+        query = "SELECT email FROM user WHERE vjudge_handle = %s;"
         cursor.execute(query, (vjudge_handle,))
         email = cursor.fetchone()
         if email is not None:
@@ -78,7 +78,7 @@ class User(UserMixin):
     @staticmethod
     def get_vjudge_handle(user_id):
         cursor = g.db.cursor()
-        query = "SELECT vjudge_handle FROM user where user_id = %s;"
+        query = "SELECT vjudge_handle FROM user WHERE user_id = %s;"
         cursor.execute(query, (user_id,))
         vjudge_handle = cursor.fetchone()[0]
         return vjudge_handle
@@ -86,7 +86,7 @@ class User(UserMixin):
     @staticmethod
     def check_password(user_id, password):
         cursor = g.db.cursor()
-        query = "SELECT password FROM user where user_id = %s;"
+        query = "SELECT password FROM user WHERE user_id = %s;"
         cursor.execute(query, (user_id,))
         true_password = cursor.fetchone()[0]
         return check_password_hash(true_password, password)
@@ -94,7 +94,7 @@ class User(UserMixin):
     @staticmethod
     def email_exists(email):
         cursor = g.db.cursor()
-        query = "SELECT * FROM user where email = %s;"
+        query = "SELECT * FROM user WHERE email = %s;"
         cursor.execute(query, (email,))
         cursor.fetchall()
         if cursor.rowcount >= 1:
@@ -105,7 +105,7 @@ class User(UserMixin):
     @staticmethod
     def vjudge_handle_exists(vjudge_handle):
         cursor = g.db.cursor()
-        query = "SELECT * FROM user where BINARY vjudge_handle = %s;"
+        query = "SELECT * FROM user WHERE BINARY vjudge_handle = %s;"
         cursor.execute(query, (vjudge_handle,))
         cursor.fetchall()
         if cursor.rowcount >= 1:
@@ -116,7 +116,7 @@ class User(UserMixin):
     @staticmethod
     def id_exists(user_id):
         cursor = g.db.cursor()
-        query = "SELECT * FROM user where user_id=%s;"
+        query = "SELECT * FROM user where user_id = %s;"
         cursor.execute(query, (user_id,))
         cursor.fetchone()
         if cursor.rowcount == 1:
@@ -129,11 +129,12 @@ class User(UserMixin):
     def add_user_admin(vjudge_handle, name, email, points, password, discord):
         cursor = g.db.cursor()
         # roleID = Permissions.getRoleID(role)
-        query = "INSERT INTO user \
-                (`vjudge_handle`, `name`,\
-                `email`, `points`, `password`, `discord_handle`)\
-                VALUES (%s,%s,%s,%s,%s,%s);"
-        cursor.execute(query, (vjudge_handle, name, email, points, password, discord,))
+        query = """
+            INSERT INTO user
+            (vjudge_handle, `name`, email, points, `password`, discord_handle)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        """
+        cursor.execute(query, (vjudge_handle, name, email, points, password, discord))
         g.db.commit()
 
     @staticmethod
@@ -150,12 +151,12 @@ class User(UserMixin):
     def add_user(name, email, vjudge, phone, university, faculty, university_level, major, discord, password):
         cursor = g.db.cursor()
         # roleID = Permissions.getRoleID("Trainee")
-        query = "INSERT INTO user \
-                (`name`, `email`,\
-                `vjudge_handle`, `phone_number`,\
-                `university`, `faculty`, `university_level`,\
-                `major`,`discord_handle`, `password`)\
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        query = """
+            INSERT INTO user
+            (`name`, email, vjudge_handle, phone_number, university, faculty,
+             university_level, major, discord_handle, `password`)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        """
         cursor.execute(query,
                        (name, email, vjudge, phone, university, faculty, university_level, major, discord, password))
         g.db.commit()
@@ -172,14 +173,19 @@ class User(UserMixin):
         trainee_id = User.get_user_id(trainee_email)
         mentor_id = User.get_user_id(mentor_email)
         cursor = g.db.cursor()
-        query = "UPDATE enrollment SET mentor_id = %s WHERE user_id=%s AND season_id=%s;"
-        cursor.execute(query, (mentor_id, trainee_id, season_id,))
+        query = """            
+            UPDATE enrollment
+            SET mentor_id = %s
+            WHERE user_id = %s
+              AND season_id = %s;
+        """
+        cursor.execute(query, (mentor_id, trainee_id, season_id))
         g.db.commit()
 
     @staticmethod
     def get_user_role(user_id):
         cursor = g.db.cursor()
-        query = "SELECT IFNULL(MIN(role_id), 3) FROM enrollment where user_id = %s"
+        query = "SELECT IFNULL(MIN(role_id), 3) FROM enrollment WHERE user_id = %s"
         # This query gets the most privileged role (roles are sorted from most privileged to least privileged)
         # and if a user for some reason is not enrolled in any season it assumes the role is trainee (role_id = 3)
         cursor.execute(query, (user_id,))
@@ -189,15 +195,15 @@ class User(UserMixin):
     @staticmethod
     def get_user_role_id(user_id, season=current_season_id):
         cursor = g.db.cursor()
-        query = "SELECT role_id FROM enrollment where user_id=%s AND season_id=%s;"
-        cursor.execute(query, (user_id, season,))
+        query = "SELECT role_id FROM enrollment WHERE user_id = %s AND season_id = %s;"
+        cursor.execute(query, (user_id, season))
         role_name = cursor.fetchone()[0]
         return role_name
 
     @staticmethod
     def get_role_name(role_id):
         cursor = g.db.cursor()
-        query = "SELECT user_role FROM role where role_id=%s;"
+        query = "SELECT user_role FROM role WHERE role_id = %s;"
         cursor.execute(query, (role_id,))
         role_name = cursor.fetchone()[0]
         return role_name
@@ -213,7 +219,7 @@ class User(UserMixin):
         # TODO invalidate session when session authentication is implemented
         def is_same_password(user_id, new_password):
             cursor = g.db.cursor(dictionary=True)
-            query = "SELECT password FROM user where user_id=%s;"
+            query = "SELECT password FROM user where user_id = %s;"
             cursor.execute(query, (user_id,))
             record = cursor.fetchone()
             # print(record)
@@ -230,7 +236,7 @@ class User(UserMixin):
                 cursor = g.db.cursor()
                 new_password = generate_password_hash(new_password, method='sha256')
                 query = "UPDATE user SET password = %s WHERE (user_id = %s);"
-                cursor.execute(query, (new_password, user_id,))
+                cursor.execute(query, (new_password, user_id))
                 # if(cursor.rowcount)
                 g.db.commit()
                 if cursor.rowcount != 0:
@@ -249,14 +255,14 @@ class User(UserMixin):
             expiry_time = datetime.now() + timedelta(minutes=10)
             try:
                 cursor = g.db.cursor()
-                query = '''
-                    INSERT INTO password_reset_tokens 
-                    VALUES (%s, %s, %s) ON DUPLICATE KEY 
-                    UPDATE 
-                        token = %s, 
-                        expires_at = %s
-                '''
-                cursor.execute(query, (user_id, hashed_token, expiry_time, hashed_token, expiry_time,))
+                query = """
+                    INSERT INTO password_reset_tokens
+                    VALUES (%s, %s, %s)
+                    ON DUPLICATE KEY
+                        UPDATE token = %s,
+                               expires_at = %s
+                """
+                cursor.execute(query, (user_id, hashed_token, expiry_time, hashed_token, expiry_time))
                 g.db.commit()
                 break
             except mysql.connector.IntegrityError:
@@ -267,14 +273,7 @@ class User(UserMixin):
     def check_password_reset_token(token) -> bool:
         hashed_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
         cursor = g.db.cursor()
-        query = '''
-            SELECT 
-                expires_at
-            FROM
-                password_reset_tokens
-            WHERE
-                token = %s
-        '''
+        query = "SELECT expires_at FROM password_reset_tokens WHERE token = %s"
         cursor.execute(query, (hashed_token,))
         result = cursor.fetchone()
 
@@ -291,22 +290,14 @@ class User(UserMixin):
     @staticmethod
     def delete_password_reset_token(user_id):
         cursor = g.db.cursor()
-        query = '''
-            DELETE FROM password_reset_tokens 
-            WHERE
-                (`user_id` = %s);
-        '''
+        query = "DELETE FROM password_reset_tokens WHERE (`user_id` = %s);"
         cursor.execute(query, (user_id,))
         g.db.commit()
 
     @staticmethod
     def cleanup_expired_password_reset_tokens():
         cursor = g.db.cursor()
-        query = '''
-            DELETE FROM password_reset_tokens 
-            WHERE
-                (`expires_at` < %s);
-        '''
+        query = "DELETE FROM password_reset_tokens WHERE (`expires_at` < %s);"
         cursor.execute(query, (datetime.now(),))
         g.db.commit()
 
@@ -316,14 +307,7 @@ class User(UserMixin):
             return False
         hashed_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
         cursor = g.db.cursor()
-        query = '''
-            SELECT 
-                user_id
-            FROM
-                password_reset_tokens
-            WHERE
-                token = %s
-        '''
+        query = "SELECT user_id FROM password_reset_tokens WHERE token = %s"
         cursor.execute(query, (hashed_token,))
         user_id = cursor.fetchone()[0]
         User.update_password(user_id, new_password)
@@ -333,7 +317,7 @@ class User(UserMixin):
     @staticmethod
     def get_vjudge_handles():
         cursor = g.db.cursor()
-        query = "SELECT `user_id`, `vjudge_handle` from user;"
+        query = "SELECT user_id, vjudge_handle from user;"
         cursor.execute(query)
         columns = cursor.column_names
         result = []
@@ -345,7 +329,7 @@ class User(UserMixin):
     @staticmethod
     def get_ids_by_vjudge_handles():
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT `user_id`, `vjudge_handle` from user;"
+        query = "SELECT user_id, vjudge_handle from user;"
         cursor.execute(query)
         result = cursor.fetchall()
         user_ids = dict()
@@ -357,25 +341,27 @@ class User(UserMixin):
     def get_all_users(role, season_id=current_season_id):
         role_id = Permissions.get_role_id(role)
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT distinct\
-                u.user_id,\
-                u.vjudge_handle,\
-                u.name,\
-                u.email,\
-                e.mentor_id as mentor_id,\
-                m.name as mentor_name,\
-                l.name as level_name,\
-                e.enrollment_id as enrollment_id,\
-                e.level_id as level_id,\
-                e.season_id as season_id,\
-                e.enrolled as enrolled\
-                from (user u) \
-                inner join enrollment e on (u.user_id = e.user_id AND e.season_id = %s)\
-                left join user m on (e.mentor_id = m.user_id)\
-                left join training_levels l on (e.level_id = l.level_id)\
-                WHERE (e.role_id = %s)\
-                ORDER BY enrolled DESC, level_id ASC;"
-        cursor.execute(query, (season_id, role_id,))
+        query = """
+            SELECT distinct u.user_id,
+                            u.vjudge_handle,
+                            u.name,
+                            u.email,
+                            e.mentor_id     as mentor_id,
+                            m.name          as mentor_name,
+                            l.name          as level_name,
+                            e.enrollment_id as enrollment_id,
+                            e.level_id      as level_id,
+                            e.season_id     as season_id,
+                            e.enrolled      as enrolled
+            from (user u)
+                     inner join enrollment e
+                                on (u.user_id = e.user_id AND e.season_id = %s)
+                     left join user m on (e.mentor_id = m.user_id)
+                     left join training_levels l on (e.level_id = l.level_id)
+            WHERE (e.role_id = %s)
+            ORDER BY enrolled DESC, level_id;
+        """
+        cursor.execute(query, (season_id, role_id))
         records = cursor.fetchall()
         users = []
         for record in records:
@@ -385,24 +371,26 @@ class User(UserMixin):
     @staticmethod
     def get_mentees(mentor_id, season_id=current_season_id):
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT distinct\
-                u.user_id,\
-                u.vjudge_handle,\
-                u.name,\
-                u.email,\
-                e.mentor_id as mentor_id,\
-                m.name as mentor_name,\
-                l.name as level_name,\
-                e.enrollment_id as enrollment_id,\
-                e.level_id as level_id,\
-                e.season_id as season_id,\
-                e.enrolled as enrolled\
-                from (user u) \
-                inner join enrollment e on (u.user_id = e.user_id AND e.season_id = %s)\
-                left join user m on (e.mentor_id = m.user_id)\
-                left join training_levels l on (e.level_id = l.level_id)\
-                WHERE (e.mentor_id = %s);"
-        cursor.execute(query, (season_id, mentor_id,))
+        query = """
+            SELECT distinct u.user_id,
+                            u.vjudge_handle,
+                            u.name,
+                            u.email,
+                            e.mentor_id     as mentor_id,
+                            m.name          as mentor_name,
+                            l.name          as level_name,
+                            e.enrollment_id as enrollment_id,
+                            e.level_id      as level_id,
+                            e.season_id     as season_id,
+                            e.enrolled      as enrolled
+            from (user u)
+                     inner join enrollment e 
+                                on (u.user_id = e.user_id AND e.season_id = %s)
+                     left join user m on (e.mentor_id = m.user_id)
+                     left join training_levels l on (e.level_id = l.level_id)
+            WHERE (e.mentor_id = %s);
+        """
+        cursor.execute(query, (season_id, mentor_id))
         records = cursor.fetchall()
         users = []
         for record in records:
@@ -420,61 +408,63 @@ class User(UserMixin):
     def update_data(user_id, email, name, vjudge_handle):
         # User.updatePassword(user_id = id, newPassword = password)
         cursor = g.db.cursor()
-        query = "UPDATE user SET email = %s, vjudge_handle=%s, name=%s WHERE user_id=%s;"
-        cursor.execute(query, (email, vjudge_handle, name, user_id,))
+        query = """
+            UPDATE user SET email = %s, vjudge_handle = %s, name = %s WHERE user_id = %s;
+        """
+        cursor.execute(query, (email, vjudge_handle, name, user_id))
         g.db.commit()
 
     @staticmethod
     def update_data_by_admin(user_id, name, vjudge_handle, email):
         cursor = g.db.cursor()
-        query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s WHERE user_id=%s;"
-        cursor.execute(query, (name, vjudge_handle, email, user_id,))
+        query = "UPDATE user SET name = %s, vjudge_handle = %s, email = %s WHERE user_id = %s;"
+        cursor.execute(query, (name, vjudge_handle, email, user_id))
         g.db.commit()
 
     @staticmethod
     def update_data_by_admin_from_file(name, email, vjudge_handle, phone, university, faculty, university_level, major,
                                        discord):
         cursor = g.db.cursor()
-        # query = "UPDATE user SET name=%s, vjudge_handle=%s, email=%s WHERE user_id=%s;"
+        # query = "UPDATE user SET name = %s, vjudge_handle = %s, email = %s WHERE user_id = %s;"
         query = """
-                UPDATE user SET
-                name=%s,
-                vjudge_handle=%s,
-                phone_number=%s,
-                university=%s,
-                faculty=%s,
-                university_level=%s,
-                major=%s,
-                discord_handle=%s
-                WHERE email=%s;
-                """
+            UPDATE user
+            SET name = %s,
+                vjudge_handle = %s,
+                phone_number = %s,
+                university = %s,
+                faculty = %s,
+                university_level = %s,
+                major = %s,
+                discord_handle = %s
+            WHERE email = %s;
+        """
         cursor.execute(query,
-                       (name, vjudge_handle, phone, university, faculty, university_level, major, discord, email,))
+                       (name, vjudge_handle, phone, university, faculty, university_level, major, discord, email))
         g.db.commit()
 
     @staticmethod
     def delete_user(email):
         cursor = g.db.cursor()
-        query = "DELETE FROM user WHERE (`email` = %s);"
+        query = "DELETE FROM user WHERE (email = %s);"
         cursor.execute(query, (email,))
         g.db.commit()
 
     @staticmethod
     def get_mentor_info(user_id, season_id):
         cursor = g.db.cursor(dictionary=True)
-        query = '''
-                SELECT 
-                    m.name,
-                    m.email,
-                    m.vjudge_handle,
-                    m.phone_number,
-                    m.discord_handle
-                from (user u)
-                inner join enrollment e on (e.user_id = u.user_id)
-                inner join user m on (e.mentor_id = m.user_id)
-                where u.user_id = %s AND e.season_id = %s;
-                '''
-        cursor.execute(query, (user_id, season_id,))
+        query = """
+            SELECT m.name,
+                   m.email,
+                   m.vjudge_handle,
+                   m.phone_number,
+                   m.discord_handle
+            from (user u)
+                     inner join enrollment e on (e.user_id = u.user_id)
+                     inner join user m on (e.mentor_id = m.user_id)
+            where u.user_id = %s
+              AND e.season_id = %s;
+        """
+        cursor.execute(query, (user_id, season_id))
         mentor_info = cursor.fetchone()
         if mentor_info is not None:
             return mentor_info
@@ -510,7 +500,7 @@ class Permissions:
     @staticmethod
     def get_all_roles():
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT `role_id`, `user_role` from role;"
+        query = "SELECT role_id, user_role from role;"
         cursor.execute(query)
         records = cursor.fetchall()
         roles = []
@@ -529,7 +519,11 @@ class ProgressPerContest:
     def get_contest_parameters(contest_id):
         # g.db.reconnect()
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT `total_problems`, `yellow_threshold`, `green_threshold` from contest where contest_id = %s;"
+        query = """
+            SELECT total_problems, yellow_threshold, green_threshold
+            FROM contest
+            WHERE contest_id = %s;
+        """
         cursor.execute(query, (contest_id,))
         record = cursor.fetchone()
         return record['total_problems'], record['yellow_threshold'], record['green_threshold']
@@ -538,7 +532,11 @@ class ProgressPerContest:
     def get_contest_parameters_by_season(season_id):
         # g.db.reconnect()
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT `contest_id`, `total_problems`, `yellow_threshold`, `green_threshold` from contest where season_id = %s;"
+        query = """
+            SELECT contest_id, total_problems, yellow_threshold, green_threshold
+            from contest
+            where season_id = %s;
+        """
         cursor.execute(query, (season_id,))
         records = cursor.fetchall()
         contest_parameters = dict()
@@ -562,19 +560,25 @@ class ProgressPerContest:
     def add_progress_per_contest(user_id, contest_id, solved_problems, zone):
 
         cursor = g.db.cursor()
-        query = "INSERT INTO progress_per_contest \
-                (`user_id`, `contest_id`,\
-                `solved_problems`, `ranking`, `zone`) \
-                VALUES (%s,%s,%s,%s,%s);"
-        cursor.execute(query, (user_id, int(contest_id), solved_problems, 0, zone,))
+        query = """
+            INSERT INTO progress_per_contest (user_id, contest_id, solved_problems, 
+                                              ranking, zone)
+            VALUES (%s, %s, %s, %s, %s);
+        """
+        cursor.execute(query, (user_id, int(contest_id), solved_problems, 0, zone))
         g.db.commit()
 
     @staticmethod
     def update_progress_per_contest_bulk(progress_list):
         cursor = g.db.cursor()
-        query = "UPDATE progress_per_contest SET \
-                solved_problems=%s, ranking=%s, zone=%s \
-                WHERE user_id=%s AND contest_id=%s;"
+        query = """
+            UPDATE progress_per_contest
+            SET solved_problems = %s,
+                ranking = %s,
+                zone = %s
+            WHERE user_id = %s
+              AND contest_id = %s;
+        """
 
         cursor.executemany(query, progress_list)
         g.db.commit()
@@ -582,21 +586,31 @@ class ProgressPerContest:
     @staticmethod
     def register_bulk(to_be_registered_list):
         cursor = g.db.cursor()
-        query = "INSERT INTO progress_per_contest \
-                (`user_id`, `contest_id`,\
-                `solved_problems`, `ranking`, `zone`) \
-                VALUES (%s,%s,%s,%s,%s);"
+        query = """
+            INSERT INTO progress_per_contest (user_id, contest_id, solved_problems, 
+                                              ranking, zone)
+            VALUES (%s, %s, %s, %s, %s);
+        """
         cursor.executemany(query, to_be_registered_list)
         g.db.commit()
 
     def __init__(self) -> None:
         print("in init")
 
+    # deprecated
     @staticmethod
     def get_contest(contest_id):
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT `contest_id`, `week_number`, `topic`, `total_problems`,\
-             `total_participants`, `minimum_problems` from contest where contest_id = %s;"
+        query = """
+            SELECT `contest_id`,
+                   `week_number`,
+                   `topic`,
+                   `total_problems`,
+                   `total_participants`,
+                   `minimum_problems`
+            from contest
+            where contest_id = %s;
+        """
         cursor.execute(query, (contest_id,))
         record = cursor.fetchone()
         return record
@@ -612,17 +626,13 @@ class ProgressPerContest:
     @staticmethod
     def get_contests_admin(season=current_season_id):
         cursor = g.db.cursor(dictionary=True)
-        query = '''
-            SELECT 
-                c.*, l.name AS level
-            FROM
-                (contest c)
-                    INNER JOIN
-                training_levels l ON (l.level_id = c.level_id)
-            WHERE
-                season_id = %s
-            order by level_id, week_number
-        '''
+        query = """
+            SELECT c.*, l.name AS level
+            FROM (contest c)
+                     INNER JOIN training_levels l ON (l.level_id = c.level_id)
+            WHERE season_id = %s
+            ORDER BY level_id, week_number
+        """
         cursor.execute(query, (season,))
         contests = cursor.fetchall()
         return contests
@@ -633,8 +643,7 @@ class ProgressPerContest:
         print("level")
         print(level_id)
         query = "SELECT * from contest WHERE (level_id = %s AND season_id = %s);"
-
-        cursor.execute(query, (level_id, season_id,))
+        cursor.execute(query, (level_id, season_id))
         contests = cursor.fetchall()
         return contests
 
@@ -644,21 +653,24 @@ class ProgressPerContest:
         cursor = g.db.cursor(dictionary=True)
         # query  = "SELECT `contest_id`, `solved_problems`, `rank`, `zone`\
         #      from progress_per_contest where user_id = %s;"
-        query = "SELECT distinct\
-                p.contest_id,\
-                p.solved_problems,\
-                p.ranking,\
-                p.zone,\
-                c.level_id,\
-                c.season_id,\
-                c.topic,\
-                c.total_problems,\
-                c.week_number\
-                from (progress_per_contest p) \
-                inner join contest c on (c.contest_id = p.contest_id)\
-                inner join enrollment e on (e.level_id = c.level_id and e.season_id = c.season_id and e.user_id = p.user_id)\
-                WHERE (p.user_id = %s AND c.season_id = %s);"
-        cursor.execute(query, (user_id, season_id,))
+        query = """
+            SELECT distinct p.contest_id,
+                            p.solved_problems,
+                            p.ranking,
+                            p.zone,
+                            c.level_id,
+                            c.season_id,
+                            c.topic,
+                            c.total_problems,
+                            c.week_number
+            from (progress_per_contest p)
+                     inner join contest c on (c.contest_id = p.contest_id)
+                     inner join enrollment e
+                                on (e.level_id = c.level_id and
+                                    e.season_id = c.season_id and e.user_id = p.user_id)
+            WHERE (p.user_id = %s AND c.season_id = %s);
+        """
+        cursor.execute(query, (user_id, season_id))
         records = cursor.fetchall()
         # contests = ProgressPerContest.getContestsFiltered(level_id=level_id,season_id=season_id)
         return {"progress": records}
@@ -666,7 +678,7 @@ class ProgressPerContest:
     @staticmethod
     def contest_exists(contest_id):
         cursor = g.db.cursor()
-        query = "SELECT * FROM contest where contest_id=%s;"
+        query = "SELECT * FROM contest where contest_id = %s;"
         cursor.execute(query, (contest_id,))
         cursor.fetchone()
         if cursor.rowcount == 1:
@@ -678,11 +690,12 @@ class ProgressPerContest:
         if ProgressPerContest.contest_exists(contest_id):
             return "Contest already registered"
         cursor = g.db.cursor()
-        query = "INSERT INTO contest \
-                (`contest_id`, `total_problems`,\
-                `yellow_threshold`, `green_threshold`, `topic`,\
-                `week_number`, `minimum_problems`, `level_id`, `season_id`) \
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        query = """
+            INSERT INTO contest (`contest_id`, `total_problems`, `yellow_threshold`,
+                                 `green_threshold`, `topic`, `week_number`,
+                                 `minimum_problems`, `level_id`, `season_id`)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+        """
         cursor.execute(query, (contest_id, num_problems, yellow_threshold,
                                green_threshold, topic, week_number, 0, level_id, current_season_id))
         g.db.commit()
@@ -699,19 +712,19 @@ class ProgressPerContest:
     def update_contest(new_contest_id, topic, yellow_threshold, green_threshold, total, week_number, level_id,
                        old_contest_id):
         cursor = g.db.cursor()
-        query = '''
-                UPDATE contest SET 
-                contest_id = %s,
+        query = """
+            UPDATE contest
+            SET contest_id = %s,
                 topic = %s,
                 yellow_threshold = %s,
                 green_threshold = %s,
                 total_problems = %s,
                 week_number = %s,
                 level_id = %s
-                WHERE contest_id = %s;
-                '''
+            WHERE contest_id = %s;
+        """
         cursor.execute(query, (
-            new_contest_id, topic, yellow_threshold, green_threshold, total, week_number, level_id, old_contest_id,))
+            new_contest_id, topic, yellow_threshold, green_threshold, total, week_number, level_id, old_contest_id))
         g.db.commit()
 
     @staticmethod
@@ -800,31 +813,28 @@ class Resources:
     @staticmethod
     def add_resource(topic, link, level, season_id=current_season_id):
         cursor = g.db.cursor()
-        query = "INSERT INTO resource \
-                (`topic`, `link`,`level_id`,`season_id`) \
-                VALUES (%s,%s,%s,%s);"
-        cursor.execute(query, (topic, link, int(level), season_id,))
+        query = """
+            INSERT INTO resource (`topic`, `link`, `level_id`, `season_id`)
+            VALUES (%s, %s, %s, %s);
+        """
+        cursor.execute(query, (topic, link, int(level), season_id))
         g.db.commit()
 
     @staticmethod
     def get_all_resources(season_id=current_season_id):
         cursor = g.db.cursor(dictionary=True)
-        query = '''
-            SELECT DISTINCT
-                r.resource_id,
-                r.topic,
-                r.link,
-                r.season_id,
-                l.name AS level,
-                l.level_id
-            FROM
-                (resource r)
-                    LEFT JOIN
-                training_levels l ON (r.level_id = l.level_id)
-            WHERE
-                (season_id = %s)
+        query = """
+            SELECT DISTINCT r.resource_id,
+                            r.topic,
+                            r.link,
+                            r.season_id,
+                            l.name AS level,
+                            l.level_id
+            FROM (resource r)
+                     LEFT JOIN training_levels l ON (r.level_id = l.level_id)
+            WHERE (season_id = %s)
             ORDER BY level_id
-        '''
+        """
         cursor.execute(query, (season_id,))
         records = cursor.fetchall()
         resources = []
@@ -835,18 +845,21 @@ class Resources:
     @staticmethod
     def get_resources(user_id, season_id=current_season_id):
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT distinct\
-                r.resource_id,\
-                r.topic,\
-                r.link,\
-                r.season_id,\
-                r.level_id,\
-                l.name as level\
-                from (resource r) \
-                inner join enrollment e on (e.season_id = r.season_id and e.level_id = r.level_id)\
-                inner join training_levels l on (r.level_id = l.level_id)\
-                where(e.user_id = %s and e.season_id = %s)"
-        cursor.execute(query, (user_id, season_id,))
+        query = """
+            SELECT distinct r.resource_id,
+                            r.topic,
+                            r.link,
+                            r.season_id,
+                            r.level_id,
+                            l.name as level
+            from (resource r)
+                     inner join enrollment e
+                                on (e.season_id = r.season_id and
+                                    e.level_id = r.level_id)
+                     inner join training_levels l on (r.level_id = l.level_id)
+            where (e.user_id = %s and e.season_id = %s)
+        """
+        cursor.execute(query, (user_id, season_id))
         records = cursor.fetchall()
         resources = []
         for record in records:
@@ -856,8 +869,10 @@ class Resources:
     @staticmethod
     def update_resource(resource_id, topic, level_id, link):
         cursor = g.db.cursor()
-        query = "UPDATE resource SET topic=%s, level_id=%s, link=%s WHERE resource_id=%s;"
-        cursor.execute(query, (topic, int(level_id), link, int(resource_id),))
+        query = """
+            UPDATE resource SET topic = %s, level_id = %s, link = %s WHERE resource_id = %s;
+        """
+        cursor.execute(query, (topic, int(level_id), link, int(resource_id)))
         g.db.commit()
 
     @staticmethod
@@ -873,9 +888,11 @@ class AvailableDays:
     def add_available_days(email, available_days):
         user_id = User.get_user_id(email=email)
         cursor = g.db.cursor()
-        query = "INSERT INTO available_days \
-                (`user_id`, `sat`, `sun`, `mon`, `tues`, `wed`, `thur`) \
-                VALUES (%s,%s,%s,%s,%s,%s,%s);"
+        query = """
+            INSERT INTO available_days (`user_id`, `sat`, `sun`, `mon`, `tues`, `wed`,
+                                        `thur`)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
+        """
         cursor.execute(query, (user_id,
                                available_days["sat"],
                                available_days["sun"],
@@ -926,15 +943,11 @@ class Seasons:
     @staticmethod
     def get_enrolled_seasons(user_id):
         cursor = g.db.cursor(dictionary=True)
-        query = '''
-                SELECT `season_id`, `name`
-                FROM seasons
-                WHERE season_id IN (
-                    SELECT `season_id`
-                    FROM enrollment
-                    WHERE user_id = %s
-                );
-                '''
+        query = """
+            SELECT `season_id`, `name`
+            FROM seasons
+            WHERE season_id IN (SELECT `season_id` FROM enrollment WHERE user_id = %s);
+        """
         cursor.execute(query, (user_id,))
         records = cursor.fetchall()
         seasons = []
@@ -948,10 +961,11 @@ class Enrollment:
     def enroll(user_id, level_id, season_id=current_season_id,
                role_id=3):  # by default enroll user as a trainee (role_id = 3)
         cursor = g.db.cursor()
-        query = "INSERT INTO enrollment \
-                (`user_id`, `level_id`, `season_id`, `role_id`) \
-                VALUES (%s,%s,%s,%s);"
-        cursor.execute(query, (user_id, level_id, season_id, role_id,))
+        query = """
+            INSERT INTO enrollment (`user_id`, `level_id`, `season_id`, `role_id`)
+            VALUES (%s, %s, %s, %s);
+        """
+        cursor.execute(query, (user_id, level_id, season_id, role_id))
         g.db.commit()
 
     @staticmethod
@@ -967,9 +981,12 @@ class Enrollment:
     @staticmethod
     def get_enrollment(user_id, season_id=current_season_id):
         cursor = g.db.cursor(dictionary=True)
-        query = "SELECT `enrollment_id`, `user_id`, `level_id`, `season_id`, `enrolled`\
-            FROM enrollment WHERE (user_id = %s AND season_id = %s)"
-        cursor.execute(query, (user_id, season_id,))
+        query = """
+            SELECT `enrollment_id`, `user_id`, `level_id`, `season_id`, `enrolled`
+            FROM enrollment
+            WHERE (user_id = %s AND season_id = %s)
+        """
+        cursor.execute(query, (user_id, season_id))
         enrollment = cursor.fetchone()
         # enrollment = []
         # for record in records:
@@ -979,16 +996,31 @@ class Enrollment:
     @staticmethod
     def update_enrollment(enrollment_id, level_id, mentor_id, enrolled, season_id=current_season_id):
         cursor = g.db.cursor()
-        query = "UPDATE enrollment SET level_id=%s, season_id=%s, mentor_id=%s, enrolled=%s WHERE enrollment_id=%s;"
-        cursor.execute(query, (level_id, season_id, mentor_id, enrolled, enrollment_id,))
+        query = """
+            UPDATE enrollment
+            SET level_id = %s,
+                season_id = %s,
+                mentor_id = %s,
+                enrolled = %s
+            WHERE enrollment_id = %s;
+        """
+        cursor.execute(query, (level_id, season_id, mentor_id, enrolled, enrollment_id))
         g.db.commit()
 
     # TODO make merge these two functions
     @staticmethod
     def update_enrollment_from_file(enrollment_id, level_id, mentor_id, enrolled, role_id, season_id=current_season_id):
         cursor = g.db.cursor()
-        query = "UPDATE enrollment SET level_id=%s, season_id=%s, mentor_id=%s, enrolled=%s, role_id = %s WHERE enrollment_id=%s;"
-        cursor.execute(query, (level_id, season_id, mentor_id, enrolled, role_id, enrollment_id,))
+        query = """
+            UPDATE enrollment
+            SET level_id = %s,
+                season_id = %s,
+                mentor_id = %s,
+                enrolled = %s,
+                role_id = %s
+            WHERE enrollment_id = %s;
+        """
+        cursor.execute(query, (level_id, season_id, mentor_id, enrolled, role_id, enrollment_id))
         g.db.commit()
 
     @staticmethod
@@ -1000,8 +1032,13 @@ class Enrollment:
     @staticmethod
     def is_enrolled(user_id, season_id=current_season_id):
         cursor = g.db.cursor()
-        query = "SELECT enrollment_id FROM enrollment where user_id=%s and season_id=%s;"
-        cursor.execute(query, (user_id, season_id,))
+        query = """
+            SELECT enrollment_id
+            FROM enrollment
+            where user_id = %s
+              and season_id = %s;
+        """
+        cursor.execute(query, (user_id, season_id))
         cursor.fetchone()
         if cursor.rowcount == 1:
             return True
@@ -1010,8 +1047,8 @@ class Enrollment:
     @staticmethod
     def get_enrollment_level(user_id, season_id=current_season_id):
         cursor = g.db.cursor()
-        query = "SELECT level_id FROM enrollment where user_id=%s and season_id=%s;"
-        cursor.execute(query, (user_id, season_id,))
+        query = "SELECT level_id FROM enrollment where user_id = %s and season_id = %s;"
+        cursor.execute(query, (user_id, season_id))
         return cursor.fetchone()[0]
 
 
@@ -1027,6 +1064,6 @@ class Vars:
     @staticmethod
     def set_variable_value(variable_name, value):
         cursor = g.db.cursor()
-        query = "UPDATE vars SET `value`=%s WHERE name=%s;"
-        cursor.execute(query, (value, variable_name,))
+        query = "UPDATE vars SET value = %s WHERE name = %s;"
+        cursor.execute(query, (value, variable_name))
         g.db.commit()
