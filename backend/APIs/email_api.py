@@ -28,22 +28,6 @@ def get_message(subject, recipient, body):
     return message.as_string()
 
 
-# def getMessage(name,recipient,password):
-#     message = email.message.EmailMessage()
-#     message.add_header("Subject", "ASUFE CPC Account Password")
-#     message.add_header("To",recipient)
-#     body = "Dear " + name + ", your ASUFE CPC Account Password is " + password
-#     message.set_content(body)
-#     return message.as_string()
-
-# def getResetMessage(recipient,password):
-#     message = email.message.EmailMessage()
-#     message.add_header("Subject", "ASUFE CPC Account Password Reset")
-#     message.add_header("To",recipient)
-#     body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
-#     message.set_content(body)
-#     return message.as_string()
-
 def send_password_emails(emails: list[dict[str, str]]):
     server = init_email()
     for em in emails:
@@ -51,7 +35,7 @@ def send_password_emails(emails: list[dict[str, str]]):
         recipient = em["email"]
         password = em["password"]
         subject = "ASUFE CPC Account Password"
-        body = "Dear " + name + ", your ASUFE CPC Account Password is " + password
+        body = f"Dear {name}, your ASUFE CPC Account Password is {password}"
         message = get_message(subject, recipient, body)
         server.sendmail(SENDER_EMAIL, recipient, message)
     # message = getMessage(name,password)
@@ -60,7 +44,8 @@ def send_password_emails(emails: list[dict[str, str]]):
 def send_password_reset_email(recipient, password):
     server = init_email()
     subject = "ASUFE CPC Account Password Reset"
-    body = "Please note that your ASUFE CPC account password has been reset, your new password is " + password
+    body = (f"Please note that your ASUFE CPC account password has been reset, "
+            f"your new password is {password}")
     message = get_message(subject, recipient, body)
     server.sendmail(SENDER_EMAIL, recipient, message)
 
@@ -71,7 +56,6 @@ def send_password_reset_link(recipient, link):
     body = f"Visit {link} to reset your password. The link expires in 10 minutes."
     message = get_message(subject, recipient, body)
     server.sendmail(SENDER_EMAIL, recipient, message)
-
 
 # send_password_emails(
 #     emails=[{"name": "Mohamed Ayman", "password": "yourpassword",
