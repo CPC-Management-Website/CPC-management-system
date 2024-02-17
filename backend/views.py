@@ -1,6 +1,5 @@
 import json
 
-import werkzeug.exceptions
 from flask import Blueprint
 from flask import request
 
@@ -29,11 +28,11 @@ def display_profile():
 def check_availability(user_id, email, vjudge_handle):
     old_email = User.get_user_email(user_id=user_id)
     if old_email != email and User.email_exists(email=email):
-        return errors.email_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.email_already_registered()
 
     old_vjudge_handle = User.get_vjudge_handle(user_id=user_id)
     if old_vjudge_handle != vjudge_handle and User.vjudge_handle_exists(vjudge_handle=vjudge_handle):
-        return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.vjudge_already_registered()
 
 
 @views.route(urls['PROFILE'], methods=["POST"], strict_slashes=False)
@@ -143,9 +142,9 @@ def add_contest():
                                             week_num, level_id)
     print(status)
     if status == 'Contest already registered':
-        return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.contest_already_registered()
     elif status == 'Incorrect date format':
-        return errors.invalid_date_format(werkzeug.exceptions.BadRequest)
+        return errors.invalid_date_format()
     ProgressPerContest.init_contest_progress_contest(contest_id=contest_id)
     # ProgressPerContest.updateProgress(contest_id=contestID)
     # ProgressPerContest.addProgress(contestID)
@@ -173,7 +172,7 @@ def update_contest():
                                           week_number, level_id, old_contest_id)
     except Exception as e:
         print(e)
-        return errors.contest_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.contest_already_registered()
     return "Success"
 
 

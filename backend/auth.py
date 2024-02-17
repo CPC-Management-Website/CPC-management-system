@@ -3,7 +3,6 @@ import os
 import secrets
 
 import pandas as pd
-import werkzeug
 from dotenv import load_dotenv
 from flask import Blueprint, request
 from flask_login import login_user
@@ -29,7 +28,7 @@ def login():
     password = request.json["password"]
 
     if not User.email_exists(email):
-        return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
+        return errors.email_doesnt_exist()
 
     user = User(email=email)
 
@@ -39,14 +38,14 @@ def login():
         perm = Permissions(user).get_allowed_permissions()
         # enrollment = Enrollment.getEnrollment(user_id=user.id)
         latest_enrollment_season = Enrollment.get_latest_enrollment_season(user_id=user.id)
-        user_json = json.dumps(user.__dict__)
+        # user_json = json.dumps(user.__dict__)
         seasons = Seasons.get_all_seasons()
         levels = Levels.get_all_levels()
         registration_status = Vars.get_variable_value(variable_name="registration")
         enrolled_seasons = Seasons.get_enrolled_seasons(user_id=user.id)
     else:
         print("Password incorrect!")
-        return errors.incorrect_password(werkzeug.exceptions.BadRequest)
+        return errors.incorrect_password()
     return {"userInfo": {"email": email, "password": password, "permissions": perm, "id": user.id,
                          "latestEnrollmentSeason": latest_enrollment_season, "enrolledSeasons": enrolled_seasons},
             "seasons": seasons,
@@ -66,10 +65,10 @@ def register_admin():
 
     if User.email_exists(email):
         print("email already registered")
-        return errors.email_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.email_already_registered()
     if User.vjudge_handle_exists(vjudge_handle=vjudge):
         print("vjudge handle already registered")
-        return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.vjudge_already_registered()
     User.register_user_by_admin(vjudge_handle=vjudge, name=name,
                                 email=email, level_id=level_id, role_id=role_id,
                                 points=0, discord=discord,
@@ -95,10 +94,10 @@ def sign_up():
 
     if User.email_exists(email):
         print("email already registered")
-        return errors.email_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.email_already_registered()
     if User.vjudge_handle_exists(vjudge_handle=vjudge):
         print("Vjudge handle already registered")
-        return errors.vjudge_already_registered(werkzeug.exceptions.BadRequest)
+        return errors.vjudge_already_registered()
     User.register_user(
         name=name,
         email=email,
@@ -202,7 +201,7 @@ def register_from_file():
     send_password_emails(emails)
 
     if len(already_registered) > 0:
-        return errors.user_already_registered_bulk(already_registered, werkzeug.exceptions.BadRequest)
+        return errors.user_already_registered_bulk(already_registered)
     return " "
 
 
@@ -230,7 +229,7 @@ def assign_mentors():
             User.assign_mentor(trainee_email=trainee_email, mentor_email=mentor_email)
 
     if len(nonexistent_emails) > 0:
-        return errors.emails_do_not_exist(nonexistent_emails, werkzeug.exceptions.BadRequest)
+        return errors.emails_do_not_exist(nonexistent_emails)
     return " "
 
 
@@ -240,9 +239,9 @@ def enroll():
     email = request.json["email"]
     registration_status = Vars.get_variable_value(variable_name="registration")
     if not int(registration_status["value"]):
-        return errors.registrationClosed(werkzeug.exceptions.BadRequest)
+        return errors.registration_closed()
     if Enrollment.get_enrollment(user_id=user_id):
-        return errors.user_already_enrolled(werkzeug.exceptions.BadRequest)
+        return errors.user_already_enrolled()
     print(f"Enrolling {email} in new season")
     Enrollment.enroll_from_registration(email=email)
     registered_seasons = Seasons.get_enrolled_seasons(user_id=user_id)
@@ -281,7 +280,7 @@ def register_users():
             Enrollment.enroll(user_id=user.id, level_id=level_id, role_id=role_id)
 
     if len(nonexistent_emails) > 0:
-        return errors.emails_do_not_exist_register_file(nonexistent_emails, werkzeug.exceptions.BadRequest)
+        return errors.emails_do_not_exist_register_file(nonexistent_emails)
     return " "
 
 
