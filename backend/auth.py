@@ -19,10 +19,10 @@ load_dotenv()
 
 REMEMBER_LOGINS = False  # consider changing this to true
 PASSWORD_LENGTH = 10
-DOMAIN = os.getenv('DOMAIN_NAME')
+DOMAIN = os.getenv("DOMAIN_NAME")
 
 
-@auth.route(urls['LOGIN'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["LOGIN"], methods=["POST"], strict_slashes=False)
 def login():
     email = request.json["email"]
     password = request.json["password"]
@@ -37,7 +37,9 @@ def login():
         login_user(user, remember=REMEMBER_LOGINS)
         perm = Permissions(user).get_allowed_permissions()
         # enrollment = Enrollment.getEnrollment(user_id=user.id)
-        latest_enrollment_season = Enrollment.get_latest_enrollment_season(user_id=user.id)
+        latest_enrollment_season = Enrollment.get_latest_enrollment_season(
+            user_id=user.id
+        )
         # user_json = json.dumps(user.__dict__)
         seasons = Seasons.get_all_seasons()
         levels = Levels.get_all_levels()
@@ -46,14 +48,22 @@ def login():
     else:
         print("Password incorrect!")
         return errors.incorrect_password()
-    return {"userInfo": {"email": email, "password": password, "permissions": perm, "id": user.id,
-                         "latestEnrollmentSeason": latest_enrollment_season, "enrolledSeasons": enrolled_seasons},
-            "seasons": seasons,
-            "levels": levels,
-            "registrationAvailable": registration_status}
+    return {
+        "userInfo": {
+            "email": email,
+            "password": password,
+            "permissions": perm,
+            "id": user.id,
+            "latestEnrollmentSeason": latest_enrollment_season,
+            "enrolledSeasons": enrolled_seasons,
+        },
+        "seasons": seasons,
+        "levels": levels,
+        "registrationAvailable": registration_status,
+    }
 
 
-@auth.route(urls['USER_ENTRY'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["USER_ENTRY"], methods=["POST"], strict_slashes=False)
 def register_admin():
     name = request.json["firstName"] + " " + request.json["lastName"]
     email = request.json["email"]
@@ -69,16 +79,22 @@ def register_admin():
     if User.vjudge_handle_exists(vjudge_handle=vjudge):
         print("vjudge handle already registered")
         return errors.vjudge_already_registered()
-    User.register_user_by_admin(vjudge_handle=vjudge, name=name,
-                                email=email, level_id=level_id, role_id=role_id,
-                                points=0, discord=discord,
-                                password=generate_password_hash(password, method='sha256'))
+    User.register_user_by_admin(
+        vjudge_handle=vjudge,
+        name=name,
+        email=email,
+        level_id=level_id,
+        role_id=role_id,
+        points=0,
+        discord=discord,
+        password=generate_password_hash(password, method="sha256"),
+    )
     print("User added successfully")
     send_password_emails([{"name": name, "password": password, "email": email}])
     return {"email": email, "password": password}
 
 
-@auth.route(urls['SIGNUP'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["SIGNUP"], methods=["POST"], strict_slashes=False)
 def sign_up():
     name = request.json["fullName"]
     email = request.json["email"]
@@ -108,7 +124,7 @@ def sign_up():
         university_level=level,
         major=major,
         discord=discord_handle,
-        password=generate_password_hash(password, method='sha256')
+        password=generate_password_hash(password, method="sha256"),
     )
     print("User added successfully")
     AvailableDays.add_available_days(email=email, available_days=available_days)
@@ -118,13 +134,13 @@ def sign_up():
     return "Signup successful", 200
 
 
-@auth.route(urls['USER_ENTRY'], methods=["GET"], strict_slashes=False)
+@auth.route(urls["USER_ENTRY"], methods=["GET"], strict_slashes=False)
 def get_roles():
     roles = Permissions.get_all_roles()
     return json.dumps(roles)
 
 
-@auth.route(urls['USER_ENTRY_FILE'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["USER_ENTRY_FILE"], methods=["POST"], strict_slashes=False)
 def register_from_file():
     roles = Permissions.get_all_roles()
     levels = Levels.get_all_levels()
@@ -146,9 +162,9 @@ def register_from_file():
         password = secrets.token_urlsafe(PASSWORD_LENGTH)
         role_name = row["Role"]
         level_name = row["Level"]
-        res = [role for role in roles if role['user_role'] == role_name]
+        res = [role for role in roles if role["user_role"] == role_name]
         role_id = res[0]["role_id"]
-        res2 = [level for level in levels if level['name'] == level_name]
+        res2 = [level for level in levels if level["name"] == level_name]
         level_id = res2[0]["level_id"]
 
         # print(name,email,password)
@@ -160,8 +176,11 @@ def register_from_file():
 
         if User.email_exists(email):
             email_for_vjudge_handle = User.get_user_email_by_vjudge_handle(
-                vjudge)  # the email associated with the given vjudge handle
-            if (email_for_vjudge_handle is not None) and (email_for_vjudge_handle != email):
+                vjudge
+            )  # the email associated with the given vjudge handle
+            if (email_for_vjudge_handle is not None) and (
+                email_for_vjudge_handle != email
+            ):
                 add_already_registered(email)
                 continue
 
@@ -174,7 +193,7 @@ def register_from_file():
                 faculty=faculty,
                 university_level=university_level,
                 major=major,
-                discord=discord
+                discord=discord,
             )
 
         else:
@@ -192,9 +211,9 @@ def register_from_file():
                 university_level=university_level,
                 major=major,
                 discord=discord,
-                password=generate_password_hash(password, method='sha256'),
+                password=generate_password_hash(password, method="sha256"),
                 role_id=role_id,
-                level_id=level_id
+                level_id=level_id,
             )
             print(email, " added successfully")
             emails.append({"email": email, "name": name, "password": password})
@@ -205,7 +224,7 @@ def register_from_file():
     return " "
 
 
-@auth.route(urls['ASSIGN_MENTORS'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["ASSIGN_MENTORS"], methods=["POST"], strict_slashes=False)
 def assign_mentors():
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
@@ -233,7 +252,7 @@ def assign_mentors():
     return " "
 
 
-@auth.route(urls['ENROLL'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["ENROLL"], methods=["POST"], strict_slashes=False)
 def enroll():
     user_id = request.json["user_id"]
     email = request.json["email"]
@@ -248,7 +267,7 @@ def enroll():
     return {"enrolledSeasons": registered_seasons}
 
 
-@auth.route(urls['USER_REGISTER_FILE'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["USER_REGISTER_FILE"], methods=["POST"], strict_slashes=False)
 def register_users():
     roles = Permissions.get_all_roles()
     levels = Levels.get_all_levels()
@@ -259,10 +278,10 @@ def register_users():
         index += 2
         email = row["Email"]
         role_name = row["Role"]
-        res = [role for role in roles if role['user_role'] == role_name]
+        res = [role for role in roles if role["user_role"] == role_name]
         role_id = res[0]["role_id"]
         level_name = row["Level"]
-        res2 = [level for level in levels if level['name'] == level_name]
+        res2 = [level for level in levels if level["name"] == level_name]
         level_id = res2[0]["level_id"]
         # print(name,email,password)
         if not User.email_exists(email=email):
@@ -274,8 +293,13 @@ def register_users():
         print(level_name)
         print(level_id)
         if enrollment is not None:
-            Enrollment.update_enrollment_from_file(enrollment["enrollment_id"], level_id=level_id, mentor_id=None,
-                                                   enrolled=True, role_id=role_id)
+            Enrollment.update_enrollment_from_file(
+                enrollment["enrollment_id"],
+                level_id=level_id,
+                mentor_id=None,
+                enrolled=True,
+                role_id=role_id,
+            )
         else:
             Enrollment.enroll(user_id=user.id, level_id=level_id, role_id=role_id)
 
@@ -284,7 +308,7 @@ def register_users():
     return " "
 
 
-@auth.route(urls['FORGOT_PASSWORD'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["FORGOT_PASSWORD"], methods=["POST"], strict_slashes=False)
 def forgot_password():
     email = request.json["email"]
     if not User.email_exists(email):
@@ -298,7 +322,7 @@ def forgot_password():
     return "", 200
 
 
-@auth.route(urls['RESET_PASSWORD'], methods=["GET"], strict_slashes=False)
+@auth.route(urls["RESET_PASSWORD"], methods=["GET"], strict_slashes=False)
 def check_password_reset_link():
     token = request.args.get("token")
     if User.check_password_reset_token(token):
@@ -306,7 +330,7 @@ def check_password_reset_link():
     return "Invalid or Expired Token", 404
 
 
-@auth.route(urls['RESET_PASSWORD'], methods=["POST"], strict_slashes=False)
+@auth.route(urls["RESET_PASSWORD"], methods=["POST"], strict_slashes=False)
 def reset_password():
     token = request.json["token"]
     password = request.json["password"]

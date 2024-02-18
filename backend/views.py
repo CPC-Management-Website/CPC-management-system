@@ -14,7 +14,7 @@ from urls import urls
 views = Blueprint("views", __name__)
 
 
-@views.route(urls['PROFILE'], methods=["GET"], strict_slashes=False)
+@views.route(urls["PROFILE"], methods=["GET"], strict_slashes=False)
 def display_profile():
     email = request.args.get("email")
     # if(User.exists(email)==False):
@@ -31,11 +31,13 @@ def check_availability(user_id, email, vjudge_handle):
         return errors.email_already_registered()
 
     old_vjudge_handle = User.get_vjudge_handle(user_id=user_id)
-    if old_vjudge_handle != vjudge_handle and User.vjudge_handle_exists(vjudge_handle=vjudge_handle):
+    if old_vjudge_handle != vjudge_handle and User.vjudge_handle_exists(
+        vjudge_handle=vjudge_handle
+    ):
         return errors.vjudge_already_registered()
 
 
-@views.route(urls['PROFILE'], methods=["POST"], strict_slashes=False)
+@views.route(urls["PROFILE"], methods=["POST"], strict_slashes=False)
 def edit_profile():
     user_id = request.json["userID"]
     email = request.json["email"]
@@ -43,7 +45,9 @@ def edit_profile():
     vjudge_handle = request.json["vjudgeHandle"]
     # password = request.json["password"]
 
-    error = check_availability(user_id=user_id, email=email, vjudge_handle=vjudge_handle)
+    error = check_availability(
+        user_id=user_id, email=email, vjudge_handle=vjudge_handle
+    )
     if error:
         return error
     User.update_data(user_id, email, name, vjudge_handle)
@@ -51,7 +55,7 @@ def edit_profile():
     return "Success"
 
 
-@views.route(urls['UPDATE_PASSSWORD'], methods=["POST"], strict_slashes=False)
+@views.route(urls["UPDATE_PASSSWORD"], methods=["POST"], strict_slashes=False)
 def update_password():
     user_id = request.json["userID"]
     old_password = request.json["oldPassword"]
@@ -62,7 +66,7 @@ def update_password():
     return "Success"
 
 
-@views.route(urls['PROFILE_ADMIN'], methods=["POST"], strict_slashes=False)
+@views.route(urls["PROFILE_ADMIN"], methods=["POST"], strict_slashes=False)
 def edit_profile_admin():
     user_id = request.json["userID"]
     name = request.json["name"]
@@ -74,20 +78,27 @@ def edit_profile_admin():
     season_id = request.json["seasonID"]
     enrolled = request.json["enrolled"]
 
-    error = check_availability(user_id=user_id, email=email, vjudge_handle=vjudge_handle)
+    error = check_availability(
+        user_id=user_id, email=email, vjudge_handle=vjudge_handle
+    )
     if error:
         return error
     User.update_data_by_admin(user_id, name, vjudge_handle, email)
     if enrollment_id:
-        Enrollment.update_enrollment(enrollment_id=enrollment_id, level_id=level_id, season_id=season_id,
-                                     mentor_id=mentor_id, enrolled=enrolled)
+        Enrollment.update_enrollment(
+            enrollment_id=enrollment_id,
+            level_id=level_id,
+            season_id=season_id,
+            mentor_id=mentor_id,
+            enrolled=enrolled,
+        )
     else:
         Enrollment.enroll(user_id=user_id, level_id=level_id)
 
     return {"hereeee": "here"}
 
 
-@views.route(urls['USERS'], methods=["GET"], strict_slashes=False)
+@views.route(urls["USERS"], methods=["GET"], strict_slashes=False)
 def get_users():
     role = request.args.get("role")
     season = request.args.get("season")
@@ -96,7 +107,7 @@ def get_users():
     return json.dumps(users)
 
 
-@views.route(urls['MENTEES'], methods=["GET"], strict_slashes=False)
+@views.route(urls["MENTEES"], methods=["GET"], strict_slashes=False)
 def get_mentees():
     mentor_id = request.args.get("mentor_id")
     season = request.args.get("season")
@@ -106,7 +117,7 @@ def get_mentees():
     return json.dumps(users)
 
 
-@views.route(urls['USERS'], methods=["PATCH"], strict_slashes=False)
+@views.route(urls["USERS"], methods=["PATCH"], strict_slashes=False)
 def rest_user_password():
     user_id = request.json["user_id"]
     User.reset_password(user_id)
@@ -114,7 +125,7 @@ def rest_user_password():
     return "Success"
 
 
-@views.route(urls['USERS'], methods=["DELETE"], strict_slashes=False)
+@views.route(urls["USERS"], methods=["DELETE"], strict_slashes=False)
 def delete_user():
     email = request.args.get("email")
     User.delete_user(email)
@@ -122,14 +133,14 @@ def delete_user():
     return "Success"
 
 
-@views.route(urls['TRANSCRIPT'], methods=["GET"], strict_slashes=False)
+@views.route(urls["TRANSCRIPT"], methods=["GET"], strict_slashes=False)
 def display_transcript():
     email = request.args.get("email")
     season = request.args.get("season")
     return ProgressPerContest.get_user_progress(email=email, season_id=season)
 
 
-@views.route(urls['CONTEST'], methods=["POST"], strict_slashes=False)
+@views.route(urls["CONTEST"], methods=["POST"], strict_slashes=False)
 def add_contest():
     contest_id = request.json["contestID"]
     num_of_problems = request.json["numOfProblems"]
@@ -138,12 +149,19 @@ def add_contest():
     topic = request.json["topic"]
     week_num = request.json["weekNum"]
     level_id = request.json["levelID"]
-    status = ProgressPerContest.add_contest(contest_id, num_of_problems, yellow_threshold, green_threshold, topic,
-                                            week_num, level_id)
+    status = ProgressPerContest.add_contest(
+        contest_id,
+        num_of_problems,
+        yellow_threshold,
+        green_threshold,
+        topic,
+        week_num,
+        level_id,
+    )
     print(status)
-    if status == 'Contest already registered':
+    if status == "Contest already registered":
         return errors.contest_already_registered()
-    elif status == 'Incorrect date format':
+    elif status == "Incorrect date format":
         return errors.invalid_date_format()
     ProgressPerContest.init_contest_progress_contest(contest_id=contest_id)
     # ProgressPerContest.updateProgress(contest_id=contestID)
@@ -151,13 +169,13 @@ def add_contest():
     return {"add contest": "in add contest"}
 
 
-@views.route(urls['CONTEST'], methods=["GET"], strict_slashes=False)
+@views.route(urls["CONTEST"], methods=["GET"], strict_slashes=False)
 def get_contests():
     season = request.args.get("season")
     return ProgressPerContest.get_contests_admin(season=season)
 
 
-@views.route(urls['CONTEST'], methods=["PATCH"], strict_slashes=False)
+@views.route(urls["CONTEST"], methods=["PATCH"], strict_slashes=False)
 def update_contest():
     new_contest_id = request.json["contest_id"]
     topic = request.json["topic"]
@@ -168,15 +186,23 @@ def update_contest():
     level_id = request.json["level_id"]
     old_contest_id = request.json["old_contest_id"]
     try:
-        ProgressPerContest.update_contest(new_contest_id, topic, yellow_threshold, green_threshold, total_problems,
-                                          week_number, level_id, old_contest_id)
+        ProgressPerContest.update_contest(
+            new_contest_id,
+            topic,
+            yellow_threshold,
+            green_threshold,
+            total_problems,
+            week_number,
+            level_id,
+            old_contest_id,
+        )
     except Exception as e:
         print(e)
         return errors.contest_already_registered()
     return "Success"
 
 
-@views.route(urls['CONTEST'], methods=["DELETE"], strict_slashes=False)
+@views.route(urls["CONTEST"], methods=["DELETE"], strict_slashes=False)
 def delete_contest():
     contest_id = request.args.get("contest_id")
     ProgressPerContest.delete_contest(contest_id=contest_id)
@@ -189,7 +215,12 @@ def add_resource():
     resource_link = request.json["resourceLink"]
     resource_level = request.json["resourceLevel"]
     resource_season = request.json["seasonID"]
-    Resources.add_resource(topic=resource_topic, link=resource_link, level=resource_level, season_id=resource_season)
+    Resources.add_resource(
+        topic=resource_topic,
+        link=resource_link,
+        level=resource_level,
+        season_id=resource_season,
+    )
     return ""
 
 
@@ -208,17 +239,19 @@ def get_my_resources():
     return json.dumps(resources)
 
 
-@views.route(urls['RESOURCES'], methods=["PATCH"], strict_slashes=False)
+@views.route(urls["RESOURCES"], methods=["PATCH"], strict_slashes=False)
 def edit_resource():
     resource_id = request.json["resource_id"]
     topic = request.json["topic"]
     level_id = request.json["level_id"]
     link = request.json["link"]
-    Resources.update_resource(resource_id=resource_id, topic=topic, level_id=level_id, link=link)
+    Resources.update_resource(
+        resource_id=resource_id, topic=topic, level_id=level_id, link=link
+    )
     return "Success"
 
 
-@views.route(urls['RESOURCES'], methods=["DELETE"], strict_slashes=False)
+@views.route(urls["RESOURCES"], methods=["DELETE"], strict_slashes=False)
 def delete_resource():
     resource_id = request.args.get("resource_id")
     Resources.delete_resource(resource_id=resource_id)

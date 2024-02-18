@@ -18,9 +18,9 @@ load_dotenv()
 current_season_id = os.getenv("CURRENT_SEASON_ID")
 print(f"Current season ID: {current_season_id}")
 
-password_length = 10
+PASSWORD_LENGTH = 10
 TOKEN_LENGTH = 16
-DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 class User(UserMixin):
@@ -138,17 +138,50 @@ class User(UserMixin):
         g.db.commit()
 
     @staticmethod
-    def register_user_by_admin(name, email, vjudge_handle, phone, university, faculty, university_level, major, discord,
-                               password, role_id, level_id):
-        User.add_user(name, email, vjudge_handle, phone, university, faculty, university_level, major, discord,
-                      password)
+    def register_user_by_admin(
+        name,
+        email,
+        vjudge_handle,
+        phone,
+        university,
+        faculty,
+        university_level,
+        major,
+        discord,
+        password,
+        role_id,
+        level_id,
+    ):
+        User.add_user(
+            name,
+            email,
+            vjudge_handle,
+            phone,
+            university,
+            faculty,
+            university_level,
+            major,
+            discord,
+            password,
+        )
         user_id = User.get_user_id(email=email)
         print("Registering", email, "in contests")
         Enrollment.enroll(user_id=user_id, level_id=level_id, role_id=role_id)
         ProgressPerContest.init_contest_progress_contestant(user_id)
 
     @staticmethod
-    def add_user(name, email, vjudge, phone, university, faculty, university_level, major, discord, password):
+    def add_user(
+        name,
+        email,
+        vjudge,
+        phone,
+        university,
+        faculty,
+        university_level,
+        major,
+        discord,
+        password,
+    ):
         cursor = g.db.cursor()
         # roleID = Permissions.getRoleID("Trainee")
         query = """
@@ -157,13 +190,48 @@ class User(UserMixin):
              university_level, major, discord_handle, `password`)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-        cursor.execute(query,
-                       (name, email, vjudge, phone, university, faculty, university_level, major, discord, password))
+        cursor.execute(
+            query,
+            (
+                name,
+                email,
+                vjudge,
+                phone,
+                university,
+                faculty,
+                university_level,
+                major,
+                discord,
+                password,
+            ),
+        )
         g.db.commit()
 
     @staticmethod
-    def register_user(name, email, vjudge, phone, university, faculty, university_level, major, discord, password):
-        User.add_user(name, email, vjudge, phone, university, faculty, university_level, major, discord, password)
+    def register_user(
+        name,
+        email,
+        vjudge,
+        phone,
+        university,
+        faculty,
+        university_level,
+        major,
+        discord,
+        password,
+    ):
+        User.add_user(
+            name,
+            email,
+            vjudge,
+            phone,
+            university,
+            faculty,
+            university_level,
+            major,
+            discord,
+            password,
+        )
         user_id = User.get_user_id(email=email)
         print("Registering", email, "in contests")
         ProgressPerContest.init_contest_progress_contestant(user_id)
@@ -186,8 +254,10 @@ class User(UserMixin):
     def get_user_role(user_id):
         cursor = g.db.cursor()
         query = "SELECT IFNULL(MIN(role_id), 3) FROM enrollment WHERE user_id = %s"
-        # This query gets the most privileged role (roles are sorted from most privileged to least privileged)
-        # and if a user for some reason is not enrolled in any season it assumes the role is trainee (role_id = 3)
+        # This query gets the most privileged role
+        # (roles are sorted from most privileged to least privileged)
+        # and if a user for some reason is not enrolled in any season it assumes that
+        # the role is trainee (role_id = 3)
         cursor.execute(query, (user_id,))
         role_id = cursor.fetchone()[0]
         return role_id
@@ -224,7 +294,7 @@ class User(UserMixin):
             record = cursor.fetchone()
             # print(record)
             # print(newPassword)
-            if check_password_hash(record['password'], new_password):
+            if check_password_hash(record["password"], new_password):
                 return True
             else:
                 return False
@@ -234,7 +304,7 @@ class User(UserMixin):
                 print("Password for", user_id, "is the same")
             else:
                 cursor = g.db.cursor()
-                new_password = generate_password_hash(new_password, method='sha256')
+                new_password = generate_password_hash(new_password, method="sha256")
                 query = "UPDATE user SET password = %s WHERE (user_id = %s);"
                 cursor.execute(query, (new_password, user_id))
                 # if(cursor.rowcount)
@@ -262,7 +332,10 @@ class User(UserMixin):
                         UPDATE token = %s,
                                expires_at = %s
                 """
-                cursor.execute(query, (user_id, hashed_token, expiry_time, hashed_token, expiry_time))
+                cursor.execute(
+                    query,
+                    (user_id, hashed_token, expiry_time, hashed_token, expiry_time),
+                )
                 g.db.commit()
                 break
             except mysql.connector.IntegrityError:
@@ -334,7 +407,7 @@ class User(UserMixin):
         result = cursor.fetchall()
         user_ids = dict()
         for entry in result:
-            user_ids[entry['vjudge_handle']] = entry['user_id']
+            user_ids[entry["vjudge_handle"]] = entry["user_id"]
         return user_ids
 
     @staticmethod
@@ -399,7 +472,7 @@ class User(UserMixin):
 
     @staticmethod
     def reset_password(user_id):
-        password = secrets.token_urlsafe(password_length)
+        password = secrets.token_urlsafe(PASSWORD_LENGTH)
         User.update_password(user_id=user_id, new_password=password)
         email = User.get_user_email(user_id=user_id)
         send_password_reset_email(email, password)
@@ -409,7 +482,11 @@ class User(UserMixin):
         # User.updatePassword(user_id = id, newPassword = password)
         cursor = g.db.cursor()
         query = """
-            UPDATE user SET email = %s, vjudge_handle = %s, name = %s WHERE user_id = %s;
+            UPDATE user
+            SET email = %s,
+                vjudge_handle = %s,
+                name = %s
+            WHERE user_id = %s;
         """
         cursor.execute(query, (email, vjudge_handle, name, user_id))
         g.db.commit()
@@ -417,15 +494,29 @@ class User(UserMixin):
     @staticmethod
     def update_data_by_admin(user_id, name, vjudge_handle, email):
         cursor = g.db.cursor()
-        query = "UPDATE user SET name = %s, vjudge_handle = %s, email = %s WHERE user_id = %s;"
+        query = """
+            UPDATE user
+            SET name = %s,
+                vjudge_handle = %s,
+                email = %s
+            WHERE user_id = %s;
+        """
         cursor.execute(query, (name, vjudge_handle, email, user_id))
         g.db.commit()
 
     @staticmethod
-    def update_data_by_admin_from_file(name, email, vjudge_handle, phone, university, faculty, university_level, major,
-                                       discord):
+    def update_data_by_admin_from_file(
+        name,
+        email,
+        vjudge_handle,
+        phone,
+        university,
+        faculty,
+        university_level,
+        major,
+        discord,
+    ):
         cursor = g.db.cursor()
-        # query = "UPDATE user SET name = %s, vjudge_handle = %s, email = %s WHERE user_id = %s;"
         query = """
             UPDATE user
             SET name = %s,
@@ -438,8 +529,20 @@ class User(UserMixin):
                 discord_handle = %s
             WHERE email = %s;
         """
-        cursor.execute(query,
-                       (name, vjudge_handle, phone, university, faculty, university_level, major, discord, email))
+        cursor.execute(
+            query,
+            (
+                name,
+                vjudge_handle,
+                phone,
+                university,
+                faculty,
+                university_level,
+                major,
+                discord,
+                email,
+            ),
+        )
         g.db.commit()
 
     @staticmethod
@@ -526,7 +629,11 @@ class ProgressPerContest:
         """
         cursor.execute(query, (contest_id,))
         record = cursor.fetchone()
-        return record['total_problems'], record['yellow_threshold'], record['green_threshold']
+        return (
+            record["total_problems"],
+            record["yellow_threshold"],
+            record["green_threshold"],
+        )
 
     @staticmethod
     def get_contest_parameters_by_season(season_id):
@@ -541,20 +648,23 @@ class ProgressPerContest:
         records = cursor.fetchall()
         contest_parameters = dict()
         for record in records:
-            params = {'total_problems': record['total_problems'], 'yellow_threshold': record['yellow_threshold'],
-                      'green_threshold': record['green_threshold']}
-            contest_parameters[record['contest_id']] = params
+            params = {
+                "total_problems": record["total_problems"],
+                "yellow_threshold": record["yellow_threshold"],
+                "green_threshold": record["green_threshold"],
+            }
+            contest_parameters[record["contest_id"]] = params
         return contest_parameters
 
     @staticmethod
     def get_zone(problem_count, num_solved, yellow_threshold, green_threshold):
         if num_solved == problem_count:
-            return 'Dark Green'
+            return "Dark Green"
         if num_solved >= green_threshold:
-            return 'Green'
+            return "Green"
         if num_solved >= yellow_threshold:
-            return 'Yellow'
-        return 'Red'
+            return "Yellow"
+        return "Red"
 
     @staticmethod
     def add_progress_per_contest(user_id, contest_id, solved_problems, zone):
@@ -672,7 +782,7 @@ class ProgressPerContest:
         """
         cursor.execute(query, (user_id, season_id))
         records = cursor.fetchall()
-        # contests = ProgressPerContest.getContestsFiltered(level_id=level_id,season_id=season_id)
+
         return {"progress": records}
 
     @staticmethod
@@ -686,7 +796,15 @@ class ProgressPerContest:
         return False
 
     @staticmethod
-    def add_contest(contest_id, num_problems, yellow_threshold, green_threshold, topic, week_number, level_id):
+    def add_contest(
+        contest_id,
+        num_problems,
+        yellow_threshold,
+        green_threshold,
+        topic,
+        week_number,
+        level_id,
+    ):
         if ProgressPerContest.contest_exists(contest_id):
             return "Contest already registered"
         cursor = g.db.cursor()
@@ -696,8 +814,20 @@ class ProgressPerContest:
                                  `minimum_problems`, `level_id`, `season_id`)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
-        cursor.execute(query, (contest_id, num_problems, yellow_threshold,
-                               green_threshold, topic, week_number, 0, level_id, current_season_id))
+        cursor.execute(
+            query,
+            (
+                contest_id,
+                num_problems,
+                yellow_threshold,
+                green_threshold,
+                topic,
+                week_number,
+                0,
+                level_id,
+                current_season_id,
+            ),
+        )
         g.db.commit()
         return "Success"
 
@@ -709,8 +839,16 @@ class ProgressPerContest:
         g.db.commit()
 
     @staticmethod
-    def update_contest(new_contest_id, topic, yellow_threshold, green_threshold, total, week_number, level_id,
-                       old_contest_id):
+    def update_contest(
+        new_contest_id,
+        topic,
+        yellow_threshold,
+        green_threshold,
+        total,
+        week_number,
+        level_id,
+        old_contest_id,
+    ):
         cursor = g.db.cursor()
         query = """
             UPDATE contest
@@ -723,8 +861,19 @@ class ProgressPerContest:
                 level_id = %s
             WHERE contest_id = %s;
         """
-        cursor.execute(query, (
-            new_contest_id, topic, yellow_threshold, green_threshold, total, week_number, level_id, old_contest_id))
+        cursor.execute(
+            query,
+            (
+                new_contest_id,
+                topic,
+                yellow_threshold,
+                green_threshold,
+                total,
+                week_number,
+                level_id,
+                old_contest_id,
+            ),
+        )
         g.db.commit()
 
     @staticmethod
@@ -752,8 +901,9 @@ class ProgressPerContest:
 
     @staticmethod
     def update_progress(contest_id):
-        problem_count, yellow_threshold, green_threshold = ProgressPerContest.get_contest_parameters(
-            contest_id=contest_id)
+        problem_count, yellow_threshold, green_threshold = (
+            ProgressPerContest.get_contest_parameters(contest_id=contest_id)
+        )
         trainees = User.get_vjudge_handles()
         try:
 
@@ -763,13 +913,20 @@ class ProgressPerContest:
                 user_id = trainee["user_id"]
                 vjudge = trainee["vjudge_handle"]
                 num_solved = res[vjudge]
-                zone = ProgressPerContest.get_zone(problem_count=problem_count, num_solved=num_solved,
-                                                   yellow_threshold=yellow_threshold, green_threshold=green_threshold)
-                progress_list.append((num_solved, 0, zone, user_id,
-                                      contest_id))  # the zero here is a temporary number for user rank in contest
+                zone = ProgressPerContest.get_zone(
+                    problem_count=problem_count,
+                    num_solved=num_solved,
+                    yellow_threshold=yellow_threshold,
+                    green_threshold=green_threshold,
+                )
+                progress_list.append(
+                    (num_solved, 0, zone, user_id, contest_id)
+                )  # the zero here is a temporary number for user rank in contest
                 # ProgressPerContest.addProgressPerContest(user_id,contest_id,num_solved,zone)
 
-            ProgressPerContest.update_progress_per_contest_bulk(progress_list=progress_list)
+            ProgressPerContest.update_progress_per_contest_bulk(
+                progress_list=progress_list
+            )
             print("Successfully updated progress for contest", contest_id)
         except:
             print("Couldn't update progress for contest", contest_id)
@@ -782,19 +939,26 @@ class ProgressPerContest:
             progress_list = []
             for contest_id in progress:
                 print(f"Updating data for contest {contest_id}")
-                problem_count = contest_parameters[contest_id]['total_problems']
-                yellow_threshold = contest_parameters[contest_id]['yellow_threshold']
-                green_threshold = contest_parameters[contest_id]['green_threshold']
+                problem_count = contest_parameters[contest_id]["total_problems"]
+                yellow_threshold = contest_parameters[contest_id]["yellow_threshold"]
+                green_threshold = contest_parameters[contest_id]["green_threshold"]
                 for vjudge_handle in progress[contest_id]:
                     if vjudge_handle in user_ids.keys():
                         num_solved = progress[contest_id][vjudge_handle]
-                        zone = ProgressPerContest.get_zone(problem_count=problem_count, num_solved=num_solved,
-                                                           yellow_threshold=yellow_threshold,
-                                                           green_threshold=green_threshold)
+                        zone = ProgressPerContest.get_zone(
+                            problem_count=problem_count,
+                            num_solved=num_solved,
+                            yellow_threshold=yellow_threshold,
+                            green_threshold=green_threshold,
+                        )
                         # the zero here is a temporary number for user rank in contest
-                        progress_list.append((num_solved, 0, zone, user_ids[vjudge_handle], contest_id))
+                        progress_list.append(
+                            (num_solved, 0, zone, user_ids[vjudge_handle], contest_id)
+                        )
                         # ProgressPerContest.addProgressPerContest(user_ids,contest_id,num_solved,zone)
-            ProgressPerContest.update_progress_per_contest_bulk(progress_list=progress_list)
+            ProgressPerContest.update_progress_per_contest_bulk(
+                progress_list=progress_list
+            )
             print("Successfully updated progress for all contests")
         except Exception as e:
             print(e)
@@ -803,9 +967,13 @@ class ProgressPerContest:
 
     @staticmethod
     def update_all_progress():
-        contest_parameters = ProgressPerContest.get_contest_parameters_by_season(season_id=current_season_id)
+        contest_parameters = ProgressPerContest.get_contest_parameters_by_season(
+            season_id=current_season_id
+        )
         progress = get_progress_bulk(contests=contest_parameters.keys())
-        ProgressPerContest.update_progress_bulk(progress=progress, contest_parameters=contest_parameters)
+        ProgressPerContest.update_progress_bulk(
+            progress=progress, contest_parameters=contest_parameters
+        )
 
 
 class Resources:
@@ -870,7 +1038,11 @@ class Resources:
     def update_resource(resource_id, topic, level_id, link):
         cursor = g.db.cursor()
         query = """
-            UPDATE resource SET topic = %s, level_id = %s, link = %s WHERE resource_id = %s;
+            UPDATE resource
+            SET topic = %s,
+                level_id = %s,
+                link = %s
+            WHERE resource_id = %s;
         """
         cursor.execute(query, (topic, int(level_id), link, int(resource_id)))
         g.db.commit()
@@ -893,14 +1065,18 @@ class AvailableDays:
                                         `thur`)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
-        cursor.execute(query, (user_id,
-                               available_days["sat"],
-                               available_days["sun"],
-                               available_days["mon"],
-                               available_days["tues"],
-                               available_days["wed"],
-                               available_days["thur"]
-                               ))
+        cursor.execute(
+            query,
+            (
+                user_id,
+                available_days["sat"],
+                available_days["sun"],
+                available_days["mon"],
+                available_days["tues"],
+                available_days["wed"],
+                available_days["thur"],
+            ),
+        )
         g.db.commit()
 
 
@@ -958,8 +1134,9 @@ class Seasons:
 
 class Enrollment:
     @staticmethod
-    def enroll(user_id, level_id, season_id=current_season_id,
-               role_id=3):  # by default enroll user as a trainee (role_id = 3)
+    def enroll(
+        user_id, level_id, season_id=current_season_id, role_id=3
+    ):  # by default enroll user as a trainee (role_id = 3)
         cursor = g.db.cursor()
         query = """
             INSERT INTO enrollment (`user_id`, `level_id`, `season_id`, `role_id`)
@@ -972,8 +1149,10 @@ class Enrollment:
     def get_latest_enrollment_season(user_id):
         cursor = g.db.cursor()
         query = "SELECT IFNULL(MAX(season_id), 0) FROM enrollment where user_id = %s"
-        # This query gets the most privileged role (roles are sorted from most privileged to least privileged)
-        # and if a user for some reason is not enrolled in any season it assumes the role is trainee (role_id = 3)
+        # This query gets the most privileged role
+        # (roles are sorted from most privileged to least privileged)
+        # and if a user for some reason is not enrolled in any season
+        # it assumes the role is trainee (role_id = 3)
         cursor.execute(query, (user_id,))
         season_id = cursor.fetchone()[0]
         return season_id
@@ -994,7 +1173,9 @@ class Enrollment:
         return enrollment
 
     @staticmethod
-    def update_enrollment(enrollment_id, level_id, mentor_id, enrolled, season_id=current_season_id):
+    def update_enrollment(
+        enrollment_id, level_id, mentor_id, enrolled, season_id=current_season_id
+    ):
         cursor = g.db.cursor()
         query = """
             UPDATE enrollment
@@ -1009,7 +1190,14 @@ class Enrollment:
 
     # TODO make merge these two functions
     @staticmethod
-    def update_enrollment_from_file(enrollment_id, level_id, mentor_id, enrolled, role_id, season_id=current_season_id):
+    def update_enrollment_from_file(
+        enrollment_id,
+        level_id,
+        mentor_id,
+        enrolled,
+        role_id,
+        season_id=current_season_id,
+    ):
         cursor = g.db.cursor()
         query = """
             UPDATE enrollment
@@ -1020,7 +1208,9 @@ class Enrollment:
                 role_id = %s
             WHERE enrollment_id = %s;
         """
-        cursor.execute(query, (level_id, season_id, mentor_id, enrolled, role_id, enrollment_id))
+        cursor.execute(
+            query, (level_id, season_id, mentor_id, enrolled, role_id, enrollment_id)
+        )
         g.db.commit()
 
     @staticmethod

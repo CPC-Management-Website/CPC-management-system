@@ -6,104 +6,106 @@ from collections import defaultdict
 import requests
 from dotenv import load_dotenv
 
-COOKIE_STORAGE_FILE = 'vjudge_session_cookies.pickle'
+COOKIE_STORAGE_FILE = "vjudge_session_cookies.pickle"
 
 load_dotenv()
 
 # header for requesting data
 _headers = {
-    'authority': 'vjudge.net',
-    'accept': 'application/json, text/javascript, */*; q=0.01',
-    'sec-fetch-dest': 'empty',
-    'x-requested-with': 'XMLHttpRequest',
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36',
-    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    'origin': 'https://vjudge.net',
-    'sec-fetch-site': 'same-origin',
-    'sec-fetch-mode': 'cors',
-    'referer': 'https://vjudge.net/status/',
-    'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+    "authority": "vjudge.net",
+    "accept": "application/json, text/javascript, */*; q=0.01",
+    "sec-fetch-dest": "empty",
+    "x-requested-with": "XMLHttpRequest",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36",
+    "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "origin": "https://vjudge.net",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "cors",
+    "referer": "https://vjudge.net/status/",
+    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
 }
 
 # form data
 _data = {
-    'draw': '1',
-    'columns[0][data]': '0',
-    'columns[0][name]': '',
-    'columns[0][searchable]': 'true',
-    'columns[0][orderable]': 'false',
-    'columns[0][search][value]': '',
-    'columns[0][search][regex]': 'false',
-    'columns[1][data]': '1',
-    'columns[1][name]': '',
-    'columns[1][searchable]': 'true',
-    'columns[1][orderable]': 'false',
-    'columns[1][search][value]': '',
-    'columns[1][search][regex]': 'false',
-    'columns[2][data]': '2',
-    'columns[2][name]': '',
-    'columns[2][searchable]': 'true',
-    'columns[2][orderable]': 'false',
-    'columns[2][search][value]': '',
-    'columns[2][search][regex]': 'false',
-    'columns[3][data]': '3',
-    'columns[3][name]': '',
-    'columns[3][searchable]': 'true',
-    'columns[3][orderable]': 'false',
-    'columns[3][search][value]': '',
-    'columns[3][search][regex]': 'false',
-    'columns[4][data]': '4',
-    'columns[4][name]': '',
-    'columns[4][searchable]': 'true',
-    'columns[4][orderable]': 'false',
-    'columns[4][search][value]': '',
-    'columns[4][search][regex]': 'false',
-    'columns[5][data]': '5',
-    'columns[5][name]': '',
-    'columns[5][searchable]': 'true',
-    'columns[5][orderable]': 'false',
-    'columns[5][search][value]': '',
-    'columns[5][search][regex]': 'false',
-    'columns[6][data]': '6',
-    'columns[6][name]': '',
-    'columns[6][searchable]': 'true',
-    'columns[6][orderable]': 'false',
-    'columns[6][search][value]': '',
-    'columns[6][search][regex]': 'false',
-    'columns[7][data]': '7',
-    'columns[7][name]': '',
-    'columns[7][searchable]': 'true',
-    'columns[7][orderable]': 'false',
-    'columns[7][search][value]': '',
-    'columns[7][search][regex]': 'false',
-    'columns[8][data]': '8',
-    'columns[8][name]': '',
-    'columns[8][searchable]': 'true',
-    'columns[8][orderable]': 'false',
-    'columns[8][search][value]': '',
-    'columns[8][search][regex]': 'false',
-    'columns[9][data]': '9',
-    'columns[9][name]': '',
-    'columns[9][searchable]': 'true',
-    'columns[9][orderable]': 'false',
-    'columns[9][search][value]': '',
-    'columns[9][search][regex]': 'false',
-    'start': 0,
-    'length': 20,
-    'search[value]': '',
-    'search[regex]': 'false',
-    'onlyFollowee': 'false',
-    'orderBy': 'run_id'
+    "draw": "1",
+    "columns[0][data]": "0",
+    "columns[0][name]": "",
+    "columns[0][searchable]": "true",
+    "columns[0][orderable]": "false",
+    "columns[0][search][value]": "",
+    "columns[0][search][regex]": "false",
+    "columns[1][data]": "1",
+    "columns[1][name]": "",
+    "columns[1][searchable]": "true",
+    "columns[1][orderable]": "false",
+    "columns[1][search][value]": "",
+    "columns[1][search][regex]": "false",
+    "columns[2][data]": "2",
+    "columns[2][name]": "",
+    "columns[2][searchable]": "true",
+    "columns[2][orderable]": "false",
+    "columns[2][search][value]": "",
+    "columns[2][search][regex]": "false",
+    "columns[3][data]": "3",
+    "columns[3][name]": "",
+    "columns[3][searchable]": "true",
+    "columns[3][orderable]": "false",
+    "columns[3][search][value]": "",
+    "columns[3][search][regex]": "false",
+    "columns[4][data]": "4",
+    "columns[4][name]": "",
+    "columns[4][searchable]": "true",
+    "columns[4][orderable]": "false",
+    "columns[4][search][value]": "",
+    "columns[4][search][regex]": "false",
+    "columns[5][data]": "5",
+    "columns[5][name]": "",
+    "columns[5][searchable]": "true",
+    "columns[5][orderable]": "false",
+    "columns[5][search][value]": "",
+    "columns[5][search][regex]": "false",
+    "columns[6][data]": "6",
+    "columns[6][name]": "",
+    "columns[6][searchable]": "true",
+    "columns[6][orderable]": "false",
+    "columns[6][search][value]": "",
+    "columns[6][search][regex]": "false",
+    "columns[7][data]": "7",
+    "columns[7][name]": "",
+    "columns[7][searchable]": "true",
+    "columns[7][orderable]": "false",
+    "columns[7][search][value]": "",
+    "columns[7][search][regex]": "false",
+    "columns[8][data]": "8",
+    "columns[8][name]": "",
+    "columns[8][searchable]": "true",
+    "columns[8][orderable]": "false",
+    "columns[8][search][value]": "",
+    "columns[8][search][regex]": "false",
+    "columns[9][data]": "9",
+    "columns[9][name]": "",
+    "columns[9][searchable]": "true",
+    "columns[9][orderable]": "false",
+    "columns[9][search][value]": "",
+    "columns[9][search][regex]": "false",
+    "start": 0,
+    "length": 20,
+    "search[value]": "",
+    "search[regex]": "false",
+    "onlyFollowee": "false",
+    "orderBy": "run_id",
 }
 
 
-def get_vjudge_data(username: str = '',
-                    oj_id: str = 'All',
-                    problem_no: str = '',
-                    language: str = '',
-                    result: str = 0,
-                    contest_id: str = '',
-                    limit: int = 0):
+def get_vjudge_data(
+    username: str = "",
+    oj_id: str = "All",
+    problem_no: str = "",
+    language: str = "",
+    result: str = 0,
+    contest_id: str = "",
+    limit: int = 0,
+):
     """Function to return vjudge based on parameters
 
     Parameters:
@@ -139,42 +141,42 @@ def get_vjudge_data(username: str = '',
 
     # generate data
     query_data = {
-        'start': 0,
-        'length': 20,
-        'un': username,
-        'res': result,
-        'language': language
+        "start": 0,
+        "length": 20,
+        "un": username,
+        "res": result,
+        "language": language,
     }
 
     # if contest_id is specified
     if contest_id:
-        query_data['inContest'] = True
-        query_data['contestId'] = contest_id
-        query_data['num'] = problem_no if problem_no else '-'
+        query_data["inContest"] = True
+        query_data["contestId"] = contest_id
+        query_data["num"] = problem_no if problem_no else "-"
     else:
-        query_data['OJId'] = oj_id
-        query_data['probNum'] = problem_no
+        query_data["OJId"] = oj_id
+        query_data["probNum"] = problem_no
 
     res = []
     # set limit to a very large integer if limit = 0
-    limit = 2 ** 63 if limit == 0 else limit
+    limit = 2**63 if limit == 0 else limit
     length_per_query = min(limit, 20)  # max: 20
-    query_data['start'] = 0
-    query_data['length'] = length_per_query
+    query_data["start"] = 0
+    query_data["length"] = length_per_query
 
     while len(res) < limit:
         response = requests.get(
-            'https://vjudge.net/status/data',
+            "https://vjudge.net/status/data",
             headers=_headers,
-            params={**_data, **query_data}
+            params={**_data, **query_data},
         )
-        entries = response.json()['data']
+        entries = response.json()["data"]
         if entries:
             res += entries
         else:
             break  # if no more responses break
 
-        query_data['start'] += length_per_query
+        query_data["start"] += length_per_query
 
     return res[:limit]
 
@@ -194,7 +196,9 @@ def get_progress_old(contest_id):
 
 
 def get_progress(contest_id, session):
-    data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
+    data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(
+        contestID=contest_id
+    )
     try:
         response = session.get(data_request)
 
@@ -207,7 +211,9 @@ def get_progress(contest_id, session):
             return None
 
         if len(response.text) == 0:
-            # if the contest has no submissions, the response.text would be empty and calling json.loads() would raise an exception, so we return an empty progress
+            # if the contest has no submissions, the response.text would be empty and
+            # calling json.loads() would raise an exception,
+            # so we return an empty progress
             return progress
 
         participants = json.loads(response.text)["participants"]
@@ -239,15 +245,19 @@ def get_progress(contest_id, session):
 
 
 def session_valid(session):
-    # make sure that the contest is PRIVATE and that the account you're using can access that contest
+    # make sure that the contest is PRIVATE
+    # also make sure that the account you're using can access that contest
     contest_id = 541074
 
-    # This contest will be used to check if the login session is still valid by trying to get the data for that contest
+    # This contest will be used to check if the login session is still valid
+    # by trying to get the data for that contest
 
-    # Provided that the account you're using can normally access that contest,
-    # if you get an empty response.content for that contest it means that you're not logged in
+    # Provided that the account you're using can normally access that contest, if you
+    # get an empty response.content for that contest it means that you're not logged in
 
-    data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(contestID=contest_id)
+    data_request = "https://vjudge.net/contest/rank/single/{contestID}".format(
+        contestID=contest_id
+    )
     response = session.get(data_request)
     if len(response.content) == 0:
         print("Invalid or stale session")
@@ -256,13 +266,13 @@ def session_valid(session):
 
 
 def save_session_cookies(session):
-    with open(COOKIE_STORAGE_FILE, 'wb') as f:
+    with open(COOKIE_STORAGE_FILE, "wb") as f:
         pickle.dump(session.cookies, f)
 
 
 def load_session_cookies():
     try:
-        with open(COOKIE_STORAGE_FILE, 'rb') as f:
+        with open(COOKIE_STORAGE_FILE, "rb") as f:
             cookies = pickle.load(f)
             return cookies
     except Exception as e:
@@ -282,7 +292,10 @@ def vjudge_login():
 
         print("Logging in!")
         login_request_url = "https://vjudge.net/user/login"
-        data = {"username": os.getenv('VJUDGE_USERNAME'), "password": os.getenv("VJUDGE_PASSWORD")}
+        data = {
+            "username": os.getenv("VJUDGE_USERNAME"),
+            "password": os.getenv("VJUDGE_PASSWORD"),
+        }
         login = session.post(url=login_request_url, data=data)
         print("Login status:", login.text)
         if login.text == "success":
@@ -319,7 +332,9 @@ def get_progress_bulk(contests):
 
 
 def _main():
-    contest_id = 541074  # make sure that the account you're using can access this contest
+    contest_id = (
+        541074  # make sure that the account you're using can access this contest
+    )
 
     # res = get_vjudge_data(contest_id = contest_id)
     # filtered_res = {}
