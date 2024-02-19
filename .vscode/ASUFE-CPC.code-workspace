@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "Root",
+      "path": "../"
+    },
+    {
+      "path": "../backend"
+    },
+    {
+      "path": "../view"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "view/": true,
+      "backend/": true
+    }
+  }
+}
