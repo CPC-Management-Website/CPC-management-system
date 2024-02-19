@@ -1,7 +1,12 @@
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import React, { useState, useEffect, useContext, useReducer } from "react";
-import { UPDATE_USERS, DELETE_USERS, RESET_PASSWORDS, VIEW_ALL_TRANSCRIPTS } from "../permissions/permissions";
+import {
+  UPDATE_USERS,
+  DELETE_USERS,
+  RESET_PASSWORDS,
+  VIEW_ALL_TRANSCRIPTS,
+} from "../permissions/permissions";
 import { Store } from "../context/store";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -20,219 +25,238 @@ import { toast } from "react-toastify";
 import AlertDialog from "../components/AlertDialog";
 import Edit from "../components/Edit";
 
-function UserRow({user, seasonID, editUser, refresh}){
-    const reducer = (state, action) => {
-        switch (action.type) {
-            case "RESET_REQUEST":
-                return { ...state, loadingReset: true };
-            case "RESET_SUCCESS":
-                return { ...state, loadingReset: false };
-            case "RESET_FAIL":
-                return { ...state, loadingReset: false };
+function UserRow({ user, seasonID, editUser, refresh }) {
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "RESET_REQUEST":
+        return { ...state, loadingReset: true };
+      case "RESET_SUCCESS":
+        return { ...state, loadingReset: false };
+      case "RESET_FAIL":
+        return { ...state, loadingReset: false };
 
-            case "DELETE_REQUEST":
-                return { ...state, loadingDelete: true, successDelete: false };
-            case "DELETE_SUCCESS":
-                return {
-                ...state,
-                loadingDelete: false,
-                successDelete: true,
-                };
-            case "DELETE_FAIL":
-                return { ...state, loadingDelete: false, successDelete: false };
+      case "DELETE_REQUEST":
+        return { ...state, loadingDelete: true, successDelete: false };
+      case "DELETE_SUCCESS":
+        return {
+          ...state,
+          loadingDelete: false,
+          successDelete: true,
+        };
+      case "DELETE_FAIL":
+        return { ...state, loadingDelete: false, successDelete: false };
 
-            default:
-                return state;
-        }
-    };
+      default:
+        return state;
+    }
+  };
 
-    const { state } = useContext(Store);
-    const { userInfo } = state;
-    const [{loadingReset, loadingDelete},dispatch] = useReducer(reducer, {error: "",loadingReset:false,loadingDelete:false});
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+  const [{ loadingReset, loadingDelete }, dispatch] = useReducer(reducer, {
+    error: "",
+    loadingReset: false,
+    loadingDelete: false,
+  });
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        },
-    }));
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
 
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        "&:nth-of-type(odd)": {
-        backgroundColor: theme.palette.action.hover,
-        },
-    }));
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    "&:nth-of-type(odd)": {
+      backgroundColor: theme.palette.action.hover,
+    },
+  }));
 
-    const deleteHandler = async (email) => {
-        if (window.confirm("Are you sure that you want to delete this user?")) {
-        try {
-            dispatch({ type: "DELETE_REQUEST" });
-            await axios.delete(URLS.USERS, {
-            params: {
-                email: email,
-            },
-            });
-            dispatch({ type: "DELETE_SUCCESS" });
-            refresh();
-            toast.success("User successfully deleted");
-        } catch (err) {
-            toast.error(err);
-            dispatch({
-            type: "DELETE_FAIL",
-            });
-        }
-        }
-    };
+  const deleteHandler = async (email) => {
+    if (window.confirm("Are you sure that you want to delete this user?")) {
+      try {
+        dispatch({ type: "DELETE_REQUEST" });
+        await axios.delete(URLS.USERS, {
+          params: {
+            email: email,
+          },
+        });
+        dispatch({ type: "DELETE_SUCCESS" });
+        refresh();
+        toast.success("User successfully deleted");
+      } catch (err) {
+        toast.error(err);
+        dispatch({
+          type: "DELETE_FAIL",
+        });
+      }
+    }
+  };
 
-    const resetPass = async (user_id) => {
-        if (window.confirm("Are you sure that you want to reset this user's password?")) {
-        try {
-            dispatch({ type: "RESET_REQUEST" });
-            await axios.patch(URLS.USERS, JSON.stringify({ user_id }), {
-            headers: { "Content-Type": "application/json" },
-            });
-            dispatch({ type: "RESET_SUCCESS" });
-            toast.success("Password is successfully reset");
-        } catch (err) {
-            dispatch({ type: "RESET_FAIL" });
-            console.log(err);
-        }
-        }
-    };
+  const resetPass = async (user_id) => {
+    if (
+      window.confirm(
+        "Are you sure that you want to reset this user's password?",
+      )
+    ) {
+      try {
+        dispatch({ type: "RESET_REQUEST" });
+        await axios.patch(URLS.USERS, JSON.stringify({ user_id }), {
+          headers: { "Content-Type": "application/json" },
+        });
+        dispatch({ type: "RESET_SUCCESS" });
+        toast.success("Password is successfully reset");
+      } catch (err) {
+        dispatch({ type: "RESET_FAIL" });
+        console.log(err);
+      }
+    }
+  };
 
-    return (
-        <StyledTableRow key={user.email}>
-        <StyledTableCell align="center">
-            {user.name}
-        </StyledTableCell>
-        <StyledTableCell align="center">
-            {user.vjudge_handle}
-        </StyledTableCell>
-        <StyledTableCell align="center">
-            {user.email}
-        </StyledTableCell>
-        <StyledTableCell align="center">
-            {user.level_name}
-        </StyledTableCell>
-        <StyledTableCell align="center">
-            {user.mentor_name}
-        </StyledTableCell>
-        <StyledTableCell align="center">
-            {user.enrolled ? <p> Yes </p> : <p> No </p>}
-        </StyledTableCell>
-        <StyledTableCell className="space-x-4 text-center p-4" align="center">
-            <div className="flex flex-row justify-between">
-            {userInfo.permissions.find((perm) => perm === UPDATE_USERS) &&
-                <>
-                <Tooltip placement="bottom" title="Edit User">
-                    <button onClick={() => editUser(user)}>
-                    <CreateIcon />
-                    </button>
+  return (
+    <StyledTableRow key={user.email}>
+      <StyledTableCell align="center">{user.name}</StyledTableCell>
+      <StyledTableCell align="center">{user.vjudge_handle}</StyledTableCell>
+      <StyledTableCell align="center">{user.email}</StyledTableCell>
+      <StyledTableCell align="center">{user.level_name}</StyledTableCell>
+      <StyledTableCell align="center">{user.mentor_name}</StyledTableCell>
+      <StyledTableCell align="center">
+        {user.enrolled ? <p> Yes </p> : <p> No </p>}
+      </StyledTableCell>
+      <StyledTableCell className="space-x-4 text-center p-4" align="center">
+        <div className="flex flex-row justify-between">
+          {userInfo.permissions.find((perm) => perm === UPDATE_USERS) && (
+            <>
+              <Tooltip placement="bottom" title="Edit User">
+                <button onClick={() => editUser(user)}>
+                  <CreateIcon />
+                </button>
+              </Tooltip>
+            </>
+          )}
+          {userInfo.permissions.find((perm) => perm === DELETE_USERS) && (
+            <>
+              {loadingDelete ? (
+                <button>
+                  <CircularProgress size={23} thickness={4} color="inherit" />
+                </button>
+              ) : (
+                <Tooltip placement="bottom" title="Delete User">
+                  <button onClick={() => deleteHandler(user.email)}>
+                    <DeleteIcon />
+                  </button>
                 </Tooltip>
-                </>
-            }
-            {userInfo.permissions.find((perm) => perm === DELETE_USERS) &&
-                <>
-                {loadingDelete ? (
-                    <button>
-                    <CircularProgress size={23} thickness={4} color="inherit"/>
-                    </button>
-                ) : (
-                    <Tooltip placement="bottom" title="Delete User">
-                    <button onClick={() => deleteHandler(user.email)}>
-                        <DeleteIcon />
-                    </button>
-                    </Tooltip>
-                )}
-                </>
-            }
-            {userInfo.permissions.find((perm) => perm === RESET_PASSWORDS) &&
-                <>
-                {loadingReset ? (
-                    <button>
-                    <CircularProgress size={23}  thickness={4} color="inherit"/>
-                    </button>
-                ) : (
-                    <Tooltip placement="bottom" title="Reset password">
-                    <button onClick={() => resetPass(user.user_id)}>
-                        <RestartAltIcon />
-                    </button>
-                    </Tooltip>
-                )}
-                </>
-            }
-            {userInfo.permissions.find((perm) => perm === VIEW_ALL_TRANSCRIPTS) &&
-                <>
-                <Tooltip placement="bottom" title="View Progress">
-                    <button>
-                    <AlertDialog email={user.email} level_id={user.level_id} season={seasonID} />
-                    </button>
+              )}
+            </>
+          )}
+          {userInfo.permissions.find((perm) => perm === RESET_PASSWORDS) && (
+            <>
+              {loadingReset ? (
+                <button>
+                  <CircularProgress size={23} thickness={4} color="inherit" />
+                </button>
+              ) : (
+                <Tooltip placement="bottom" title="Reset password">
+                  <button onClick={() => resetPass(user.user_id)}>
+                    <RestartAltIcon />
+                  </button>
                 </Tooltip>
-                </>
-            } 
-            </div>
-        </StyledTableCell>
-        </StyledTableRow>
-    );
+              )}
+            </>
+          )}
+          {userInfo.permissions.find(
+            (perm) => perm === VIEW_ALL_TRANSCRIPTS,
+          ) && (
+            <>
+              <Tooltip placement="bottom" title="View Progress">
+                <button>
+                  <AlertDialog
+                    email={user.email}
+                    level_id={user.level_id}
+                    season={seasonID}
+                  />
+                </button>
+              </Tooltip>
+            </>
+          )}
+        </div>
+      </StyledTableCell>
+    </StyledTableRow>
+  );
 }
 
-export default function UsersTable({users, mentors, levels, getData, seasonID}){
-    const headers = [
-        "Name",
-        "VJudgeHandle",
-        "Email",
-        "Level",
-        "Mentor",
-        "Enrolled",
-    ];
+export default function UsersTable({
+  users,
+  mentors,
+  levels,
+  getData,
+  seasonID,
+}) {
+  const headers = [
+    "Name",
+    "VJudgeHandle",
+    "Email",
+    "Level",
+    "Mentor",
+    "Enrolled",
+  ];
 
-    const [editWindowOpened,setEditWindowOpened] = useState(false);
-    const [userToEdit,setUserToEdit] = useState("");
+  const [editWindowOpened, setEditWindowOpened] = useState(false);
+  const [userToEdit, setUserToEdit] = useState("");
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-        },
-    }));
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
 
-    return(
-        <>
-        {editWindowOpened && 
-            <Edit
-            user={userToEdit}
-            mentors={mentors}
-            levels={levels}
-            isOpened={editWindowOpened}
-            setIsOpened={setEditWindowOpened}
-            refresh={getData}
-            />
-        }
-        <TableContainer className="flex my-4" component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-                <TableRow>
-                {headers.map((header) => (
-                    <StyledTableCell key={header} align="center">
-                    {header}
-                    </StyledTableCell>
-                ))}
-                <StyledTableCell align="center">ACTIONS</StyledTableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {users?.map((user) => (
-                <UserRow key={user.email} user={user} seasonID={seasonID} refresh={getData} editUser={(user)=>{setUserToEdit(user); setEditWindowOpened(true)}}/>
-                ))}
-            </TableBody>
-            </Table>
-        </TableContainer>
-        </>
-    );
+  return (
+    <>
+      {editWindowOpened && (
+        <Edit
+          user={userToEdit}
+          mentors={mentors}
+          levels={levels}
+          isOpened={editWindowOpened}
+          setIsOpened={setEditWindowOpened}
+          refresh={getData}
+        />
+      )}
+      <TableContainer className="flex my-4" component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              {headers.map((header) => (
+                <StyledTableCell key={header} align="center">
+                  {header}
+                </StyledTableCell>
+              ))}
+              <StyledTableCell align="center">ACTIONS</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users?.map((user) => (
+              <UserRow
+                key={user.email}
+                user={user}
+                seasonID={seasonID}
+                refresh={getData}
+                editUser={(user) => {
+                  setUserToEdit(user);
+                  setEditWindowOpened(true);
+                }}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
 }

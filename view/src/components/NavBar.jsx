@@ -36,7 +36,7 @@ import {
 
 function NavBar() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo,seasonID,seasons } = state;
+  const { userInfo, seasonID, seasons } = state;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openDrop = Boolean(anchorEl);
@@ -53,9 +53,9 @@ function NavBar() {
     setOpen(newOpen);
   };
 
-  const changeSeasonHandler = (newSeason) =>{
+  const changeSeasonHandler = (newSeason) => {
     ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(newSeason) });
-    sessionStorage.setItem("seasonID",newSeason)
+    sessionStorage.setItem("seasonID", newSeason);
   };
 
   const list = () => (
@@ -63,30 +63,30 @@ function NavBar() {
       {userInfo && userInfo.enrolledSeasons.length ? (
         <select
           value={seasonID}
-          onChange={(e) =>changeSeasonHandler(e.target.value)}
+          onChange={(e) => changeSeasonHandler(e.target.value)}
           type="string"
           placeholder="Level"
           className="input"
         >
-        {userInfo?.enrolledSeasons.map(({ season_id, name }) => (
-          <option key={season_id} value={season_id}>
-            {name}
-          </option>
-        ))}
+          {userInfo?.enrolledSeasons.map(({ season_id, name }) => (
+            <option key={season_id} value={season_id}>
+              {name}
+            </option>
+          ))}
         </select>
-      ):null}
+      ) : null}
       <ul className="flex felx-row justify-between">
-      {userInfo ? (
-        <li className="nav-item">
-          <NavLink
-            onClick={toggleDrawer(false)}
-            to={HOMEPAGE}
-            className={(navData) => (navData.isActive ? "active" : null)}
-          >
-            Home
-          </NavLink>
-        </li>
-      ):null}
+        {userInfo ? (
+          <li className="nav-item">
+            <NavLink
+              onClick={toggleDrawer(false)}
+              to={HOMEPAGE}
+              className={(navData) => (navData.isActive ? "active" : null)}
+            >
+              Home
+            </NavLink>
+          </li>
+        ) : null}
         <li>
           <CloseIcon onClick={toggleDrawer(false)} sx={{ fontSize: 30 }} />
         </li>
@@ -139,7 +139,12 @@ function NavBar() {
         </li>
       ) : null}
 
-      {userInfo?.permissions?.find((perm) => perm === ADD_CONTESTS || perm === UPDATE_CONTESTS || perm === DELETE_CONTESTS) ? (
+      {userInfo?.permissions?.find(
+        (perm) =>
+          perm === ADD_CONTESTS ||
+          perm === UPDATE_CONTESTS ||
+          perm === DELETE_CONTESTS,
+      ) ? (
         <li className="nav-item">
           <NavLink
             onClick={toggleDrawer(false)}
@@ -155,7 +160,7 @@ function NavBar() {
         (perm) =>
           perm === VIEW_ADMINS ||
           perm === VIEW_MENTORS ||
-          perm === VIEW_TRAINEES
+          perm === VIEW_TRAINEES,
       ) ? (
         <li className="nav-item">
           <NavLink
@@ -167,10 +172,7 @@ function NavBar() {
           </NavLink>
         </li>
       ) : null}
-      {userInfo?.permissions?.find(
-        (perm) =>
-          perm === VIEW_MENTEES
-      ) ? (
+      {userInfo?.permissions?.find((perm) => perm === VIEW_MENTEES) ? (
         <li className="nav-item">
           <NavLink
             onClick={toggleDrawer(false)}
@@ -193,10 +195,8 @@ function NavBar() {
             Sign out
           </NavLink>
         </li>
-      ):null}
-      {userInfo ? (
-        null
-      ):(
+      ) : null}
+      {userInfo ? null : (
         <li className="nav-item">
           <NavLink
             onClick={toggleDrawer(false)}
@@ -207,9 +207,7 @@ function NavBar() {
           </NavLink>
         </li>
       )}
-      {userInfo ? (
-        null
-      ):(
+      {userInfo ? null : (
         <li className="nav-item">
           <NavLink
             onClick={toggleDrawer(false)}
@@ -242,10 +240,7 @@ function NavBar() {
           </Drawer>
         </span>
 
-        <NavLink
-          className="flex flex-row items-center text-3xl"
-          to={HOMEPAGE}
-        >
+        <NavLink className="flex flex-row items-center text-3xl" to={HOMEPAGE}>
           <img className="w-10" src="/CPC_logo.png" />
           ASUFE CPC
         </NavLink>
@@ -261,7 +256,7 @@ function NavBar() {
             </li>
           ) : null}
           {userInfo?.permissions?.find(
-            (perm) => perm === VIEW_MY_TRANSCRIPT
+            (perm) => perm === VIEW_MY_TRANSCRIPT,
           ) ? (
             <li className="nav-item">
               <NavLink
@@ -304,7 +299,12 @@ function NavBar() {
             </li>
           ) : null}
 
-          {userInfo?.permissions?.find((perm) => perm === ADD_CONTESTS || perm === UPDATE_CONTESTS || perm === DELETE_CONTESTS) ? (
+          {userInfo?.permissions?.find(
+            (perm) =>
+              perm === ADD_CONTESTS ||
+              perm === UPDATE_CONTESTS ||
+              perm === DELETE_CONTESTS,
+          ) ? (
             <li className="nav-item">
               <NavLink
                 end
@@ -322,7 +322,7 @@ function NavBar() {
             (perm) =>
               perm === VIEW_ADMINS ||
               perm === VIEW_MENTORS ||
-              perm === VIEW_TRAINEES
+              perm === VIEW_TRAINEES,
           ) ? (
             <li className="nav-item">
               <NavLink
@@ -332,14 +332,11 @@ function NavBar() {
                   navData.isActive ? "active" : "nav-links"
                 }
               >
-              <span>Users</span>
+                <span>Users</span>
               </NavLink>
             </li>
           ) : null}
-          {userInfo?.permissions?.find(
-            (perm) =>
-              perm === VIEW_MENTEES
-          ) ? (
+          {userInfo?.permissions?.find((perm) => perm === VIEW_MENTEES) ? (
             <li className="nav-item">
               <NavLink
                 end
@@ -348,93 +345,92 @@ function NavBar() {
                   navData.isActive ? "active" : "nav-links"
                 }
               >
-              <span>Mentees</span>
+                <span>Mentees</span>
               </NavLink>
             </li>
           ) : null}
-          </ul>
-          {userInfo ? (
-            <div className="hidden lg:flex flex-row items-center">
-              {userInfo.enrolledSeasons.length ?(
-                <select
-                  value={seasonID}
-                  onChange={(e) =>changeSeasonHandler(e.target.value)}
-                  type="string"
-                  placeholder="Season"
-                  className="inputNavbar mr-4"
-                >
+        </ul>
+        {userInfo ? (
+          <div className="hidden lg:flex flex-row items-center">
+            {userInfo.enrolledSeasons.length ? (
+              <select
+                value={seasonID}
+                onChange={(e) => changeSeasonHandler(e.target.value)}
+                type="string"
+                placeholder="Season"
+                className="inputNavbar mr-4"
+              >
                 {userInfo?.enrolledSeasons.map(({ season_id, name }) => (
                   <option key={season_id} value={season_id}>
                     {name}
                   </option>
                 ))}
-                </select>
-              ):null}
-              <AccountCircleIcon
-                className="cursor-pointer text-violet-800"
-                sx={{ fontSize: 30 }}
-                onClick={handleClick}
-              />
-              <Menu
-                anchorEl={anchorEl}
-                open={openDrop}
-                onClose={handleClose}
-                onClick={handleClose}
-                PaperProps={{
-                  elevation: 0,
-                  sx: {
-                    width: 180,
-                    overflow: "visible",
-                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                    mt: 1.2,
-                    "&:before": {
-                      content: '""',
-                      display: "block",
-                      position: "absolute",
-                      top: 0,
-                      right: 10,
-                      width: 10,
-                      height: 10,
-                      bgcolor: "background.paper",
-                      transform: "translateY(-50%) rotate(45deg)",
-                      zIndex: 0,
-                    },
+              </select>
+            ) : null}
+            <AccountCircleIcon
+              className="cursor-pointer text-violet-800"
+              sx={{ fontSize: 30 }}
+              onClick={handleClick}
+            />
+            <Menu
+              anchorEl={anchorEl}
+              open={openDrop}
+              onClose={handleClose}
+              onClick={handleClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  width: 180,
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.2,
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 10,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
                   },
-                }}
-                transformOrigin={{
-                  horizontal: "right",
-                  vertical: "top",
-                }}
-                anchorOrigin={{
-                  horizontal: "right",
-                  vertical: "bottom",
-                }}
-              >
-                <Link to="/profile">
-                  <MenuItem sx={{ py: 1.5 }}>
-                    <ListItemIcon>
-                      <PersonIcon fontSize="small" />
-                    </ListItemIcon>
-                    Profile
-                  </MenuItem>
-                </Link>
+                },
+              }}
+              transformOrigin={{
+                horizontal: "right",
+                vertical: "top",
+              }}
+              anchorOrigin={{
+                horizontal: "right",
+                vertical: "bottom",
+              }}
+            >
+              <Link to="/profile">
+                <MenuItem sx={{ py: 1.5 }}>
+                  <ListItemIcon>
+                    <PersonIcon fontSize="small" />
+                  </ListItemIcon>
+                  Profile
+                </MenuItem>
+              </Link>
 
-                <Divider />
-                <Link to={HOMEPAGE} onClick={signoutHandler}>
-                  <MenuItem>
-                    <ListItemIcon>
-                      <Logout fontSize="small" />
-                    </ListItemIcon>
-                    Logout
-                  </MenuItem>
-                </Link>
-              </Menu>
-            </div>
-          ) : null}
-        {userInfo ? (null):
-        
-        <ul className="hidden lg:flex flex-row space-x-8 mx-32">
-          <li className="nav-item">
+              <Divider />
+              <Link to={HOMEPAGE} onClick={signoutHandler}>
+                <MenuItem>
+                  <ListItemIcon>
+                    <Logout fontSize="small" />
+                  </ListItemIcon>
+                  Logout
+                </MenuItem>
+              </Link>
+            </Menu>
+          </div>
+        ) : null}
+        {userInfo ? null : (
+          <ul className="hidden lg:flex flex-row space-x-8 mx-32">
+            <li className="nav-item">
               <NavLink
                 end
                 to={LOGIN}
@@ -456,8 +452,8 @@ function NavBar() {
                 Sign Up
               </NavLink>
             </li>
-        </ul>
-        }
+          </ul>
+        )}
       </div>
     </nav>
   );

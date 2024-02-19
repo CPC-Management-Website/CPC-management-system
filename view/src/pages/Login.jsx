@@ -7,7 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Store } from "../context/store";
 import { HOMEPAGE, FORGOT_PASSWORD } from "../urls/frontend_urls";
 import LOGIN from "../assets/login.jpg";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -47,22 +47,31 @@ export default function SignIn() {
       });
       // const seasons = await axios.get(URLS.SEASONS);
       ctxDispatch({ type: "GET_SEASONS", payload: data.seasons });
-      sessionStorage.setItem("seasons",JSON.stringify(data.seasons))
+      sessionStorage.setItem("seasons", JSON.stringify(data.seasons));
 
       // const levels = await axios.get(URLS.LEVELS);
       ctxDispatch({ type: "GET_LEVELS", payload: data.levels });
-      sessionStorage.setItem("levels",JSON.stringify(data.levels))
+      sessionStorage.setItem("levels", JSON.stringify(data.levels));
 
-      ctxDispatch({ type: "SET_SEASON_ID", payload: parseInt(data.userInfo.latestEnrollmentSeason) });
-      sessionStorage.setItem("seasonID",data.userInfo.latestEnrollmentSeason)
+      ctxDispatch({
+        type: "SET_SEASON_ID",
+        payload: parseInt(data.userInfo.latestEnrollmentSeason),
+      });
+      sessionStorage.setItem("seasonID", data.userInfo.latestEnrollmentSeason);
 
       ctxDispatch({ type: "USER_SIGNIN", payload: data.userInfo });
       sessionStorage.setItem("userInfo", JSON.stringify(data.userInfo));
 
-      ctxDispatch({ type: "GET_REGISTRATIONAVAILABLE", payload: parseInt(data.registrationAvailable.value) });
-      sessionStorage.setItem("registrationAvailable", data.registrationAvailable.value)
-      console.log(data)
-      
+      ctxDispatch({
+        type: "GET_REGISTRATIONAVAILABLE",
+        payload: parseInt(data.registrationAvailable.value),
+      });
+      sessionStorage.setItem(
+        "registrationAvailable",
+        data.registrationAvailable.value,
+      );
+      console.log(data);
+
       dispatch({ type: "LOGIN_SUCCESS" });
       navigate(redirect || HOMEPAGE);
     } catch (err) {
@@ -114,7 +123,7 @@ export default function SignIn() {
               />
             </div>
           </div>
-          
+
           <Link to={FORGOT_PASSWORD}>Forgot password?</Link>
           <div className="flex flex-col mt-4">
             {loading ? (

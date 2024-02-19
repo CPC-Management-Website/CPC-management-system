@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer,useContext } from "react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 import { Store } from "../context/store";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
@@ -18,7 +18,7 @@ const reducer = (state, action) => {
     case "ADD_REQUEST":
       return { ...state, loadingAdd: true };
     case "ADD_SUCCESS":
-      return { ...state, loadingAdd: false};
+      return { ...state, loadingAdd: false };
     case "ADD_FAIL":
       return { ...state, loadingAdd: false, error: action.payload };
     default:
@@ -37,17 +37,20 @@ function ContestDetails() {
   const [weekNum, setWeekNum] = useState("");
   const [levelID, setLevelID] = useState("");
 
-  const [{ loadingAdd, loadingContests,contests }, dispatch] = useReducer(reducer, {
-    loadingAdd: false,
-    loadingContests: true,
-    error: "",
-  });
+  const [{ loadingAdd, loadingContests, contests }, dispatch] = useReducer(
+    reducer,
+    {
+      loadingAdd: false,
+      loadingContests: true,
+      error: "",
+    },
+  );
 
   const addContest = async (e) => {
-    console.log(contestID)
+    console.log(contestID);
     e.preventDefault();
     try {
-      console.log(levelID)
+      console.log(levelID);
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
         URLS.CONTEST,
@@ -62,11 +65,11 @@ function ContestDetails() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       dispatch({ type: "ADD_SUCCESS" });
       getAllContests();
-      toast.success("Contest Added Successfully")
+      toast.success("Contest Added Successfully");
     } catch (error) {
       if (!error?.response) {
         toast.error("Internal Server Error");
@@ -79,9 +82,9 @@ function ContestDetails() {
 
   const getAllContests = async () => {
     try {
-      const params = new URLSearchParams([["season",seasonID]]);
+      const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_CONTESTS_REQUEST" });
-      const response = await axios.get(URLS.CONTEST,{params});
+      const response = await axios.get(URLS.CONTEST, { params });
       dispatch({ type: "GET_CONTESTS_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_CONTESTS_FAIL" });
@@ -89,150 +92,147 @@ function ContestDetails() {
     }
   };
   useEffect(() => {
-    getAllContests()
+    getAllContests();
   }, [seasonID]);
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0 my-5">
-      {userInfo.permissions.find((perm) => perm === ADD_CONTESTS) ?
-      (
+      {userInfo.permissions.find((perm) => perm === ADD_CONTESTS) ? (
         <>
-        <p className="text-3xl font-semibold lg:my-10 mb-4">
-          Add Contest
-        </p>
-        <form className="flex flex-col lg:w-[50%] " onSubmit={addContest}>
-          <div className="flex flex-col">
-            <label className="inputlabel">Contest ID*</label>
-            <div className="inputCont">
-              <input
-                className="input"
-                type="number"
-                required
-                min={1}
-                placeholder="Contest ID"
-                onChange={(e) => setContestID(e.target.value)}
-              />
+          <p className="text-3xl font-semibold lg:my-10 mb-4">Add Contest</p>
+          <form className="flex flex-col lg:w-[50%] " onSubmit={addContest}>
+            <div className="flex flex-col">
+              <label className="inputlabel">Contest ID*</label>
+              <div className="inputCont">
+                <input
+                  className="input"
+                  type="number"
+                  required
+                  min={1}
+                  placeholder="Contest ID"
+                  onChange={(e) => setContestID(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col">
-            <label className="inputlabel">Topic*</label>
-            <div className="inputCont">
-              <input
-                className="input"
-                required
-                placeholder="Topic"
-                onChange={(e) => setTopic(e.target.value)}
-              />
+            <div className="flex flex-col">
+              <label className="inputlabel">Topic*</label>
+              <div className="inputCont">
+                <input
+                  className="input"
+                  required
+                  placeholder="Topic"
+                  onChange={(e) => setTopic(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col">
-            <label className="inputlabel">Yellow threshold*</label>
-            <div className="inputCont">
-              <input
-                className="input"
-                type="number"
-                required
-                min={1}
-                placeholder="Yellow threshold"
-                onChange={(e) => setYellowThreshold(e.target.value)}
-              />
+            <div className="flex flex-col">
+              <label className="inputlabel">Yellow threshold*</label>
+              <div className="inputCont">
+                <input
+                  className="input"
+                  type="number"
+                  required
+                  min={1}
+                  placeholder="Yellow threshold"
+                  onChange={(e) => setYellowThreshold(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col">
-            <label className="inputlabel">Green threshold*</label>
-            <div className="inputCont">
-              <input
-                className="input"
-                type="number"
-                required
-                min={1}
-                placeholder="Green threshold"
-                onChange={(e) => setGreenThreshold(e.target.value)}
-              />
+            <div className="flex flex-col">
+              <label className="inputlabel">Green threshold*</label>
+              <div className="inputCont">
+                <input
+                  className="input"
+                  type="number"
+                  required
+                  min={1}
+                  placeholder="Green threshold"
+                  onChange={(e) => setGreenThreshold(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
+            <div className="flex flex-col">
+              <label className="inputlabel">Number of Problems*</label>
+              <div className="inputCont">
+                <input
+                  className="input"
+                  type="number"
+                  required
+                  min={1}
+                  placeholder="Number of Problems"
+                  onChange={(e) => setNumOfProblems(e.target.value)}
+                />
+              </div>
+            </div>
 
-          <div className="flex flex-col">
-            <label className="inputlabel">Number of Problems*</label>
-            <div className="inputCont">
-              <input
-                className="input"
-                type="number"
-                required
-                min={1}
-                placeholder="Number of Problems"
-                onChange={(e) => setNumOfProblems(e.target.value)}
-              />
+            <div className="flex flex-col">
+              <label className="inputlabel">Week Number*</label>
+              <div className="inputCont">
+                <input
+                  className="input"
+                  type="number"
+                  required
+                  min={1}
+                  placeholder="Week Number"
+                  onChange={(e) => setWeekNum(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-
-          <div className="flex flex-col">
-            <label className="inputlabel">Week Number*</label>
-            <div className="inputCont">
-              <input
-                className="input"
-                type="number"
-                required
-                min={1}
-                placeholder="Week Number"
-                onChange={(e) => setWeekNum(e.target.value)}
-              />
+            <div className="flex flex-col">
+              <label className="inputlabel">Level*</label>
+              <div className="inputCont">
+                <select
+                  onChange={(e) =>
+                    setLevelID(
+                      e.target.value === "NULL" ? null : e.target.value,
+                    )
+                  }
+                  type="string"
+                  placeholder="Level"
+                  className="input"
+                  required
+                >
+                  <option key={null} value={undefined}>
+                    {""}
+                  </option>
+                  {levels?.map(({ level_id, name }) => (
+                    <option key={level_id} value={level_id}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col">
-            <label className="inputlabel">Level*</label>
-            <div className="inputCont">
-            <select
-                onChange={(e) =>
-                  setLevelID(e.target.value === "NULL" ? null : e.target.value)
-                }
-                type="string"
-                placeholder="Level"
-                className="input"
-                required
-              >
-              <option key={null} value={undefined}>
-                  {""}
-              </option>
-              {levels?.map(({ level_id, name }) => (
-                <option key={level_id} value={level_id}>
-                  {name}
-                </option>
-              ))}
-              </select>
+            <div className="flex flex-col mt-4">
+              {loadingAdd ? (
+                <button
+                  className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
+                  type="submit"
+                >
+                  <CircularProgress size={23} thickness={4} color="inherit" />
+                </button>
+              ) : (
+                <button
+                  className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
+                  type="submit"
+                >
+                  Add
+                </button>
+              )}
             </div>
-          </div>
-          <div className="flex flex-col mt-4">
-            {loadingAdd ? (
-              <button
-                className="bg-slate-300 text-white py-2 px-6 rounded flex justify-center items-center"
-                type="submit"
-              >
-                <CircularProgress size={23} thickness={4} color="inherit" />
-              </button>
-            ) : (
-              <button
-                className="bg-violet-800 hover:bg-violet-500 text-white py-2 px-6 rounded"
-                type="submit"
-              >
-                Add
-              </button>
-            )}
-          </div>
-        </form>
+          </form>
         </>
-      ):
-      null}
-      {loadingContests? (
-          <div className="flex justify-center py-32">
-            <CircularProgress size={50} thickness={4} color="inherit" />
-          </div>
-        ) : (
-          <>
+      ) : null}
+      {loadingContests ? (
+        <div className="flex justify-center py-32">
+          <CircularProgress size={50} thickness={4} color="inherit" />
+        </div>
+      ) : (
+        <>
           <p className="text-3xl font-semibold my-10">
             Current season's contests
           </p>
@@ -246,8 +246,8 @@ function ContestDetails() {
               />
             ))}
           </div>
-          </> 
-        )}
+        </>
+      )}
     </div>
   );
 }

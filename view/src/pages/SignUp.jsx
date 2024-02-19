@@ -3,7 +3,7 @@ import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { LOGIN } from "../urls/frontend_urls";
 import SelectWithOther from "../components/SelectWithOther";
 
@@ -40,31 +40,29 @@ function SignUp() {
   const [level, setLevel] = useState("");
   const [major, setMajor] = useState("");
   const [discordHandle, setDiscordHandle] = useState("");
-  const [availDays, setAvailDays] = useState(
-    {
-      sat: false,
-      sun: false,
-      mon: false,
-      tues: false,
-      wed: false,
-      thur: false
-    }
-  );
+  const [availDays, setAvailDays] = useState({
+    sat: false,
+    sun: false,
+    mon: false,
+    tues: false,
+    wed: false,
+    thur: false,
+  });
   const days = [
     { label: "Saturday", value: "sat" },
     { label: "Sunday", value: "sun" },
     { label: "Monday", value: "mon" },
     { label: "Tuesday", value: "tues" },
     { label: "Wednesday", value: "wed" },
-    { label: "Thursday", value: "thur" }
-  ]
+    { label: "Thursday", value: "thur" },
+  ];
   const levels = [
     { value: "Freshman" },
     { value: "Sophomore" },
     { value: "Junior" },
     { value: "Senior 1" },
-    { value: "Senior 2" }
-  ]
+    { value: "Senior 2" },
+  ];
   const majors = [
     { value: "Freshman" },
     { value: "Architectural Engineering" },
@@ -88,39 +86,41 @@ function SignUp() {
     { value: "Mechatronics Engineering and Automation" },
     { value: "Structural Engineering" },
     { value: "Utilities and Infrastructure" },
-    { value: "Water Engineering and Hydraulic Structures" }
-  ]
+    { value: "Water Engineering and Hydraulic Structures" },
+  ];
 
   const universities = [
     { value: "Ain Shams University" },
     { value: "Cairo University" },
-    { value: "Helwan University" }
-  ]
+    { value: "Helwan University" },
+  ];
 
-  const faculties = [
-    { value: "Engineering" },
-    { value: "Computer Science"}
-  ]
+  const faculties = [{ value: "Engineering" }, { value: "Computer Science" }];
 
-  const [{ loadingSignUp, registration, loading }, dispatch] =
-    useReducer(reducer, {
+  const [{ loadingSignUp, registration, loading }, dispatch] = useReducer(
+    reducer,
+    {
       loading: true,
       error: "",
-    });
+    },
+  );
 
   const getRegistrationStatus = async () => {
     try {
       dispatch({ type: "GET_REGISTRATION_REQUEST" });
       const response = await axios.get(URLS.REGISTRATION);
-      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data.value == 1 ? true : false });
+      dispatch({
+        type: "GET_REGISTRATION_SUCCESS",
+        payload: response.data.value == 1 ? true : false,
+      });
     } catch (error) {
       dispatch({ type: "GET_REGISTRATION_FAIL" });
       console.log(error);
     }
   };
   const signUp = async (e) => {
-    if (password !== confirmPassword){
-      toast.error("The two passwords aren't the same")
+    if (password !== confirmPassword) {
+      toast.error("The two passwords aren't the same");
       return;
     }
     try {
@@ -142,7 +142,7 @@ function SignUp() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       console.log(response);
       dispatch({ type: "SIGNUP_SUCCESS" });
@@ -155,7 +155,7 @@ function SignUp() {
         toast.error(error.response.data.Error);
       }
       console.log(error);
-      dispatch({ type: "SIGNUP_FAIL" })
+      dispatch({ type: "SIGNUP_FAIL" });
       //return console.log(error)
     }
   };
@@ -177,8 +177,8 @@ function SignUp() {
     // }
   };
   const updateCheckbox = ({ checked, value }) => {
-    availDays[value] = checked
-    setAvailDays({ ...availDays })
+    availDays[value] = checked;
+    setAvailDays({ ...availDays });
   };
 
   // useEffect(() => {
@@ -186,7 +186,6 @@ function SignUp() {
   // }, []);
 
   return (
-
     <div className="flex flex-col p-4 lg:p-0  lg:items-center">
       <p className="text-3xl font-semibold lg:my-10 mb-4">Sign Up</p>
       <form className="flex flex-col lg:w-[40%]" onSubmit={handleSubmit}>
@@ -203,7 +202,9 @@ function SignUp() {
           </div>
         </div>
         <div className="flex flex-col">
-          <label className="inputlabel">Email* (make sure to write it correctly)</label>
+          <label className="inputlabel">
+            Email* (make sure to write it correctly)
+          </label>
           <div className="inputCont">
             <input
               className="input"
@@ -270,19 +271,31 @@ function SignUp() {
         </div>
         <div className="flex flex-col">
           <label className="inputlabel">University*</label>
-          <SelectWithOther items={ universities } setValue={ setUniversity } placeholder={ "University" }/>
+          <SelectWithOther
+            items={universities}
+            setValue={setUniversity}
+            placeholder={"University"}
+          />
         </div>
         <div className="flex flex-col">
           <label className="inputlabel">Faculty*</label>
-          <SelectWithOther items={ faculties } setValue={ setFaculty } placeholder={ "Faculty" }/>
+          <SelectWithOther
+            items={faculties}
+            setValue={setFaculty}
+            placeholder={"Faculty"}
+          />
         </div>
         {console.log(faculty)}
-        {faculty === "Engineering" &&
+        {faculty === "Engineering" && (
           <div className="flex flex-col">
             <label className="inputlabel">Major*</label>
-            <SelectWithOther items={ majors } setValue={ setMajor } placeholder={ "Major" }/>
+            <SelectWithOther
+              items={majors}
+              setValue={setMajor}
+              placeholder={"Major"}
+            />
           </div>
-        }
+        )}
         <div className="flex flex-col w-full">
           <label className="inputlabel">Level*</label>
           <div className="inputCont">

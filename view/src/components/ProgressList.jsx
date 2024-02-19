@@ -1,7 +1,7 @@
 import ProgressPerContest from "./ProgressPerContest";
 import React, { useEffect, useState, useReducer } from "react";
 import axios from "../hooks/axios";
-import URLS from '../urls/server_urls.json';
+import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const reducer = (state, action) => {
@@ -18,15 +18,10 @@ const reducer = (state, action) => {
 };
 
 function render(progressList) {
-  console.log(progressList)
+  console.log(progressList);
   const data = [];
   for (let i = 0; i < progressList.length; i++) {
-    data.push(
-      <ProgressPerContest
-        key={i}
-        progressItem={progressList[i]}
-      />
-    );
+    data.push(<ProgressPerContest key={i} progressItem={progressList[i]} />);
   }
   return data;
 }
@@ -39,7 +34,10 @@ function ProgressList(props) {
   });
 
   const getProgressList = async () => {
-    const params = new URLSearchParams([["email", props["email"]],["season",props["season"]]]);
+    const params = new URLSearchParams([
+      ["email", props["email"]],
+      ["season", props["season"]],
+    ]);
     try {
       dispatch({ type: "FETCH_REQUEST" });
       const response = await axios.get(
@@ -47,7 +45,7 @@ function ProgressList(props) {
         { params },
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       dispatch({ type: "FETCH_SUCCESS" });
       setProgressList(response.data.progress);
@@ -59,7 +57,7 @@ function ProgressList(props) {
 
   useEffect(() => {
     getProgressList();
-    console.log(progressList)
+    console.log(progressList);
   }, [props["season"]]);
 
   return loading ? (

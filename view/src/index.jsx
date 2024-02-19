@@ -11,5 +11,5 @@ root.render(
     <StoreProvider>
       <App />
     </StoreProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
 );

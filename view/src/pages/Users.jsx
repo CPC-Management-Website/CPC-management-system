@@ -1,12 +1,19 @@
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import React, { useState, useEffect, useContext, useReducer } from "react";
-import { VIEW_ADMINS, VIEW_MENTORS, EDIT_REGISTRATION_STATUS, VIEW_TRAINEES, VIEW_MENTEES, UPDATE_USERS } from "../permissions/permissions";
+import {
+  VIEW_ADMINS,
+  VIEW_MENTORS,
+  EDIT_REGISTRATION_STATUS,
+  VIEW_TRAINEES,
+  VIEW_MENTEES,
+  UPDATE_USERS,
+} from "../permissions/permissions";
 import { Store } from "../context/store";
 import CircularProgress from "@mui/material/CircularProgress";
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 import { toast } from "react-toastify";
 import UsersTable from "../components/UsersTable";
 import FileInput from "../components/FileInput";
@@ -44,14 +51,14 @@ const reducer = (state, action) => {
     case "ASSIGN_MENTORS_REQUEST":
       return { ...state, loadingAssignMentors: true };
     case "ASSIGN_MENTORS_SUCCESS":
-      return { ...state, loadingAssignMentors: false};
+      return { ...state, loadingAssignMentors: false };
     case "ASSIGN_MENTORS_FAIL":
       return { ...state, loadingAssignMentors: false, error: action.payload };
-    
+
     case "REGISTER_USERS_REQUEST":
       return { ...state, loadingRegisterUsers: true };
     case "REGISTER_USERS_SUCCESS":
-      return { ...state, loadingRegisterUsers: false};
+      return { ...state, loadingRegisterUsers: false };
     case "REGISTER_USERS_FAIL":
       return { ...state, loadingRegisterUsers: false, error: action.payload };
     default:
@@ -61,7 +68,7 @@ const reducer = (state, action) => {
 
 export default function User() {
   const { state } = useContext(Store);
-  const { seasonID,levels } = state;
+  const { seasonID, levels } = state;
 
   const { userInfo } = state;
   const [
@@ -74,7 +81,7 @@ export default function User() {
       admins,
       registration,
       loadingAssignMentors,
-      loadingRegisterUsers
+      loadingRegisterUsers,
     },
     dispatch,
   ] = useReducer(reducer, {
@@ -149,8 +156,13 @@ export default function User() {
     try {
       dispatch({ type: "GET_REGISTRATION_REQUEST" });
       const response = await axios.get(URLS.REGISTRATION);
-      dispatch({ type: "GET_REGISTRATION_SUCCESS", payload: response.data.value == 1 ? true : false });
-      { console.log(registration) }
+      dispatch({
+        type: "GET_REGISTRATION_SUCCESS",
+        payload: response.data.value == 1 ? true : false,
+      });
+      {
+        console.log(registration);
+      }
     } catch (error) {
       dispatch({ type: "GET_REGISTRATION_FAIL" });
       console.log(error);
@@ -170,7 +182,9 @@ export default function User() {
       //the user must be an admin
       getTrainees();
     }
-    if (userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS)) {
+    if (
+      userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS)
+    ) {
       getRegistrationStatus();
     }
   };
@@ -180,18 +194,18 @@ export default function User() {
       await axios.post(
         URLS.REGISTRATION,
         JSON.stringify({
-          registration: registration ? false : true
+          registration: registration ? false : true,
         }),
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       toast.success("Registration status updated");
       dispatch({ type: "UPDATE_REGISTRATION_STATUS", payload: !registration });
     } catch (error) {
       toast.error(error.response.data.Error);
     }
-  }
+  };
 
   const assignMentorsFile = async (file) => {
     try {
@@ -207,7 +221,7 @@ export default function User() {
       if (!error?.response) {
         toast.error("Internal Server Error");
       } else {
-        toast.warning(error.response.data.Error,{autoClose:false});
+        toast.warning(error.response.data.Error, { autoClose: false });
       }
       dispatch({ type: "ASSIGN_MENTORS_FAIL" });
       console.log(error);
@@ -228,7 +242,7 @@ export default function User() {
       if (!error?.response) {
         toast.error("Internal Server Error");
       } else {
-        toast.warning(error.response.data.Error,{autoClose:false});
+        toast.warning(error.response.data.Error, { autoClose: false });
       }
       dispatch({ type: "REGISTER_USERS_FAIL" });
       console.log(error);
@@ -242,80 +256,121 @@ export default function User() {
   return (
     <>
       <div className="flex flex-col p-4 sm:p-0 sm:mx-4 sm:mb-4 sm:min-h-screen sm:items-center">
-        {userInfo?.permissions?.find((perm) => perm === EDIT_REGISTRATION_STATUS) ?
-          (
-            <div className="mt-4">
-              <FormGroup>
-                <FormControlLabel
-                  control={<Switch checked={registration || false} />}
-                  disabled={registration === undefined ? true : false}
-                  label="Registration"
-                  labelPlacement="top"
-                  onChange={() => handleRegistrationSwitch()}
-                />
-              </FormGroup>
-              {console.log(registration)}
-            </div>
-          ) :
-          null
-        }
-        {userInfo?.permissions?.find((perm) => perm === VIEW_ADMINS) &&
+        {userInfo?.permissions?.find(
+          (perm) => perm === EDIT_REGISTRATION_STATUS,
+        ) ? (
+          <div className="mt-4">
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={registration || false} />}
+                disabled={registration === undefined ? true : false}
+                label="Registration"
+                labelPlacement="top"
+                onChange={() => handleRegistrationSwitch()}
+              />
+            </FormGroup>
+            {console.log(registration)}
+          </div>
+        ) : null}
+        {userInfo?.permissions?.find((perm) => perm === VIEW_ADMINS) && (
           <>
-          <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
-          {loading_admins && 
-            <div className="flex justify-center py-32">
-              <CircularProgress size={50} thickness={4} color="inherit" />
-            </div>
-          }
-          {!loading_admins && <UsersTable users={admins} mentors={mentors} levels={levels} seasonID={seasonID} getData={getAdmins}/>}
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Admins</p>
+            {loading_admins && (
+              <div className="flex justify-center py-32">
+                <CircularProgress size={50} thickness={4} color="inherit" />
+              </div>
+            )}
+            {!loading_admins && (
+              <UsersTable
+                users={admins}
+                mentors={mentors}
+                levels={levels}
+                seasonID={seasonID}
+                getData={getAdmins}
+              />
+            )}
           </>
-        }
-        {userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS) &&
+        )}
+        {userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS) && (
           <>
-          <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Mentors</p>
-          {loading_mentors && 
-            <div className="flex justify-center py-32">
-              <CircularProgress size={50} thickness={4} color="inherit" />
-            </div>
-          }
-          {!loading_mentors && <UsersTable users={mentors} mentors={mentors} levels={levels} seasonID={seasonID} getData={getMentors}/>}
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Mentors</p>
+            {loading_mentors && (
+              <div className="flex justify-center py-32">
+                <CircularProgress size={50} thickness={4} color="inherit" />
+              </div>
+            )}
+            {!loading_mentors && (
+              <UsersTable
+                users={mentors}
+                mentors={mentors}
+                levels={levels}
+                seasonID={seasonID}
+                getData={getMentors}
+              />
+            )}
           </>
-        }
-        {userInfo?.permissions?.find((perm) => perm === VIEW_TRAINEES) &&
+        )}
+        {userInfo?.permissions?.find((perm) => perm === VIEW_TRAINEES) && (
           <>
-          <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Trainees</p>
-          {loading_trainees && 
-            <div className="flex justify-center py-32">
-              <CircularProgress size={50} thickness={4} color="inherit" />
-            </div>
-          }
-          {!loading_trainees && <UsersTable users={trainees} mentors={mentors} levels={levels} seasonID={seasonID} getData={getTrainees}/>}
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Trainees</p>
+            {loading_trainees && (
+              <div className="flex justify-center py-32">
+                <CircularProgress size={50} thickness={4} color="inherit" />
+              </div>
+            )}
+            {!loading_trainees && (
+              <UsersTable
+                users={trainees}
+                mentors={mentors}
+                levels={levels}
+                seasonID={seasonID}
+                getData={getTrainees}
+              />
+            )}
           </>
-        }
-        {userInfo?.permissions?.find((perm) => perm === VIEW_MENTEES) &&
+        )}
+        {userInfo?.permissions?.find((perm) => perm === VIEW_MENTEES) && (
           <>
-          <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Mentees</p>
-          {loading_trainees && 
-            <div className="flex justify-center py-32">
-              <CircularProgress size={50} thickness={4} color="inherit" />
-            </div>
-          }
-          {!loading_trainees && <UsersTable users={trainees} mentors={mentors} levels={levels} seasonID={seasonID} getData={getMentees}/>}
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4">Mentees</p>
+            {loading_trainees && (
+              <div className="flex justify-center py-32">
+                <CircularProgress size={50} thickness={4} color="inherit" />
+              </div>
+            )}
+            {!loading_trainees && (
+              <UsersTable
+                users={trainees}
+                mentors={mentors}
+                levels={levels}
+                seasonID={seasonID}
+                getData={getMentees}
+              />
+            )}
           </>
-        }
-        {userInfo?.permissions?.find((perm) => perm === UPDATE_USERS) ?(
+        )}
+        {userInfo?.permissions?.find((perm) => perm === UPDATE_USERS) ? (
           <>
-            <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">Assign Mentors</p>
-            <FileInput identifier={"assignMentors"} title={"Assign Mentors"} loading={loadingAssignMentors} submitHandler={assignMentorsFile} />
-            <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">Register Users</p>
-            <FileInput identifier={"registerUsers"} title={"Register Users"} loading={loadingRegisterUsers} submitHandler={registerUsersFile} />
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">
+              Assign Mentors
+            </p>
+            <FileInput
+              identifier={"assignMentors"}
+              title={"Assign Mentors"}
+              loading={loadingAssignMentors}
+              submitHandler={assignMentorsFile}
+            />
+            <p className="text-3xl font-semibold sm:my-10 sm:mb-4 mt-4 mb-4">
+              Register Users
+            </p>
+            <FileInput
+              identifier={"registerUsers"}
+              title={"Register Users"}
+              loading={loadingRegisterUsers}
+              submitHandler={registerUsersFile}
+            />
           </>
-          ):
-          null
-          }
-        
+        ) : null}
       </div>
-      
     </>
   );
 }

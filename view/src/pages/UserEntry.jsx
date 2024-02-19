@@ -17,13 +17,13 @@ const reducer = (state, action) => {
     case "ADD_REQUEST":
       return { ...state, loadingAdd: true };
     case "ADD_SUCCESS":
-      return { ...state, loadingAdd: false};
+      return { ...state, loadingAdd: false };
     case "ADD_FAIL":
       return { ...state, loadingAdd: false, error: action.payload };
     case "ADD_BULK_REQUEST":
       return { ...state, loadingAddBulk: true };
     case "ADD_BULK_SUCCESS":
-      return { ...state, loadingAddBulk: false};
+      return { ...state, loadingAddBulk: false };
     case "ADD_BULK_FAIL":
       return { ...state, loadingAddBulk: false, error: action.payload };
     default:
@@ -32,8 +32,8 @@ const reducer = (state, action) => {
 };
 
 function UserEntry() {
-  const { state } = useContext(Store)
-  const { levels } = state
+  const { state } = useContext(Store);
+  const { levels } = state;
 
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -46,11 +46,21 @@ function UserEntry() {
   const [levelID, setLevelID] = useState(1);
   const [discordHandle, setDiscordHandle] = useState("");
 
-  const [{ loading, loadingAdd, loadingAddBulk,error, product, loadingDelete, successDelete }, dispatch] =
-    useReducer(reducer, {
-      loading: false,
-      error: "",
-    });
+  const [
+    {
+      loading,
+      loadingAdd,
+      loadingAddBulk,
+      error,
+      product,
+      loadingDelete,
+      successDelete,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: false,
+    error: "",
+  });
 
   const enterUser = async (e) => {
     e.preventDefault();
@@ -69,7 +79,7 @@ function UserEntry() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       console.log(response);
       dispatch({ type: "ADD_SUCCESS" });
@@ -81,7 +91,7 @@ function UserEntry() {
         toast.error(error.response.data.Error);
       }
       console.log(error);
-      dispatch({type: "ADD_FAIL"})
+      dispatch({ type: "ADD_FAIL" });
       //return console.log(error)
     }
   };
@@ -99,7 +109,7 @@ function UserEntry() {
       if (!error?.response) {
         toast.error("Internal Server Error");
       } else {
-        toast.warning(error.response.data.Error,{autoClose:false});
+        toast.warning(error.response.data.Error, { autoClose: false });
       }
       dispatch({ type: "ADD_BULK_FAIL" });
       console.log(error);
@@ -113,7 +123,7 @@ function UserEntry() {
         response.data.map(({ role_id, user_role }) => ({
           platformRole: user_role,
           role_id: role_id,
-        }))
+        })),
       );
     } catch (error) {
       console.log(error);
@@ -193,21 +203,21 @@ function UserEntry() {
           <div className="flex flex-col w-full">
             <label className="inputlabel">Level*</label>
             <select
-                value={levelID}
-                onChange={(e) =>
-                  setLevelID(e.target.value === "NULL" ? null : e.target.value)
-                }
-                type="string"
-                placeholder="Level"
-                className="input"
-                required
-              >
+              value={levelID}
+              onChange={(e) =>
+                setLevelID(e.target.value === "NULL" ? null : e.target.value)
+              }
+              type="string"
+              placeholder="Level"
+              className="input"
+              required
+            >
               {levels?.map(({ level_id, name }) => (
                 <option key={level_id} value={level_id}>
                   {name}
                 </option>
               ))}
-              </select>
+            </select>
           </div>
         </div>
         <div className="flex flex-col mt-4">
@@ -229,7 +239,12 @@ function UserEntry() {
         </div>
       </form>
       <p className="flex text-lg font-semibold justify-center py-6">OR</p>
-      <FileInput identifier={"addUsers"} title={"Add Users"} loading={loadingAddBulk} submitHandler={enterFile}/>
+      <FileInput
+        identifier={"addUsers"}
+        title={"Add Users"}
+        loading={loadingAddBulk}
+        submitHandler={enterFile}
+      />
     </div>
   );
 }

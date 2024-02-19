@@ -5,7 +5,11 @@ import { useEffect } from "react";
 import { LOGIN } from "../urls/frontend_urls";
 import AccessDenied from "../pages/AccessDenied.jsx";
 
-export default function ProtectedRoute({ children, restrict, allowedPermissions }) {
+export default function ProtectedRoute({
+  children,
+  restrict,
+  allowedPermissions,
+}) {
   const navigate = useNavigate();
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -16,12 +20,14 @@ export default function ProtectedRoute({ children, restrict, allowedPermissions 
   //   }
   // }, [navigate, userInfo]);
 
-  return (
-    userInfo?.permissions?.find(perm => allowedPermissions?.includes(perm)) || (restrict === false && userInfo)
-      ? children
-      : userInfo ?
-        <AccessDenied />
-        :
-        <Navigate to={LOGIN} />
+  return userInfo?.permissions?.find((perm) =>
+    allowedPermissions?.includes(perm),
+  ) ||
+    (restrict === false && userInfo) ? (
+    children
+  ) : userInfo ? (
+    <AccessDenied />
+  ) : (
+    <Navigate to={LOGIN} />
   );
 }

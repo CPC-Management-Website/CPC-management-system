@@ -50,22 +50,24 @@ const reducer = (state, action) => {
 export default function Resources() {
   const { state } = useContext(Store);
   const { userInfo, levels, seasonID } = state;
-  const [{ loading, loadingAdd, resources}, dispatch] =
-    useReducer(reducer, {
-      loading: true,
-      error: "",
-    });
+  const [{ loading, loadingAdd, resources }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+  });
 
   const [resourceTopic, setResourceTopic] = useState("");
   const [resourceLink, setResourceLink] = useState("");
   const [resourceLevel, setResourceLevel] = useState("");
 
   const getMyResources = async () => {
-    console.log(userInfo)
+    console.log(userInfo);
     try {
-      const params = new URLSearchParams([["user_id", userInfo.id],["season",seasonID]]);
+      const params = new URLSearchParams([
+        ["user_id", userInfo.id],
+        ["season", seasonID],
+      ]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
-      const response = await axios.get(URLS.MYRESOURCES, {params});
+      const response = await axios.get(URLS.MYRESOURCES, { params });
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_RESOURCES_FAIL" });
@@ -74,9 +76,9 @@ export default function Resources() {
   };
   const getAllResources = async () => {
     try {
-      const params = new URLSearchParams([["season",seasonID]]);
+      const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
-      const response = await axios.get(URLS.RESOURCES,{params});
+      const response = await axios.get(URLS.RESOURCES, { params });
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_RESOURCES_FAIL" });
@@ -90,16 +92,21 @@ export default function Resources() {
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
         URLS.RESOURCES,
-        JSON.stringify({ resourceTopic, resourceLevel, resourceLink, seasonID }),
+        JSON.stringify({
+          resourceTopic,
+          resourceLevel,
+          resourceLink,
+          seasonID,
+        }),
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       dispatch({ type: "ADD_SUCCESS" });
-      toast.success("Resource added successfully")
+      toast.success("Resource added successfully");
       getAllResources();
     } catch (error) {
-      toast.error("Failed to add resource")
+      toast.error("Failed to add resource");
       dispatch({ type: "ADD_FAIL" });
       console.log(error);
     }
@@ -112,7 +119,7 @@ export default function Resources() {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.patch(
         URLS.RESOURCES,
-        JSON.stringify({ resource_id, newTopic, newLevel, newLink })
+        JSON.stringify({ resource_id, newTopic, newLevel, newLink }),
       );
       dispatch({ type: "UPDATE_SUCCESS" });
     } catch (error) {
@@ -122,10 +129,12 @@ export default function Resources() {
   };
 
   useEffect(() => {
-    userInfo?.permissions.find((perm) => perm === (ADD_RESOURCES || UPDATE_RESOURCES || DELETE_RESOURCES))?
-      getAllResources()
-    : 
-      getMyResources()
+    userInfo?.permissions.find(
+      (perm) =>
+        perm === (ADD_RESOURCES || UPDATE_RESOURCES || DELETE_RESOURCES),
+    )
+      ? getAllResources()
+      : getMyResources();
   }, [seasonID]);
 
   return (
@@ -157,11 +166,13 @@ export default function Resources() {
             placeholder="Level.."
             required
             onChange={(e) =>
-              setResourceLevel(e.target.value === "NULL" ? null : e.target.value)
+              setResourceLevel(
+                e.target.value === "NULL" ? null : e.target.value,
+              )
             }
           >
             <option key={null} value={undefined}>
-                {""}
+              {""}
             </option>
             {levels?.map(({ level_id, name }) => (
               <option key={level_id} value={level_id}>
@@ -204,7 +215,8 @@ export default function Resources() {
                 key={resource.resource_id}
                 resource={resource}
                 permissions={userInfo.permissions}
-                refreshResources={getAllResources}/>
+                refreshResources={getAllResources}
+              />
             ))}
           </div>
         </div>

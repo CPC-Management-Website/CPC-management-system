@@ -3,7 +3,7 @@ import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { LOGIN } from "../urls/frontend_urls";
 
 const reducer = (state, action) => {
@@ -24,12 +24,10 @@ function ForgotPassword() {
 
   const [email, setEmail] = useState("");
 
-  const [{ loading }, dispatch] =
-    useReducer(reducer, {
-      loading: false,
-      error: "",
-    });
-
+  const [{ loading }, dispatch] = useReducer(reducer, {
+    loading: false,
+    error: "",
+  });
 
   const requestResetLink = async (e) => {
     try {
@@ -41,12 +39,18 @@ function ForgotPassword() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
       console.log(response);
       dispatch({ type: "SUCCESS" });
       navigate(LOGIN);
-      toast.success(<div>If your email is registered, a password reset link will be sent to your email</div>,{autoClose:false});
+      toast.success(
+        <div>
+          If your email is registered, a password reset link will be sent to
+          your email
+        </div>,
+        { autoClose: false },
+      );
     } catch (error) {
       if (!error?.response) {
         toast.error("Internal Server Error");
@@ -54,7 +58,7 @@ function ForgotPassword() {
         toast.error(error.response.data.Error);
       }
       console.log(error);
-      dispatch({ type: "FAIL" })
+      dispatch({ type: "FAIL" });
       //return console.log(error)
     }
   };
@@ -65,11 +69,9 @@ function ForgotPassword() {
   };
 
   return (
-
     <div className="flex flex-col p-4 lg:p-0  lg:items-center">
       <p className="text-3xl font-semibold lg:my-10 mb-4">Forgot Password</p>
       <form className="flex flex-col lg:w-[40%]" onSubmit={handleSubmit}>
-        
         <div className="flex flex-col">
           <label className="inputlabel">Email*</label>
           <div className="inputCont">

@@ -24,8 +24,8 @@ import NavBar from "./components/NavBar";
 import { ToastContainer } from "react-toastify";
 import Contest from "./pages/Contest.jsx";
 import Users from "./pages/Users.jsx";
-import SignUp from "./pages/SignUp.jsx"
-import Forgot_Password from "./pages/ForgotPassword.jsx"
+import SignUp from "./pages/SignUp.jsx";
+import Forgot_Password from "./pages/ForgotPassword.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import {
   ADD_CONTESTS,
@@ -47,20 +47,9 @@ function App() {
     <div>
       <NavBar />
       <Routes>
-        <Route path="/"
-          element={<Navigate to={HOMEPAGE} />}
-        />
-        <Route path={LOGIN}
-          element={
-            <Login />
-          }
-        />
-        <Route
-          path={HOMEPAGE}
-          element={
-            <Home />
-          }
-        />
+        <Route path="/" element={<Navigate to={HOMEPAGE} />} />
+        <Route path={LOGIN} element={<Login />} />
+        <Route path={HOMEPAGE} element={<Home />} />
         <Route
           path={USER_ENTRY}
           element={
@@ -96,7 +85,13 @@ function App() {
         <Route
           path={CONTEST}
           element={
-            <ProtectedRoute allowedPermissions={[ADD_CONTESTS,UPDATE_CONTESTS,DELETE_CONTESTS]}>
+            <ProtectedRoute
+              allowedPermissions={[
+                ADD_CONTESTS,
+                UPDATE_CONTESTS,
+                DELETE_CONTESTS,
+              ]}
+            >
               <Contest />
             </ProtectedRoute>
           }
@@ -104,35 +99,22 @@ function App() {
         <Route
           path={USERS}
           element={
-            <ProtectedRoute allowedPermissions={[VIEW_ADMINS, VIEW_MENTORS, VIEW_TRAINEES, VIEW_MENTEES]}>
+            <ProtectedRoute
+              allowedPermissions={[
+                VIEW_ADMINS,
+                VIEW_MENTORS,
+                VIEW_TRAINEES,
+                VIEW_MENTEES,
+              ]}
+            >
               <Users />
             </ProtectedRoute>
           }
         />
-        <Route
-          path={SIGNUP}
-          element={
-            <SignUp />
-          }
-        />
-        <Route
-          path={FORGOT_PASSWORD}
-          element={
-            <Forgot_Password/>
-          }
-        />
-        <Route
-          path={RESET_PASSWORD}
-          element={
-            <ResetPassword/>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <NotFound />
-          }
-        />
+        <Route path={SIGNUP} element={<SignUp />} />
+        <Route path={FORGOT_PASSWORD} element={<Forgot_Password />} />
+        <Route path={RESET_PASSWORD} element={<ResetPassword />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer position="bottom-center" limit={1} autoClose={5000} />
     </div>
