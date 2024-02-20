@@ -1,11 +1,10 @@
-import { useReducer, useState, useContext } from "react";
+import React, { useReducer, useState, useContext } from "react";
 import { DELETE_CONTESTS, UPDATE_CONTESTS } from "../permissions/permissions";
 import { Store } from "../context/store";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
-import ResourceEdit from "./ResourceEdit";
 import ContestEdit from "./ContestEdit";
 
 const reducer = (state, action) => {
@@ -44,7 +43,7 @@ export default function ContestContainer({
       try {
         dispatch({ type: "DELETE_REQUEST" });
         console.log("here");
-        let response = await axios.delete(URLS.CONTEST, {
+        const response = await axios.delete(URLS.CONTEST, {
           params: {
             contest_id: contest.contest_id,
           },
@@ -72,6 +71,7 @@ export default function ContestContainer({
               target="_blank"
               href={`https://vjudge.net/contest/${contest.contest_id}`}
               className="underline text-blue-900"
+              rel="noreferrer"
             >
               {contest.topic}
             </a>

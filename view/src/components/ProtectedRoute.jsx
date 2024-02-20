@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { Store } from "../context/store";
-import { useNavigate, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { LOGIN } from "../urls/frontend_urls";
 import AccessDenied from "../pages/AccessDenied.jsx";
 
@@ -10,7 +9,6 @@ export default function ProtectedRoute({
   restrict,
   allowedPermissions,
 }) {
-  const navigate = useNavigate();
   const { state } = useContext(Store);
   const { userInfo } = state;
 
@@ -21,7 +19,7 @@ export default function ProtectedRoute({
   // }, [navigate, userInfo]);
 
   return userInfo?.permissions?.find((perm) =>
-    allowedPermissions?.includes(perm),
+    allowedPermissions?.includes(perm)
   ) ||
     (restrict === false && userInfo) ? (
     children

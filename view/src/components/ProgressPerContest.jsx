@@ -1,3 +1,5 @@
+import React from "react";
+
 function ProgressPerContest(props) {
   let color = "bg-green-300";
   switch (props.progressItem?.zone) {
@@ -26,6 +28,7 @@ function ProgressPerContest(props) {
           target="_blank"
           href={`https://vjudge.net/contest/${props.progressItem?.contest_id}`}
           className="underline text-blue-900"
+          rel="noreferrer"
         >
           {props.progressItem?.topic}
         </a>

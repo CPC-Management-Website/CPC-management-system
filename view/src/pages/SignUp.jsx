@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useReducer } from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -48,14 +48,14 @@ function SignUp() {
     wed: false,
     thur: false,
   });
-  const days = [
-    { label: "Saturday", value: "sat" },
-    { label: "Sunday", value: "sun" },
-    { label: "Monday", value: "mon" },
-    { label: "Tuesday", value: "tues" },
-    { label: "Wednesday", value: "wed" },
-    { label: "Thursday", value: "thur" },
-  ];
+  // const days = [
+  //   { label: "Saturday", value: "sat" },
+  //   { label: "Sunday", value: "sun" },
+  //   { label: "Monday", value: "mon" },
+  //   { label: "Tuesday", value: "tues" },
+  //   { label: "Wednesday", value: "wed" },
+  //   { label: "Thursday", value: "thur" },
+  // ];
   const levels = [
     { value: "Freshman" },
     { value: "Sophomore" },
@@ -97,28 +97,25 @@ function SignUp() {
 
   const faculties = [{ value: "Engineering" }, { value: "Computer Science" }];
 
-  const [{ loadingSignUp, registration, loading }, dispatch] = useReducer(
-    reducer,
-    {
-      loading: true,
-      error: "",
-    },
-  );
+  const [{ loadingSignUp }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+  });
 
-  const getRegistrationStatus = async () => {
-    try {
-      dispatch({ type: "GET_REGISTRATION_REQUEST" });
-      const response = await axios.get(URLS.REGISTRATION);
-      dispatch({
-        type: "GET_REGISTRATION_SUCCESS",
-        payload: response.data.value == 1 ? true : false,
-      });
-    } catch (error) {
-      dispatch({ type: "GET_REGISTRATION_FAIL" });
-      console.log(error);
-    }
-  };
-  const signUp = async (e) => {
+  // const getRegistrationStatus = async () => {
+  //   try {
+  //     dispatch({ type: "GET_REGISTRATION_REQUEST" });
+  //     const response = await axios.get(URLS.REGISTRATION);
+  //     dispatch({
+  //       type: "GET_REGISTRATION_SUCCESS",
+  //       payload: response.data.value == 1 ? true : false,
+  //     });
+  //   } catch (error) {
+  //     dispatch({ type: "GET_REGISTRATION_FAIL" });
+  //     console.log(error);
+  //   }
+  // };
+  const signUp = async () => {
     if (password !== confirmPassword) {
       toast.error("The two passwords aren't the same");
       return;
@@ -142,7 +139,7 @@ function SignUp() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       console.log(response);
       dispatch({ type: "SIGNUP_SUCCESS" });
@@ -160,12 +157,12 @@ function SignUp() {
     }
   };
 
-  function validateCheckboxes() {
-    for (const day in availDays) {
-      if (availDays[day]) return true;
-    }
-    return false;
-  }
+  // function validateCheckboxes() {
+  //   for (const day in availDays) {
+  //     if (availDays[day]) return true;
+  //   }
+  //   return false;
+  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -176,10 +173,10 @@ function SignUp() {
     //   toast.warning("Please select at least one day to attend sessions")
     // }
   };
-  const updateCheckbox = ({ checked, value }) => {
-    availDays[value] = checked;
-    setAvailDays({ ...availDays });
-  };
+  // const updateCheckbox = ({ checked, value }) => {
+  //   availDays[value] = checked;
+  //   setAvailDays({ ...availDays });
+  // };
 
   // useEffect(() => {
   //   getRegistrationStatus()

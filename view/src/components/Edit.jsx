@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { useState, useReducer } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -54,7 +54,7 @@ export default function Edit({
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
 
       dispatch({ type: "UPDATE_SUCCESS" });

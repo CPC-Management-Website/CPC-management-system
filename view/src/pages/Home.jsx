@@ -1,6 +1,5 @@
-import React, { useContext, useReducer, useState, useEffect } from "react";
+import React, { useContext, useReducer, useEffect } from "react";
 import HERO from "../assets/developer.svg";
-import AlertDialog from "../components/AlertDialog";
 import { Store } from "../context/store";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,7 +12,7 @@ import { LOGIN } from "../urls/frontend_urls";
 
 function Home() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo, seasons, newSeasonWindowOpen } = state;
+  const { userInfo, newSeasonWindowOpen } = state;
   const navigate = useNavigate();
 
   const level1Content = [
@@ -48,7 +47,7 @@ function Home() {
         JSON.stringify({ user_id, email }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       console.log(response);
       dispatch({ type: "REGISTER_SUCCESS" });
@@ -57,7 +56,7 @@ function Home() {
         payload: {
           ...userInfo,
           latestEnrollmentSeason: parseInt(
-            import.meta.env.VITE_CURRENT_SEASON_ID,
+            import.meta.env.VITE_CURRENT_SEASON_ID
           ),
           enrolledSeasons: response.data.enrolledSeasons,
         },
@@ -67,10 +66,10 @@ function Home() {
         JSON.stringify({
           ...userInfo,
           latestEnrollmentSeason: parseInt(
-            import.meta.env.VITE_CURRENT_SEASON_ID,
+            import.meta.env.VITE_CURRENT_SEASON_ID
           ),
           enrolledSeasons: response.data.enrolledSeasons,
-        }),
+        })
       );
       ctxDispatch({
         type: "SET_SEASON_ID",
@@ -78,7 +77,7 @@ function Home() {
       });
       sessionStorage.setItem(
         "seasonID",
-        import.meta.env.VITE_CURRENT_SEASON_ID,
+        import.meta.env.VITE_CURRENT_SEASON_ID
       );
       // userInfo.latestEnrollmentSeason = import.meta.env.VITE_CURRENT_SEASON_ID
       console.log(userInfo.latestEnrollmentSeason);
@@ -154,8 +153,8 @@ function Home() {
         <div>
           You need to be logged in!
           <br />
-          Please sign up if you don't have an account.
-        </div>,
+          {"Please sign up if you don't have an account."}
+        </div>
       );
       navigate(LOGIN);
     }
@@ -177,26 +176,28 @@ function Home() {
       console.log(error);
     }
   };
-  const getRegistrationLevel = async () => {
-    try {
-      dispatch({ type: "GET_REGISTRATION_LEVEL_REQUEST" });
-      const params = new URLSearchParams([["user_id", userInfo.id]]);
-      const response = await axios.get(URLS.REGISTRATION_LEVEL, { params });
-      dispatch({
-        type: "GET_REGISTRATION_LEVEL_SUCCESS",
-        payload: response.data,
-      });
-    } catch (error) {
-      dispatch({ type: "GET_REGISTRATION_LEVEL_FAIL" });
-      console.log(error);
-    }
-  };
+
   const handleClosePopup = () => {
     ctxDispatch({ type: "CLOSE_NEWSEASONWINDOW" });
     sessionStorage.setItem("newSeasonWindowOpen", false);
   };
 
   useEffect(() => {
+    const getRegistrationLevel = async () => {
+      try {
+        dispatch({ type: "GET_REGISTRATION_LEVEL_REQUEST" });
+        const params = new URLSearchParams([["user_id", userInfo.id]]);
+        const response = await axios.get(URLS.REGISTRATION_LEVEL, { params });
+        dispatch({
+          type: "GET_REGISTRATION_LEVEL_SUCCESS",
+          payload: response.data,
+        });
+      } catch (error) {
+        dispatch({ type: "GET_REGISTRATION_LEVEL_FAIL" });
+        console.log(error);
+      }
+    };
+
     dispatch({ type: "GET_REGISTRATION_LEVEL_SUCCESS", payload: 0 });
     getRegistrationStatus();
     {

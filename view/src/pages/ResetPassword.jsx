@@ -39,10 +39,10 @@ function ResetPassword() {
       loadingReset: false,
       validToken: false,
       error: "",
-    },
+    }
   );
 
-  const checkTokenValidity = async (e) => {
+  const checkTokenValidity = async () => {
     try {
       dispatch({ type: "CHECK_REQUEST" });
       const params = new URLSearchParams([
@@ -62,7 +62,7 @@ function ResetPassword() {
     }
   };
 
-  const requestPasswordUpdate = async (e) => {
+  const requestPasswordUpdate = async () => {
     if (newPassword !== confirmPassword) {
       toast.error("The two passwords aren't the same");
       return;
@@ -77,7 +77,7 @@ function ResetPassword() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       console.log(response);
       navigate(LOGIN);
@@ -102,7 +102,7 @@ function ResetPassword() {
 
   useEffect(() => {
     checkTokenValidity();
-  }, []);
+  });
 
   return (
     <>

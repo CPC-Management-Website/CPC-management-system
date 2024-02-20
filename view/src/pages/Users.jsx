@@ -1,6 +1,6 @@
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
-import React, { useState, useEffect, useContext, useReducer } from "react";
+import React, { useEffect, useContext, useReducer, useCallback } from "react";
 import {
   VIEW_ADMINS,
   VIEW_MENTORS,
@@ -90,7 +90,7 @@ export default function User() {
     error: "",
   });
 
-  const getTrainees = async () => {
+  const getTrainees = useCallback(async () => {
     try {
       dispatch({ type: "FETCH_REQUEST_trainees" });
       const response = await axios.get(URLS.USERS, {
@@ -104,25 +104,28 @@ export default function User() {
       dispatch({ type: "FETCH_FAIL" });
       console.log(err);
     }
-  };
+  }, [seasonID]);
 
-  const getMentees = async (mentor_id) => {
-    try {
-      dispatch({ type: "FETCH_REQUEST_trainees" });
-      const response = await axios.get(URLS.MENTEES, {
-        params: {
-          mentor_id,
-          season: seasonID,
-        },
-      });
-      dispatch({ type: "FETCH_SUCCESS_trainees", payload: response.data });
-    } catch (err) {
-      dispatch({ type: "FETCH_FAIL" });
-      console.log(err);
-    }
-  };
+  const getMentees = useCallback(
+    async (mentor_id) => {
+      try {
+        dispatch({ type: "FETCH_REQUEST_trainees" });
+        const response = await axios.get(URLS.MENTEES, {
+          params: {
+            mentor_id,
+            season: seasonID,
+          },
+        });
+        dispatch({ type: "FETCH_SUCCESS_trainees", payload: response.data });
+      } catch (err) {
+        dispatch({ type: "FETCH_FAIL" });
+        console.log(err);
+      }
+    },
+    [seasonID]
+  );
 
-  const getMentors = async () => {
+  const getMentors = useCallback(async () => {
     try {
       dispatch({ type: "FETCH_REQUEST_mentors" });
       const response = await axios.get(URLS.USERS, {
@@ -135,9 +138,9 @@ export default function User() {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [seasonID]);
 
-  const getAdmins = async () => {
+  const getAdmins = useCallback(async () => {
     try {
       dispatch({ type: "FETCH_REQUEST_admins" });
       const response = await axios.get(URLS.USERS, {
@@ -150,9 +153,9 @@ export default function User() {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [seasonID]);
 
-  const getRegistrationStatus = async () => {
+  const getRegistrationStatus = useCallback(async () => {
     try {
       dispatch({ type: "GET_REGISTRATION_REQUEST" });
       const response = await axios.get(URLS.REGISTRATION);
@@ -167,9 +170,9 @@ export default function User() {
       dispatch({ type: "GET_REGISTRATION_FAIL" });
       console.log(error);
     }
-  };
+  }, [registration]);
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     if (userInfo?.permissions?.find((perm) => perm === VIEW_MENTORS)) {
       getMentors();
     }
@@ -187,7 +190,15 @@ export default function User() {
     ) {
       getRegistrationStatus();
     }
-  };
+  }, [
+    getAdmins,
+    getMentees,
+    getMentors,
+    getRegistrationStatus,
+    getTrainees,
+    userInfo.id,
+    userInfo?.permissions,
+  ]);
 
   const handleRegistrationSwitch = async () => {
     try {
@@ -198,7 +209,7 @@ export default function User() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       toast.success("Registration status updated");
       dispatch({ type: "UPDATE_REGISTRATION_STATUS", payload: !registration });
@@ -251,13 +262,13 @@ export default function User() {
 
   useEffect(() => {
     getData();
-  }, [seasonID]);
+  }, [getData]);
 
   return (
     <>
       <div className="flex flex-col p-4 sm:p-0 sm:mx-4 sm:mb-4 sm:min-h-screen sm:items-center">
         {userInfo?.permissions?.find(
-          (perm) => perm === EDIT_REGISTRATION_STATUS,
+          (perm) => perm === EDIT_REGISTRATION_STATUS
         ) ? (
           <div className="mt-4">
             <FormGroup>

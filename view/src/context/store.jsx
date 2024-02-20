@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react";
+import React, { createContext, useReducer } from "react";
 export const Store = createContext();
 const initialState = {
   userInfo: sessionStorage.getItem("userInfo")

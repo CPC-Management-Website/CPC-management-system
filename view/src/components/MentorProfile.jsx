@@ -28,27 +28,26 @@ export default function MentorProfile() {
 
   const [mentor, setMentor] = useState("");
 
-  const getMentor = async () => {
-    const params = new URLSearchParams([
-      ["user_id", userInfo.id],
-      ["season_id", seasonID],
-    ]);
-    try {
-      dispatch({ type: "FETCH_REQUEST" });
-      const response = await axios.get(URLS.MENTOR, {
-        params,
-      });
-      setMentor(response.data);
-      dispatch({ type: "FETCH_SUCCESS" });
-    } catch (error) {
-      dispatch({ type: "FETCH_FAIL" });
-      toast.error(error);
-    }
-  };
-
   useEffect(() => {
+    const getMentor = async () => {
+      const params = new URLSearchParams([
+        ["user_id", userInfo.id],
+        ["season_id", seasonID],
+      ]);
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+        const response = await axios.get(URLS.MENTOR, {
+          params,
+        });
+        setMentor(response.data);
+        dispatch({ type: "FETCH_SUCCESS" });
+      } catch (error) {
+        dispatch({ type: "FETCH_FAIL" });
+        toast.error(error);
+      }
+    };
     getMentor();
-  }, [seasonID]);
+  }, [userInfo.id, seasonID]);
 
   return (
     <>

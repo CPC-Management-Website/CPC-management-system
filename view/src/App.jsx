@@ -1,10 +1,11 @@
+import React from "react";
 import Login from "./pages/Login.jsx";
 import "react-toastify/dist/ReactToastify.css";
 import UserEntry from "./pages/UserEntry.jsx";
 import Resources from "./pages/Resources.jsx";
 import Home from "./pages/Home.jsx";
 import Profile from "./pages/Profile";
-import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Transcript from "./pages/Transcript.jsx";
 import {
   HOMEPAGE,
@@ -42,7 +43,6 @@ import {
 import ResetPassword from "./pages/ResetPassword.jsx";
 
 function App() {
-  const location = useLocation();
   return (
     <div>
       <NavBar />

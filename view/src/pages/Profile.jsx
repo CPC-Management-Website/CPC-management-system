@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+  useCallback,
+} from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
@@ -38,11 +44,10 @@ export default function EditProfile() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
-  const [password, setPassword] = useState(userInfo.password);
   const [updatePasswordWindowOpened, setUpdatePasswordWindowOpened] =
     useState(false);
 
-  const displayProfile = async () => {
+  const displayProfile = useCallback(async () => {
     const params = new URLSearchParams([["email", userInfo.email]]);
     try {
       dispatch({ type: "FETCH_REQUEST" });
@@ -59,7 +64,7 @@ export default function EditProfile() {
       dispatch({ type: "FETCH_FAIL" });
       toast.error(error);
     }
-  };
+  }, [userInfo.email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,7 +75,7 @@ export default function EditProfile() {
         JSON.stringify({ userID, email, name, vjudgeHandle }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Profile updated");
@@ -83,7 +88,7 @@ export default function EditProfile() {
 
   useEffect(() => {
     displayProfile();
-  }, []);
+  }, [displayProfile]);
 
   return (
     <>

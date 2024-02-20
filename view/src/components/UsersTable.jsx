@@ -1,6 +1,6 @@
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
-import React, { useState, useEffect, useContext, useReducer } from "react";
+import React, { useState, useContext, useReducer } from "react";
 import {
   UPDATE_USERS,
   DELETE_USERS,
@@ -99,7 +99,7 @@ function UserRow({ user, seasonID, editUser, refresh }) {
   const resetPass = async (user_id) => {
     if (
       window.confirm(
-        "Are you sure that you want to reset this user's password?",
+        "Are you sure that you want to reset this user's password?"
       )
     ) {
       try {
@@ -168,7 +168,7 @@ function UserRow({ user, seasonID, editUser, refresh }) {
             </>
           )}
           {userInfo.permissions.find(
-            (perm) => perm === VIEW_ALL_TRANSCRIPTS,
+            (perm) => perm === VIEW_ALL_TRANSCRIPTS
           ) && (
             <>
               <Tooltip placement="bottom" title="View Progress">

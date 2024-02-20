@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useReducer, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useContext,
+  useCallback,
+} from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import { Store } from "../context/store";
@@ -59,8 +65,7 @@ export default function Resources() {
   const [resourceLink, setResourceLink] = useState("");
   const [resourceLevel, setResourceLevel] = useState("");
 
-  const getMyResources = async () => {
-    console.log(userInfo);
+  const getMyResources = useCallback(async () => {
     try {
       const params = new URLSearchParams([
         ["user_id", userInfo.id],
@@ -73,8 +78,8 @@ export default function Resources() {
       dispatch({ type: "GET_RESOURCES_FAIL" });
       console.log(error);
     }
-  };
-  const getAllResources = async () => {
+  }, [seasonID, userInfo.id]);
+  const getAllResources = useCallback(async () => {
     try {
       const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
@@ -84,7 +89,7 @@ export default function Resources() {
       dispatch({ type: "GET_RESOURCES_FAIL" });
       console.log(error);
     }
-  };
+  }, [seasonID]);
 
   const enterResource = async (e) => {
     e.preventDefault();
@@ -100,7 +105,7 @@ export default function Resources() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       dispatch({ type: "ADD_SUCCESS" });
       toast.success("Resource added successfully");
@@ -112,30 +117,29 @@ export default function Resources() {
     }
   };
 
-  const editResource = async (resource) => {
-    e.preventDefault();
-    try {
-      let resource_id = resource.resource_id;
-      dispatch({ type: "UPDATE_REQUEST" });
-      await axios.patch(
-        URLS.RESOURCES,
-        JSON.stringify({ resource_id, newTopic, newLevel, newLink }),
-      );
-      dispatch({ type: "UPDATE_SUCCESS" });
-    } catch (error) {
-      console.log(error);
-      dispatch({ type: "UPDATE_FAIL" });
-    }
-  };
+  // const editResource = async (resource) => {
+  //   e.preventDefault();
+  //   try {
+  //     let resource_id = resource.resource_id;
+  //     dispatch({ type: "UPDATE_REQUEST" });
+  //     await axios.patch(
+  //       URLS.RESOURCES,
+  //       JSON.stringify({ resource_id, newTopic, newLevel, newLink }),
+  //     );
+  //     dispatch({ type: "UPDATE_SUCCESS" });
+  //   } catch (error) {
+  //     console.log(error);
+  //     dispatch({ type: "UPDATE_FAIL" });
+  //   }
+  // };
 
   useEffect(() => {
     userInfo?.permissions.find(
-      (perm) =>
-        perm === (ADD_RESOURCES || UPDATE_RESOURCES || DELETE_RESOURCES),
+      (perm) => perm === (ADD_RESOURCES || UPDATE_RESOURCES || DELETE_RESOURCES)
     )
       ? getAllResources()
       : getMyResources();
-  }, [seasonID]);
+  }, [getAllResources, getMyResources, userInfo?.permissions]);
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0  ">
@@ -167,7 +171,7 @@ export default function Resources() {
             required
             onChange={(e) =>
               setResourceLevel(
-                e.target.value === "NULL" ? null : e.target.value,
+                e.target.value === "NULL" ? null : e.target.value
               )
             }
           >

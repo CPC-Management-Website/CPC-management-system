@@ -29,7 +29,7 @@ function ForgotPassword() {
     error: "",
   });
 
-  const requestResetLink = async (e) => {
+  const requestResetLink = async () => {
     try {
       dispatch({ type: "REQUEST" });
       const response = await axios.post(
@@ -39,7 +39,7 @@ function ForgotPassword() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       console.log(response);
       dispatch({ type: "SUCCESS" });
@@ -49,7 +49,7 @@ function ForgotPassword() {
           If your email is registered, a password reset link will be sent to
           your email
         </div>,
-        { autoClose: false },
+        { autoClose: false }
       );
     } catch (error) {
       if (!error?.response) {

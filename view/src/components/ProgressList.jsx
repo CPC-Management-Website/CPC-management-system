@@ -33,32 +33,30 @@ function ProgressList(props) {
     error: "",
   });
 
-  const getProgressList = async () => {
-    const params = new URLSearchParams([
-      ["email", props["email"]],
-      ["season", props["season"]],
-    ]);
-    try {
-      dispatch({ type: "FETCH_REQUEST" });
-      const response = await axios.get(
-        URLS.TRANSCRIPT,
-        { params },
-        {
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-      dispatch({ type: "FETCH_SUCCESS" });
-      setProgressList(response.data.progress);
-    } catch (err) {
-      dispatch({ type: "FETCH_FAIL" });
-      console.log(err);
-    }
-  };
-
   useEffect(() => {
+    const getProgressList = async () => {
+      const params = new URLSearchParams([
+        ["email", props["email"]],
+        ["season", props["season"]],
+      ]);
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+        const response = await axios.get(
+          URLS.TRANSCRIPT,
+          { params },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        dispatch({ type: "FETCH_SUCCESS" });
+        setProgressList(response.data.progress);
+      } catch (err) {
+        dispatch({ type: "FETCH_FAIL" });
+        console.log(err);
+      }
+    };
     getProgressList();
-    console.log(progressList);
-  }, [props["season"]]);
+  }, [props]);
 
   return loading ? (
     <div className="flex justify-center py-32">

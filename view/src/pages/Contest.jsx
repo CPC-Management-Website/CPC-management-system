@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useReducer, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useContext,
+  useCallback,
+} from "react";
 import { Store } from "../context/store";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
@@ -43,7 +49,7 @@ function ContestDetails() {
       loadingAdd: false,
       loadingContests: true,
       error: "",
-    },
+    }
   );
 
   const addContest = async (e) => {
@@ -65,7 +71,7 @@ function ContestDetails() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       dispatch({ type: "ADD_SUCCESS" });
       getAllContests();
@@ -80,7 +86,7 @@ function ContestDetails() {
     }
   };
 
-  const getAllContests = async () => {
+  const getAllContests = useCallback(async () => {
     try {
       const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_CONTESTS_REQUEST" });
@@ -90,10 +96,10 @@ function ContestDetails() {
       dispatch({ type: "GET_CONTESTS_FAIL" });
       console.log(error);
     }
-  };
+  }, [seasonID]);
   useEffect(() => {
     getAllContests();
-  }, [seasonID]);
+  }, [getAllContests]);
 
   return (
     <div className="flex flex-col lg:items-center p-4 lg:p-0 my-5">
@@ -188,7 +194,7 @@ function ContestDetails() {
                 <select
                   onChange={(e) =>
                     setLevelID(
-                      e.target.value === "NULL" ? null : e.target.value,
+                      e.target.value === "NULL" ? null : e.target.value
                     )
                   }
                   type="string"
@@ -234,7 +240,7 @@ function ContestDetails() {
       ) : (
         <>
           <p className="text-3xl font-semibold my-10">
-            Current season's contests
+            {"Current season's contests"}
           </p>
           <div className="flex flex-col space-y-4 lg:w-[50%]">
             {contests?.map((contest) => (

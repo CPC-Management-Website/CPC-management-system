@@ -1,3 +1,4 @@
+import React from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -68,7 +69,7 @@ export default function SignIn() {
       });
       sessionStorage.setItem(
         "registrationAvailable",
-        data.registrationAvailable.value,
+        data.registrationAvailable.value
       );
       console.log(data);
 

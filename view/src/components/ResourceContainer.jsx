@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 import { DELETE_RESOURCES, UPDATE_RESOURCES } from "../permissions/permissions";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
@@ -69,6 +69,7 @@ export default function ResourceContainer({
               href={resource.link}
               target="_blank"
               className="underline text-blue-800"
+              rel="noreferrer"
             >
               {resource.topic}
             </a>

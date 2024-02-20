@@ -36,7 +36,7 @@ import {
 
 function NavBar() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo, seasonID, seasons } = state;
+  const { userInfo, seasonID } = state;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openDrop = Boolean(anchorEl);
@@ -143,7 +143,7 @@ function NavBar() {
         (perm) =>
           perm === ADD_CONTESTS ||
           perm === UPDATE_CONTESTS ||
-          perm === DELETE_CONTESTS,
+          perm === DELETE_CONTESTS
       ) ? (
         <li className="nav-item">
           <NavLink
@@ -160,7 +160,7 @@ function NavBar() {
         (perm) =>
           perm === VIEW_ADMINS ||
           perm === VIEW_MENTORS ||
-          perm === VIEW_TRAINEES,
+          perm === VIEW_TRAINEES
       ) ? (
         <li className="nav-item">
           <NavLink
@@ -256,7 +256,7 @@ function NavBar() {
             </li>
           ) : null}
           {userInfo?.permissions?.find(
-            (perm) => perm === VIEW_MY_TRANSCRIPT,
+            (perm) => perm === VIEW_MY_TRANSCRIPT
           ) ? (
             <li className="nav-item">
               <NavLink
@@ -303,7 +303,7 @@ function NavBar() {
             (perm) =>
               perm === ADD_CONTESTS ||
               perm === UPDATE_CONTESTS ||
-              perm === DELETE_CONTESTS,
+              perm === DELETE_CONTESTS
           ) ? (
             <li className="nav-item">
               <NavLink
@@ -322,7 +322,7 @@ function NavBar() {
             (perm) =>
               perm === VIEW_ADMINS ||
               perm === VIEW_MENTORS ||
-              perm === VIEW_TRAINEES,
+              perm === VIEW_TRAINEES
           ) ? (
             <li className="nav-item">
               <NavLink
