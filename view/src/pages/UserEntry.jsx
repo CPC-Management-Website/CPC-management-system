@@ -36,28 +36,14 @@ function UserEntry() {
   const { levels } = state;
 
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
   const [vjudgeHandle, setVjudgeHandle] = useState("");
   const [platformRole, setPlatformRole] = useState(3); //3 is the id for Trainee role
-  const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
   const [roles, setRoles] = useState([]);
   const [levelID, setLevelID] = useState(1);
   const [discordHandle, setDiscordHandle] = useState("");
 
-  const [
-    {
-      loading,
-      loadingAdd,
-      loadingAddBulk,
-      error,
-      product,
-      loadingDelete,
-      successDelete,
-    },
-    dispatch,
-  ] = useReducer(reducer, {
+  const [{ loadingAdd, loadingAddBulk }, dispatch] = useReducer(reducer, {
     loading: false,
     error: "",
   });
@@ -70,8 +56,7 @@ function UserEntry() {
         URLS.USER_ENTRY,
         JSON.stringify({
           email,
-          firstName,
-          lastName,
+          name,
           vjudgeHandle,
           discordHandle,
           platformRole,
@@ -79,7 +64,7 @@ function UserEntry() {
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       console.log(response);
       dispatch({ type: "ADD_SUCCESS" });
@@ -123,7 +108,7 @@ function UserEntry() {
         response.data.map(({ role_id, user_role }) => ({
           platformRole: user_role,
           role_id: role_id,
-        })),
+        }))
       );
     } catch (error) {
       console.log(error);
@@ -155,7 +140,7 @@ function UserEntry() {
           <div className="inputCont">
             <input
               className="input"
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               type="string"
               placeholder="Full Name"
               required

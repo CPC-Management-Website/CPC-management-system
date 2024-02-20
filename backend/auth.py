@@ -65,7 +65,7 @@ def login():
 
 @auth.route(urls["USER_ENTRY"], methods=["POST"], strict_slashes=False)
 def register_admin():
-    name = request.json["firstName"] + " " + request.json["lastName"]
+    name = request.json["name"]
     email = request.json["email"]
     password = secrets.token_urlsafe(PASSWORD_LENGTH)
     vjudge = request.json["vjudgeHandle"]
@@ -85,7 +85,6 @@ def register_admin():
         email=email,
         level_id=level_id,
         role_id=role_id,
-        points=0,
         discord=discord,
         password=generate_password_hash(password, method="sha256"),
     )
