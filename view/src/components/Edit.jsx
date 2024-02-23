@@ -127,7 +127,7 @@ export default function Edit({
                 <label className="inputlabel">Level</label>
                 <div className="inputCont">
                   <select
-                    value={tempUser.level_id ? tempUser.level_id : undefined}
+                    value={tempUser.level_id}
                     onChange={(e) =>
                       updateTempUser({
                         ...tempUser,
