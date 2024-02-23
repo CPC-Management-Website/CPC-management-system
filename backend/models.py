@@ -11,7 +11,7 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from APIs.email_api import send_password_reset_email
-from APIs.vjudge_api import get_progress, get_progress_bulk
+from APIs.vjudge_api import get_progress_bulk
 
 load_dotenv()
 
@@ -241,7 +241,7 @@ class User(UserMixin):
         trainee_id = User.get_user_id(trainee_email)
         mentor_id = User.get_user_id(mentor_email)
         cursor = g.db.cursor()
-        query = """            
+        query = """
             UPDATE enrollment
             SET mentor_id = %s
             WHERE user_id = %s
@@ -707,24 +707,6 @@ class ProgressPerContest:
     def __init__(self) -> None:
         print("in init")
 
-    # deprecated
-    @staticmethod
-    def get_contest(contest_id):
-        cursor = g.db.cursor(dictionary=True)
-        query = """
-            SELECT `contest_id`,
-                   `week_number`,
-                   `topic`,
-                   `total_problems`,
-                   `total_participants`,
-                   `minimum_problems`
-            from contest
-            where contest_id = %s;
-        """
-        cursor.execute(query, (contest_id,))
-        record = cursor.fetchone()
-        return record
-
     @staticmethod
     def get_all_contests():
         cursor = g.db.cursor(dictionary=True)
@@ -898,39 +880,6 @@ class ProgressPerContest:
             # the second zero here is a temporary number for user rank in contest
             to_be_registered_list.append((contestant_id, contest_id, 0, 0, "Red"))
         ProgressPerContest.register_bulk(to_be_registered_list=to_be_registered_list)
-
-    @staticmethod
-    def update_progress(contest_id):
-        problem_count, yellow_threshold, green_threshold = (
-            ProgressPerContest.get_contest_parameters(contest_id=contest_id)
-        )
-        trainees = User.get_vjudge_handles()
-        try:
-
-            res = get_progress(contest_id=contest_id)
-            progress_list = []
-            for trainee in trainees:
-                user_id = trainee["user_id"]
-                vjudge = trainee["vjudge_handle"]
-                num_solved = res[vjudge]
-                zone = ProgressPerContest.get_zone(
-                    problem_count=problem_count,
-                    num_solved=num_solved,
-                    yellow_threshold=yellow_threshold,
-                    green_threshold=green_threshold,
-                )
-                progress_list.append(
-                    (num_solved, 0, zone, user_id, contest_id)
-                )  # the zero here is a temporary number for user rank in contest
-                # ProgressPerContest.addProgressPerContest(user_id,contest_id,num_solved,zone)
-
-            ProgressPerContest.update_progress_per_contest_bulk(
-                progress_list=progress_list
-            )
-            print("Successfully updated progress for contest", contest_id)
-        except:
-            print("Couldn't update progress for contest", contest_id)
-        return " "
 
     @staticmethod
     def update_progress_bulk(progress, contest_parameters):
