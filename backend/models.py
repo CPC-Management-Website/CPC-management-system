@@ -950,7 +950,7 @@ class Resources:
             FROM (resource r)
                      LEFT JOIN training_levels l ON (r.level_id = l.level_id)
             WHERE (season_id = %s)
-            ORDER BY level_id
+            ORDER BY level_id, resource_id
         """
         cursor.execute(query, (season_id,))
         records = cursor.fetchall()
