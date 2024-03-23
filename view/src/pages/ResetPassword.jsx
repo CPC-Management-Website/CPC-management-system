@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useState, useReducer, useEffect, useCallback } from "react";
 import axios from "../hooks/axios";
 import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -42,7 +42,7 @@ function ResetPassword() {
     }
   );
 
-  const checkTokenValidity = async () => {
+  const checkTokenValidity = useCallback(async () => {
     try {
       dispatch({ type: "CHECK_REQUEST" });
       const params = new URLSearchParams([
@@ -60,7 +60,7 @@ function ResetPassword() {
       console.log(error);
       dispatch({ type: "CHECK_FAIL" });
     }
-  };
+  }, [searchParams]);
 
   const requestPasswordUpdate = async () => {
     if (newPassword !== confirmPassword) {
@@ -102,7 +102,7 @@ function ResetPassword() {
 
   useEffect(() => {
     checkTokenValidity();
-  });
+  }, [checkTokenValidity]); // can cause infinite loop
 
   return (
     <>
