@@ -5,7 +5,6 @@ import secrets
 import pandas as pd
 from dotenv import load_dotenv
 from flask import Blueprint, request
-from flask_login import login_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import errors
@@ -17,7 +16,6 @@ auth = Blueprint("auth", __name__)
 
 load_dotenv()
 
-REMEMBER_LOGINS = False  # consider changing this to true
 PASSWORD_LENGTH = 10
 DOMAIN = os.getenv("DOMAIN_NAME")
 
@@ -34,7 +32,6 @@ def login():
 
     if check_password_hash(user.password, password):
         print("Logged in!")
-        login_user(user, remember=REMEMBER_LOGINS)
         perm = Permissions(user).get_allowed_permissions()
         # enrollment = Enrollment.getEnrollment(user_id=user.id)
         latest_enrollment_season = Enrollment.get_latest_enrollment_season(

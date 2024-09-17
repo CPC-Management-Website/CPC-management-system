@@ -5,7 +5,6 @@ import mysql.connector.pooling
 from dotenv import load_dotenv
 from flask import Flask, g
 from flask_cors import CORS
-from flask_login import LoginManager
 
 from models import ProgressPerContest
 
@@ -38,16 +37,6 @@ def create_app():
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
     app.register_blueprint(errors, url_prefix="/")
-
-    login_manager = LoginManager()
-    login_manager.init_app(app)
-
-    from models import User
-
-    @login_manager.user_loader
-    def load_user(email):
-        # return User.getUser(email)
-        return User(email)
 
     pool = create_connection_pool()
 

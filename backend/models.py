@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 import mysql.connector
 from dotenv import load_dotenv
 from flask import g
-from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from APIs.email_api import send_password_reset_email
@@ -23,7 +22,7 @@ TOKEN_LENGTH = 16
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-class User(UserMixin):
+class User():
     id = None
     vjudge_handle = None
     name = None
