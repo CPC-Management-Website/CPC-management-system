@@ -6,7 +6,7 @@ from collections import defaultdict
 import requests
 from dotenv import load_dotenv
 
-COOKIE_STORAGE_FILE = "vjudge_session_cookies.pickle"
+COOKIE_STORAGE_FILE = "cache/vjudge_session_cookies.pickle"
 
 load_dotenv()
 

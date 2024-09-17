@@ -1,0 +1,3 @@
+# START CRON JOB
+* * * * * cd /src && /usr/local/bin/flask update-progress >> logs/updateprogress.log 2>&1
+# END CRON JOB
