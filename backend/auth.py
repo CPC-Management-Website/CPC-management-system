@@ -3,7 +3,6 @@ import os
 import secrets
 
 import pandas as pd
-from dotenv import load_dotenv
 from flask import Blueprint, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -13,8 +12,6 @@ from models import User, Permissions, AvailableDays, Enrollment, Levels, Vars, S
 from urls import urls
 
 auth = Blueprint("auth", __name__)
-
-load_dotenv()
 
 PASSWORD_LENGTH = 10
 DOMAIN = os.getenv("DOMAIN_NAME")

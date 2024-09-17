@@ -2,13 +2,11 @@ import os
 from datetime import datetime
 
 import mysql.connector.pooling
-from dotenv import load_dotenv
 from flask import Flask, g
 from flask_cors import CORS
 
 from models import ProgressPerContest
 
-load_dotenv()
 cors = CORS()
 
 

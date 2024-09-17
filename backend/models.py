@@ -22,7 +22,7 @@ TOKEN_LENGTH = 16
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-class User():
+class User:
     id = None
     vjudge_handle = None
     name = None
