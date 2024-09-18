@@ -1,3 +1,4 @@
+import hmac
 import json
 import os
 import secrets
@@ -17,6 +18,18 @@ PASSWORD_LENGTH = 10
 DOMAIN = os.getenv("DOMAIN_NAME")
 
 
+def check_password_hash_sha256(pwhash: str, password: str) -> bool:
+    try:
+        method, salt, hashval = pwhash.split("$", 2)
+    except ValueError:
+        return False
+
+    salt_bytes = salt.encode()
+    password_bytes = password.encode()
+    hash = hmac.new(salt_bytes, password_bytes, method).hexdigest()
+    return hmac.compare_digest(hash, hashval)
+
+
 @auth.route(urls["LOGIN"], methods=["POST"], strict_slashes=False)
 def login():
     email = request.json["email"]
@@ -27,7 +40,19 @@ def login():
 
     user = User(email=email)
 
-    if check_password_hash(user.password, password):
+    method, _, _ = user.password.split("$", 2)
+    login_success = False
+
+    if method == "sha256":
+        if check_password_hash_sha256(user.password, password):
+            login_success = True
+            print("updating hashing method")
+            User.update_password(user.id, password)
+    else:
+        if check_password_hash(user.password, password):
+            login_success = True
+
+    if login_success:
         print("Logged in!")
         perm = Permissions(user).get_allowed_permissions()
         # enrollment = Enrollment.getEnrollment(user_id=user.id)
@@ -80,7 +105,7 @@ def register_admin():
         level_id=level_id,
         role_id=role_id,
         discord=discord,
-        password=generate_password_hash(password, method="sha256"),
+        password=generate_password_hash(password, method="scrypt"),
     )
     print("User added successfully")
     send_password_emails([{"name": name, "password": password, "email": email}])
@@ -117,7 +142,7 @@ def sign_up():
         university_level=level,
         major=major,
         discord=discord_handle,
-        password=generate_password_hash(password, method="sha256"),
+        password=generate_password_hash(password, method="scrypt"),
     )
     print("User added successfully")
     AvailableDays.add_available_days(email=email, available_days=available_days)
@@ -204,7 +229,7 @@ def register_from_file():
                 university_level=university_level,
                 major=major,
                 discord=discord,
-                password=generate_password_hash(password, method="sha256"),
+                password=generate_password_hash(password, method="scrypt"),
                 role_id=role_id,
                 level_id=level_id,
             )

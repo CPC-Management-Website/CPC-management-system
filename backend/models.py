@@ -299,20 +299,17 @@ class User:
                 return False
 
         if User.id_exists(user_id):
-            if is_same_password(user_id, new_password):
-                print("Password for", user_id, "is the same")
+            cursor = g.db.cursor()
+            new_password = generate_password_hash(new_password, method="scrypt")
+            query = "UPDATE user SET password = %s WHERE (user_id = %s);"
+            cursor.execute(query, (new_password, user_id))
+            # if(cursor.rowcount)
+            g.db.commit()
+            if cursor.rowcount != 0:
+                print("Password for", user_id, "updated successfully")
             else:
-                cursor = g.db.cursor()
-                new_password = generate_password_hash(new_password, method="sha256")
-                query = "UPDATE user SET password = %s WHERE (user_id = %s);"
-                cursor.execute(query, (new_password, user_id))
-                # if(cursor.rowcount)
-                g.db.commit()
-                if cursor.rowcount != 0:
-                    print("Password for", user_id, "updated successfully")
-                else:
-                    print("Error Updating Password")
-                    # print(cursor.rowcount)
+                print("Error Updating Password")
+                # print(cursor.rowcount)
         else:
             print("Email doesn't exist")
 

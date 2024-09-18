@@ -5,5 +5,5 @@ numpy==1.26.4
 pandas==1.5.2
 python-dotenv==1.0.1
 Requests==2.32.3
-Werkzeug==2.2.2
+Werkzeug==2.3.8
 gunicorn==23.0.0
