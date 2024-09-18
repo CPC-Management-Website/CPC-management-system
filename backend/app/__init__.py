@@ -5,9 +5,20 @@ import mysql.connector.pooling
 from flask import Flask, g
 from flask_cors import CORS
 
-from models import ProgressPerContest
+app = Flask(__name__)
 
-cors = CORS()
+cors = CORS(app, resources={r"*": {"origins": "*"}})
+
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
+from app.models import ProgressPerContest
+from app.views import views
+from app.auth import auth
+from app.errors import errors
+
+app.register_blueprint(views, url_prefix="/")
+app.register_blueprint(auth, url_prefix="/")
+app.register_blueprint(errors, url_prefix="/")
 
 
 def create_connection_pool():
@@ -23,33 +34,17 @@ def create_connection_pool():
     return connection_pool
 
 
-def create_app():
-    app = Flask(__name__)
-    cors.init_app(app, resources={r"*": {"origins": "*"}})
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-
-    from views import views
-    from auth import auth
-    from errors import errors
-
-    app.register_blueprint(views, url_prefix="/")
-    app.register_blueprint(auth, url_prefix="/")
-    app.register_blueprint(errors, url_prefix="/")
-
-    pool = create_connection_pool()
-
-    @app.before_request
-    def before_request():
-        g.db = pool.get_connection()
-
-    @app.teardown_request
-    def teardown_request(exception):
-        g.db.close()
-
-    return app
+pool = create_connection_pool()
 
 
-app = create_app()
+@app.before_request
+def before_request():
+    g.db = pool.get_connection()
+
+
+@app.teardown_request
+def teardown_request(exception):
+    g.db.close()
 
 
 @app.cli.command()
@@ -61,7 +56,3 @@ def update_progress():
         ProgressPerContest.update_all_progress()
         print(datetime.utcnow(), "Done!")
         print()
-
-
-if __name__ == "__main__":
-    app.run()

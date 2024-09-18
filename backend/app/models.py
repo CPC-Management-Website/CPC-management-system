@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 from flask import g
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from APIs.email_api import send_password_reset_email
-from APIs.vjudge_api import get_progress_bulk
+from app.APIs.email_api import send_password_reset_email
+from app.APIs.vjudge_api import get_progress_bulk
 
 load_dotenv()
 

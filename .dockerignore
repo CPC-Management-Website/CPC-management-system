@@ -1,6 +1,0 @@
-**/__pycache__/
-**/.gitignore
-backend/.env
-backend/.env_sample
-backend/.venv
-backend/cache

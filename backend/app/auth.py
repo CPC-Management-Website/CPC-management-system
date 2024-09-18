@@ -7,10 +7,18 @@ import pandas as pd
 from flask import Blueprint, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import errors
-from APIs.email_api import send_password_emails, send_password_reset_link
-from models import User, Permissions, AvailableDays, Enrollment, Levels, Vars, Seasons
-from urls import urls
+from app.errors import errors
+from app.APIs.email_api import send_password_emails, send_password_reset_link
+from app.models import (
+    User,
+    Permissions,
+    AvailableDays,
+    Enrollment,
+    Levels,
+    Vars,
+    Seasons,
+)
+from app.urls import urls
 
 auth = Blueprint("auth", __name__)
 

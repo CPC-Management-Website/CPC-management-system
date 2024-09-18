@@ -3,10 +3,10 @@ import json
 from flask import Blueprint
 from flask import request
 
-import errors
-from models import ProgressPerContest
-from models import User, Resources, Levels, Enrollment, Vars, Seasons
-from urls import urls
+from app.errors import errors
+from app.models import ProgressPerContest
+from app.models import User, Resources, Levels, Enrollment, Vars, Seasons
+from app.urls import urls
 
 # import sys
 # # sys.path.append("..")
