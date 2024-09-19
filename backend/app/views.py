@@ -4,9 +4,9 @@ from flask import Blueprint
 from flask import request
 
 import app.errors as errors
-from app.models import ProgressPerContest
-from app.models import User, Resources, Levels, Enrollment, Vars, Seasons
-from app.urls import urls
+from .models import ProgressPerContest
+from .models import User, Resources, Levels, Enrollment, Vars, Seasons
+from .urls import urls
 
 # import sys
 # # sys.path.append("..")

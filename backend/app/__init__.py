@@ -10,10 +10,10 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
-from app.models import ProgressPerContest
-from app.views import views
-from app.auth import auth
-from app.errors import errors
+from .models import ProgressPerContest
+from .views import views
+from .auth import auth
+from .errors import errors
 
 app.register_blueprint(views, url_prefix="/")
 app.register_blueprint(auth, url_prefix="/")

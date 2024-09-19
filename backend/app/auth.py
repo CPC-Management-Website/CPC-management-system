@@ -8,8 +8,8 @@ from flask import Blueprint, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import app.errors as errors
-from app.APIs.email_api import send_password_emails, send_password_reset_link
-from app.models import (
+from .APIs.email_api import send_password_emails, send_password_reset_link
+from .models import (
     User,
     Permissions,
     AvailableDays,
@@ -18,7 +18,7 @@ from app.models import (
     Vars,
     Seasons,
 )
-from app.urls import urls
+from .urls import urls
 
 auth = Blueprint("auth", __name__)
 
