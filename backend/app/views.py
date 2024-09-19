@@ -284,9 +284,8 @@ def set_registration_status():
     return "Success"
 
 
-@views.route(urls["MENTOR"], methods=["GET"], strict_slashes=False)
-def get_mentor():
-    user_id = request.args.get("user_id")
+@views.route("/api/users/<int:user_id>/mentor", methods=["GET"], strict_slashes=False)
+def get_mentor(user_id):
     season = request.args.get("season_id")
     mentor = User.get_mentor_info(user_id=user_id, season_id=season)
     if mentor is not None:
