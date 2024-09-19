@@ -86,7 +86,11 @@ function UserEntry() {
       dispatch({ type: "ADD_BULK_REQUEST" });
       const data = new FormData();
       data.append("excel-file", file, "file.xlsx");
-      const response = await axios.post(URLS.USER_ENTRY_FILE, data);
+      const response = await axios.post("/api/admin/users", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(response);
       dispatch({ type: "ADD_BULK_SUCCESS" });
       toast.success("Users added successfully");

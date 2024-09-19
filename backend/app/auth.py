@@ -92,6 +92,16 @@ def login():
 
 @auth.route("/api/admin/users", methods=["POST"], strict_slashes=False)
 def register_admin():
+    print(request.content_type)
+    if request.content_type == "application/json":
+        print("registering from json")
+        return register_admin_json()
+    else:
+        print("registering form file")
+        return register_from_file()
+
+
+def register_admin_json():
     name = request.json["name"]
     email = request.json["email"]
     password = secrets.token_urlsafe(PASSWORD_LENGTH)
@@ -120,53 +130,6 @@ def register_admin():
     return {"email": email, "password": password}
 
 
-@auth.route(urls["SIGNUP"], methods=["POST"], strict_slashes=False)
-def sign_up():
-    name = request.json["fullName"]
-    email = request.json["email"]
-    vjudge = request.json["vjudgeHandle"]
-    phone = request.json["phoneNumber"]
-    university = request.json["university"]
-    faculty = request.json["faculty"]
-    level = request.json["level"]
-    major = request.json["major"]
-    discord_handle = request.json["discordHandle"]
-    available_days = request.json["availDays"]
-    password = request.json["password"]
-
-    if User.email_exists(email):
-        print("email already registered")
-        return errors.email_already_registered()
-    if User.vjudge_handle_exists(vjudge_handle=vjudge):
-        print("Vjudge handle already registered")
-        return errors.vjudge_already_registered()
-    User.register_user(
-        name=name,
-        email=email,
-        vjudge=vjudge,
-        phone=phone,
-        university=university,
-        faculty=faculty,
-        university_level=level,
-        major=major,
-        discord=discord_handle,
-        password=generate_password_hash(password, method="scrypt"),
-    )
-    print("User added successfully")
-    AvailableDays.add_available_days(email=email, available_days=available_days)
-    print("Available days added successfully")
-    # Enrollment.enrollFromRegistration(email=email)
-    # sendPasswordEmails([{"name":name,"password":password,"email":email}])
-    return "Signup successful", 200
-
-
-@auth.route(urls["ROLES"], methods=["GET"], strict_slashes=False)
-def get_roles():
-    roles = Permissions.get_all_roles()
-    return json.dumps(roles)
-
-
-@auth.route(urls["USER_ENTRY_FILE"], methods=["POST"], strict_slashes=False)
 def register_from_file():
     roles = Permissions.get_all_roles()
     levels = Levels.get_all_levels()
@@ -248,6 +211,52 @@ def register_from_file():
     if len(already_registered) > 0:
         return errors.user_already_registered_bulk(already_registered)
     return " "
+
+
+@auth.route(urls["SIGNUP"], methods=["POST"], strict_slashes=False)
+def sign_up():
+    name = request.json["fullName"]
+    email = request.json["email"]
+    vjudge = request.json["vjudgeHandle"]
+    phone = request.json["phoneNumber"]
+    university = request.json["university"]
+    faculty = request.json["faculty"]
+    level = request.json["level"]
+    major = request.json["major"]
+    discord_handle = request.json["discordHandle"]
+    available_days = request.json["availDays"]
+    password = request.json["password"]
+
+    if User.email_exists(email):
+        print("email already registered")
+        return errors.email_already_registered()
+    if User.vjudge_handle_exists(vjudge_handle=vjudge):
+        print("Vjudge handle already registered")
+        return errors.vjudge_already_registered()
+    User.register_user(
+        name=name,
+        email=email,
+        vjudge=vjudge,
+        phone=phone,
+        university=university,
+        faculty=faculty,
+        university_level=level,
+        major=major,
+        discord=discord_handle,
+        password=generate_password_hash(password, method="scrypt"),
+    )
+    print("User added successfully")
+    AvailableDays.add_available_days(email=email, available_days=available_days)
+    print("Available days added successfully")
+    # Enrollment.enrollFromRegistration(email=email)
+    # sendPasswordEmails([{"name":name,"password":password,"email":email}])
+    return "Signup successful", 200
+
+
+@auth.route(urls["ROLES"], methods=["GET"], strict_slashes=False)
+def get_roles():
+    roles = Permissions.get_all_roles()
+    return json.dumps(roles)
 
 
 @auth.route(urls["ASSIGN_MENTORS"], methods=["POST"], strict_slashes=False)
