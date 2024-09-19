@@ -133,11 +133,10 @@ def delete_user():
     return "Success"
 
 
-@views.route(urls["TRANSCRIPT"], methods=["GET"], strict_slashes=False)
-def display_transcript():
-    email = request.args.get("email")
+@views.route("/api/users/<int:user_id>/progress", methods=["GET"], strict_slashes=False)
+def get_progress(user_id: int):
     season = request.args.get("season")
-    return ProgressPerContest.get_user_progress(email=email, season_id=season)
+    return ProgressPerContest.get_user_progress(user_id=user_id, season_id=season)
 
 
 @views.route(urls["CONTEST"], methods=["POST"], strict_slashes=False)

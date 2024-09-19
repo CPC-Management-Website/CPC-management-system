@@ -174,7 +174,7 @@ function UserRow({ user, seasonID, editUser, refresh }) {
               <Tooltip placement="bottom" title="View Progress">
                 <button>
                   <AlertDialog
-                    email={user.email}
+                    user_id={user.user_id}
                     level_id={user.level_id}
                     season={seasonID}
                   />

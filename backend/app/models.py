@@ -779,8 +779,7 @@ class ProgressPerContest:
         return contests
 
     @staticmethod
-    def get_user_progress(email, season_id=current_season_id):
-        user_id = User.get_user_id(email)
+    def get_user_progress(user_id, season_id=current_season_id):
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         # query  = "SELECT `contest_id`, `solved_problems`, `rank`, `zone`\

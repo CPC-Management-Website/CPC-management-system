@@ -1,7 +1,6 @@
 import ProgressPerContest from "./ProgressPerContest";
 import React, { useEffect, useState, useReducer } from "react";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const reducer = (state, action) => {
@@ -35,14 +34,11 @@ function ProgressList(props) {
 
   useEffect(() => {
     const getProgressList = async () => {
-      const params = new URLSearchParams([
-        ["email", props["email"]],
-        ["season", props["season"]],
-      ]);
+      const params = new URLSearchParams([["season", props["season"]]]);
       try {
         dispatch({ type: "FETCH_REQUEST" });
         const response = await axios.get(
-          URLS.TRANSCRIPT,
+          `/api/users/${props["user_id"]}/progress`,
           { params },
           {
             headers: { "Content-Type": "application/json" },
