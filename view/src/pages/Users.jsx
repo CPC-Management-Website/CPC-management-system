@@ -110,9 +110,8 @@ export default function User() {
     async (mentor_id) => {
       try {
         dispatch({ type: "FETCH_REQUEST_trainees" });
-        const response = await axios.get(URLS.MENTEES, {
+        const response = await axios.get(`/api/users/${mentor_id}/mentees`, {
           params: {
-            mentor_id,
             season: seasonID,
           },
         });

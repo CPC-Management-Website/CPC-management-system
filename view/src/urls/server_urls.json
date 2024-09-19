@@ -8,7 +8,6 @@
   "PROFILE": "/backend/profile",
   "PROFILE_ADMIN": "/backend/profileadmin",
   "USERS": "/backend/users",
-  "MENTEES": "/backend/mentees",
   "USER": "/backend/user",
   "SIGNUP": "/api/signup",
   "LEVELS": "/api/levels",
