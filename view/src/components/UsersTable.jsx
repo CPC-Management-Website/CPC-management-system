@@ -4,7 +4,6 @@ import React, { useState, useContext, useReducer } from "react";
 import {
   UPDATE_USERS,
   DELETE_USERS,
-  RESET_PASSWORDS,
   VIEW_ALL_TRANSCRIPTS,
 } from "../permissions/permissions";
 import { Store } from "../context/store";
@@ -19,7 +18,6 @@ import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import CircularProgress from "@mui/material/CircularProgress";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Tooltip from "@mui/material/Tooltip";
 import { toast } from "react-toastify";
 import AlertDialog from "../components/AlertDialog";
@@ -53,9 +51,8 @@ function UserRow({ user, seasonID, editUser, refresh }) {
 
   const { state } = useContext(Store);
   const { userInfo } = state;
-  const [{ loadingReset, loadingDelete }, dispatch] = useReducer(reducer, {
+  const [{ loadingDelete }, dispatch] = useReducer(reducer, {
     error: "",
-    loadingReset: false,
     loadingDelete: false,
   });
 
@@ -96,26 +93,6 @@ function UserRow({ user, seasonID, editUser, refresh }) {
     }
   };
 
-  const resetPass = async (user_id) => {
-    if (
-      window.confirm(
-        "Are you sure that you want to reset this user's password?"
-      )
-    ) {
-      try {
-        dispatch({ type: "RESET_REQUEST" });
-        await axios.patch(URLS.USERS, JSON.stringify({ user_id }), {
-          headers: { "Content-Type": "application/json" },
-        });
-        dispatch({ type: "RESET_SUCCESS" });
-        toast.success("Password is successfully reset");
-      } catch (err) {
-        dispatch({ type: "RESET_FAIL" });
-        console.log(err);
-      }
-    }
-  };
-
   return (
     <StyledTableRow key={user.email}>
       <StyledTableCell align="center">{user.name}</StyledTableCell>
@@ -147,21 +124,6 @@ function UserRow({ user, seasonID, editUser, refresh }) {
                 <Tooltip placement="bottom" title="Delete User">
                   <button onClick={() => deleteHandler(user.email)}>
                     <DeleteIcon />
-                  </button>
-                </Tooltip>
-              )}
-            </>
-          )}
-          {userInfo.permissions.find((perm) => perm === RESET_PASSWORDS) && (
-            <>
-              {loadingReset ? (
-                <button>
-                  <CircularProgress size={23} thickness={4} color="inherit" />
-                </button>
-              ) : (
-                <Tooltip placement="bottom" title="Reset password">
-                  <button onClick={() => resetPass(user.user_id)}>
-                    <RestartAltIcon />
                   </button>
                 </Tooltip>
               )}

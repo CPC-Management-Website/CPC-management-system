@@ -115,14 +115,6 @@ def get_mentees(mentor_id):
     return json.dumps(users)
 
 
-@views.route(urls["USERS"], methods=["PATCH"], strict_slashes=False)
-def rest_user_password():
-    user_id = request.json["user_id"]
-    User.reset_password(user_id)
-    print("Reset password for ", user_id)
-    return "Success"
-
-
 @views.route(urls["USERS"], methods=["DELETE"], strict_slashes=False)
 def delete_user():
     email = request.args.get("email")
