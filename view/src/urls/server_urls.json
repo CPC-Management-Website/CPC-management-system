@@ -4,7 +4,6 @@
   "USER_ENTRY_FILE": "/backend/userentryfile",
   "USER_REGISTER_FILE": "/backend/userregisterfile",
   "ASSIGN_MENTORS": "/backend/assignmentors",
-  "PROGRESS_PER_CONTEST": "/backend/progresspercontest",
   "USERS": "/backend/users",
   "USER": "/backend/user",
   "SIGNUP": "/api/signup",
