@@ -90,7 +90,7 @@ def login():
     }
 
 
-@auth.route(urls["USER_ENTRY"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/admin/users", methods=["POST"], strict_slashes=False)
 def register_admin():
     name = request.json["name"]
     email = request.json["email"]

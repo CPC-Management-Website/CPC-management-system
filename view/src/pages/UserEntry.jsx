@@ -53,7 +53,7 @@ function UserEntry() {
     try {
       dispatch({ type: "ADD_REQUEST" });
       const response = await axios.post(
-        URLS.USER_ENTRY,
+        "/api/admin/users",
         JSON.stringify({
           email,
           name,
