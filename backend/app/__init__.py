@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 
-import mysql.connector.pooling
 from flask import Flask, g
 from flask_cors import CORS
 
@@ -20,31 +19,9 @@ app.register_blueprint(views, url_prefix="/")
 app.register_blueprint(auth, url_prefix="/")
 app.register_blueprint(errors, url_prefix="/")
 
+from . import db
 
-def create_connection_pool():
-    db_config = {
-        "host": os.getenv("DB_HOST"),
-        "user": os.getenv("DB_USER"),
-        "password": os.getenv("DB_PASSWD"),
-        "database": os.getenv("DB_DATABASE"),
-    }
-    connection_pool = mysql.connector.pooling.MySQLConnectionPool(
-        pool_name="my_pool", pool_size=6, autocommit=True, **db_config
-    )
-    return connection_pool
-
-
-pool = create_connection_pool()
-
-
-@app.before_request
-def before_request():
-    g.db = pool.get_connection()
-
-
-@app.teardown_request
-def teardown_request(exception):
-    g.db.close()
+db.init_app(app)
 
 
 @app.cli.command()
