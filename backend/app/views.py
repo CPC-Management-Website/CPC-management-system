@@ -14,9 +14,9 @@ from .urls import urls
 views = Blueprint("views", __name__)
 
 
-@views.route(urls["PROFILE"], methods=["GET"], strict_slashes=False)
-def display_profile():
-    email = request.args.get("email")
+@views.route("/api/users/<int:user_id>", methods=["GET"], strict_slashes=False)
+def display_profile(user_id):
+    email = User.get_user_email(user_id)
     # if(User.exists(email)==False):
     #     return errors.email_doesnt_exist(werkzeug.exceptions.BadRequest)
     print(email)
@@ -37,9 +37,8 @@ def check_availability(user_id, email, vjudge_handle):
         return errors.vjudge_already_registered()
 
 
-@views.route(urls["PROFILE"], methods=["POST"], strict_slashes=False)
-def edit_profile():
-    user_id = request.json["userID"]
+@views.route("/api/users/<int:user_id>", methods=["PUT"], strict_slashes=False)
+def edit_profile(user_id):
     email = request.json["email"]
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]

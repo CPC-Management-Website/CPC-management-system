@@ -6,7 +6,6 @@ import React, {
   useCallback,
 } from "react";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 import { Store } from "../context/store";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -48,12 +47,9 @@ export default function EditProfile() {
     useState(false);
 
   const displayProfile = useCallback(async () => {
-    const params = new URLSearchParams([["email", userInfo.email]]);
     try {
       dispatch({ type: "FETCH_REQUEST" });
-      const response = await axios.get(URLS.PROFILE, {
-        params,
-      });
+      const response = await axios.get(`/api/users/${userInfo.id}`);
       setUserID(response.data.id);
       setName(response.data.name);
       setEmail(response.data.email);
@@ -70,9 +66,9 @@ export default function EditProfile() {
     e.preventDefault();
     try {
       dispatch({ type: "UPDATE_REQUEST" });
-      await axios.post(
-        URLS.PROFILE,
-        JSON.stringify({ userID, email, name, vjudgeHandle }),
+      await axios.put(
+        `/api/users/${userID}`,
+        JSON.stringify({ email, name, vjudgeHandle }),
         {
           headers: { "Content-Type": "application/json" },
         }
