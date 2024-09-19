@@ -1,5 +1,5 @@
 {
-  "LOGIN": "/backend/login",
+  "LOGIN": "/api/login",
   "USER_ENTRY": "/backend/userentry",
   "USER_ENTRY_FILE": "/backend/userentryfile",
   "USER_REGISTER_FILE": "/backend/userregisterfile",
