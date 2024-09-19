@@ -55,9 +55,8 @@ def edit_profile():
     return "Success"
 
 
-@views.route(urls["UPDATE_PASSSWORD"], methods=["POST"], strict_slashes=False)
-def update_password():
-    user_id = request.json["userID"]
+@views.route("/api/users/<int:user_id>/password", methods=["PUT"], strict_slashes=False)
+def update_password(user_id):
     old_password = request.json["oldPassword"]
     new_password = request.json["newPassword"]
     if not User.check_password(user_id, old_password):

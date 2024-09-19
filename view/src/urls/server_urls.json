@@ -22,7 +22,6 @@
   "REGISTRATION_LEVEL": "/backend/registrationlevel",
   "ENROLL": "/backend/enroll",
   "MENTOR": "/backend/mentor",
-  "UPDATE_PASSSWORD": "/backend/update_password",
-  "FORGOT_PASSWORD": "/backend/forgot_password",
-  "RESET_PASSWORD": "/backend/reset_password"
+  "FORGOT_PASSWORD": "/api/users/forgot-password",
+  "RESET_PASSWORD": "/api/users/reset-password"
 }
