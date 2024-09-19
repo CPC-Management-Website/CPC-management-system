@@ -7,7 +7,7 @@ import pandas as pd
 from flask import Blueprint, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app.errors import errors
+import app.errors as errors
 from app.APIs.email_api import send_password_emails, send_password_reset_link
 from app.models import (
     User,
