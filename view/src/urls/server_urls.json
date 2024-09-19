@@ -13,7 +13,7 @@
   "SIGNUP": "/api/signup",
   "LEVELS": "/api/levels",
   "SEASONS": "/api/seasons",
-  "REGISTRATION": "/backend/registrationstatus",
+  "REGISTRATION": "/api/registration-status",
   "REGISTRATION_LEVEL": "/backend/registrationlevel",
   "ENROLL": "/backend/enroll",
   "FORGOT_PASSWORD": "/api/users/forgot-password",

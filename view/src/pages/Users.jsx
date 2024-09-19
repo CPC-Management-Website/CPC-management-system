@@ -202,7 +202,7 @@ export default function User() {
 
   const handleRegistrationSwitch = async () => {
     try {
-      await axios.post(
+      await axios.put(
         URLS.REGISTRATION,
         JSON.stringify({
           registration: registration ? false : true,

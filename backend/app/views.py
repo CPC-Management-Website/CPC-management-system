@@ -277,7 +277,7 @@ def get_registration_status():
     return res
 
 
-@views.route(urls["REGISTRATION"], methods=["POST"], strict_slashes=False)
+@views.route(urls["REGISTRATION"], methods=["PUT"], strict_slashes=False)
 def set_registration_status():
     value = request.json["registration"]
     Vars.set_variable_value("registration", value=value)
