@@ -9,7 +9,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: 'Login via Azure CLI'
+      - name: "Login via Azure CLI"
         uses: azure/login@v2
         with:
           creds: |
@@ -32,11 +32,12 @@ jobs:
           tags: |
             type=sha
             type=raw,value=latest-${{ github.ref_name }}
-      
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           push: true
+          context: backend
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -50,7 +51,7 @@ jobs:
     # note that the vm needs to have docker, azure cli installed
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: "Checkout GitHub Action"
         uses: actions/checkout@v4
 
       - name: Read script contents
@@ -59,7 +60,7 @@ jobs:
         with:
           path: .github/workflows/scripts/deploy.sh
 
-      - name: 'Deploy to Azure VM'
+      - name: "Deploy to Azure VM"
         uses: appleboy/ssh-action@v1.0.3
         env:
           APP_ID: ${{ secrets.AZURE_SP_APP_ID }}
