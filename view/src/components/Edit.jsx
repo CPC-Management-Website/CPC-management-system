@@ -4,7 +4,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
@@ -39,10 +38,9 @@ export default function Edit({
     e.preventDefault();
     try {
       dispatch({ type: "UPDATE_REQUEST" });
-      await axios.post(
-        URLS.PROFILE_ADMIN,
+      await axios.put(
+        `/api/admin/users/${tempUser.user_id}`,
         JSON.stringify({
-          userID: tempUser.user_id,
           name: tempUser.name,
           vjudgeHandle: tempUser.vjudge_handle,
           email: tempUser.email,

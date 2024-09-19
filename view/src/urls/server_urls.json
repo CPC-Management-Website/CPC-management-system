@@ -5,7 +5,6 @@
   "USER_REGISTER_FILE": "/backend/userregisterfile",
   "ASSIGN_MENTORS": "/backend/assignmentors",
   "PROGRESS_PER_CONTEST": "/backend/progresspercontest",
-  "PROFILE_ADMIN": "/backend/profileadmin",
   "USERS": "/backend/users",
   "USER": "/backend/user",
   "SIGNUP": "/api/signup",

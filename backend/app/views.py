@@ -64,9 +64,8 @@ def update_password(user_id):
     return "Success"
 
 
-@views.route(urls["PROFILE_ADMIN"], methods=["POST"], strict_slashes=False)
-def edit_profile_admin():
-    user_id = request.json["userID"]
+@views.route("/api/admin/users/<int:user_id>", methods=["PUT"], strict_slashes=False)
+def edit_profile_admin(user_id):
     name = request.json["name"]
     vjudge_handle = request.json["vjudgeHandle"]
     email = request.json["email"]
