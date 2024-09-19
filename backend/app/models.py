@@ -572,11 +572,11 @@ class User:
         g.db.commit()
 
     @staticmethod
-    def delete_user(email):
+    def delete_user(user_id):
         conn = get_connection()
         cursor = conn.cursor()
-        query = "DELETE FROM user WHERE (email = %s);"
-        cursor.execute(query, (email,))
+        query = "DELETE FROM user WHERE (user_id = %s);"
+        cursor.execute(query, (user_id,))
         g.db.commit()
 
     @staticmethod

@@ -1,5 +1,4 @@
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import React, { useState, useContext, useReducer } from "react";
 import {
   UPDATE_USERS,
@@ -72,15 +71,11 @@ function UserRow({ user, seasonID, editUser, refresh }) {
     },
   }));
 
-  const deleteHandler = async (email) => {
+  const deleteHandler = async (id) => {
     if (window.confirm("Are you sure that you want to delete this user?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
-        await axios.delete(URLS.USERS, {
-          params: {
-            email: email,
-          },
-        });
+        await axios.delete(`/api/users/${id}`);
         dispatch({ type: "DELETE_SUCCESS" });
         refresh();
         toast.success("User successfully deleted");
@@ -122,7 +117,7 @@ function UserRow({ user, seasonID, editUser, refresh }) {
                 </button>
               ) : (
                 <Tooltip placement="bottom" title="Delete User">
-                  <button onClick={() => deleteHandler(user.email)}>
+                  <button onClick={() => deleteHandler(user.user_id)}>
                     <DeleteIcon />
                   </button>
                 </Tooltip>

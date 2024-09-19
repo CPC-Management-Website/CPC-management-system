@@ -115,11 +115,10 @@ def get_mentees(mentor_id):
     return json.dumps(users)
 
 
-@views.route(urls["USERS"], methods=["DELETE"], strict_slashes=False)
-def delete_user():
-    email = request.args.get("email")
-    User.delete_user(email)
-    print("Deleted user", email)
+@views.route("/api/users/<int:user_id>", methods=["DELETE"], strict_slashes=False)
+def delete_user(user_id):
+    User.delete_user(user_id)
+    print("Deleted user", user_id)
     return "Success"
 
 
