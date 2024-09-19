@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { Store } from "../context/store";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import ContestContainer from "../components/ContestContainer";
@@ -59,7 +58,7 @@ function ContestDetails() {
       console.log(levelID);
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
-        URLS.CONTEST,
+        `/api/contests/${contestID}`,
         JSON.stringify({
           contestID: contestID,
           numOfProblems,
@@ -90,7 +89,7 @@ function ContestDetails() {
     try {
       const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_CONTESTS_REQUEST" });
-      const response = await axios.get(URLS.CONTEST, { params });
+      const response = await axios.get("/api/contests", { params });
       dispatch({ type: "GET_CONTESTS_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_CONTESTS_FAIL" });

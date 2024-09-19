@@ -10,7 +10,6 @@
   "PROFILE_ADMIN": "/backend/profileadmin",
   "USERS": "/backend/users",
   "MENTEES": "/backend/mentees",
-  "CONTEST": "/backend/contest",
   "USER": "/backend/user",
   "RESOURCES": "/backend/resources",
   "MYRESOURCES": "/backend/myresources",

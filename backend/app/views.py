@@ -138,9 +138,8 @@ def get_progress(user_id: int):
     return ProgressPerContest.get_user_progress(user_id=user_id, season_id=season)
 
 
-@views.route(urls["CONTEST"], methods=["POST"], strict_slashes=False)
-def add_contest():
-    contest_id = request.json["contestID"]
+@views.route("/api/contests/<int:contest_id>", methods=["POST"], strict_slashes=False)
+def add_contest(contest_id):
     num_of_problems = request.json["numOfProblems"]
     yellow_threshold = request.json["yellowThreshold"]
     green_threshold = request.json["greenThreshold"]
@@ -167,14 +166,17 @@ def add_contest():
     return {"add contest": "in add contest"}
 
 
-@views.route(urls["CONTEST"], methods=["GET"], strict_slashes=False)
+@views.route("/api/contests", methods=["GET"], strict_slashes=False)
 def get_contests():
     season = request.args.get("season")
     return ProgressPerContest.get_contests_admin(season=season)
 
 
-@views.route(urls["CONTEST"], methods=["PATCH"], strict_slashes=False)
-def update_contest():
+# TODO consider changing how this route deals with changing contest id
+@views.route(
+    "/api/contests/<int:old_contest_id>", methods=["PATCH"], strict_slashes=False
+)
+def update_contest(old_contest_id):
     new_contest_id = request.json["contest_id"]
     topic = request.json["topic"]
     yellow_threshold = request.json["yellow_threshold"]
@@ -182,7 +184,6 @@ def update_contest():
     total_problems = request.json["total_problems"]
     week_number = request.json["week_number"]
     level_id = request.json["level_id"]
-    old_contest_id = request.json["old_contest_id"]
     try:
         ProgressPerContest.update_contest(
             new_contest_id,
@@ -200,9 +201,8 @@ def update_contest():
     return "Success"
 
 
-@views.route(urls["CONTEST"], methods=["DELETE"], strict_slashes=False)
-def delete_contest():
-    contest_id = request.args.get("contest_id")
+@views.route("/api/contests/<int:contest_id>", methods=["DELETE"], strict_slashes=False)
+def delete_contest(contest_id):
     ProgressPerContest.delete_contest(contest_id=contest_id)
     return "Success"
 

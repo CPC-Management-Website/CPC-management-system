@@ -1,7 +1,6 @@
 import React, { useState, useContext, useReducer } from "react";
 import { Store } from "../context/store";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -38,11 +37,11 @@ export default function ContestEdit({
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       const request = await axios.patch(
-        URLS.CONTEST,
-        JSON.stringify({ ...tempContest, old_contest_id: contest.contest_id }),
+        `/api/contests/${contest.contest_id}`,
+        JSON.stringify({ ...tempContest }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
       console.log(request);
       dispatch({ type: "UPDATE_SUCCESS" });

@@ -2,7 +2,6 @@ import React, { useReducer, useState, useContext } from "react";
 import { DELETE_CONTESTS, UPDATE_CONTESTS } from "../permissions/permissions";
 import { Store } from "../context/store";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import ContestEdit from "./ContestEdit";
@@ -43,11 +42,9 @@ export default function ContestContainer({
       try {
         dispatch({ type: "DELETE_REQUEST" });
         console.log("here");
-        const response = await axios.delete(URLS.CONTEST, {
-          params: {
-            contest_id: contest.contest_id,
-          },
-        });
+        const response = await axios.delete(
+          `/api/contests/${contest.contest_id}`
+        );
         console.log(response);
         dispatch({ type: "DELETE_SUCCESS" });
         toast.success("Contest deleted successfully");
