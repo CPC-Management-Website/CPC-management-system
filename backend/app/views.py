@@ -207,7 +207,7 @@ def delete_contest(contest_id):
     return "Success"
 
 
-@views.route(urls["RESOURCES"], methods=["POST"], strict_slashes=False)
+@views.route("/api/resources", methods=["POST"], strict_slashes=False)
 def add_resource():
     resource_topic = request.json["resourceTopic"]
     resource_link = request.json["resourceLink"]
@@ -222,24 +222,26 @@ def add_resource():
     return ""
 
 
-@views.route(urls["RESOURCES"], methods=["GET"], strict_slashes=False)
+@views.route("/api/resources", methods=["GET"], strict_slashes=False)
 def get_all_resources():
     season = request.args.get("season")
     resources = Resources.get_all_resources(season_id=season)
     return json.dumps(resources)
 
 
-@views.route(urls["MYRESOURCES"], methods=["GET"], strict_slashes=False)
-def get_my_resources():
-    user_id = request.args.get("user_id")
+@views.route(
+    "/api/users/<int:user_id>/resources", methods=["GET"], strict_slashes=False
+)
+def get_my_resources(user_id):
     season = request.args.get("season")
     resources = Resources.get_resources(user_id=user_id, season_id=season)
     return json.dumps(resources)
 
 
-@views.route(urls["RESOURCES"], methods=["PATCH"], strict_slashes=False)
-def edit_resource():
-    resource_id = request.json["resource_id"]
+@views.route(
+    "/api/resources/<int:resource_id>", methods=["PATCH"], strict_slashes=False
+)
+def edit_resource(resource_id):
     topic = request.json["topic"]
     level_id = request.json["level_id"]
     link = request.json["link"]
@@ -249,9 +251,10 @@ def edit_resource():
     return "Success"
 
 
-@views.route(urls["RESOURCES"], methods=["DELETE"], strict_slashes=False)
-def delete_resource():
-    resource_id = request.args.get("resource_id")
+@views.route(
+    "/api/resources/<int:resource_id>", methods=["DELETE"], strict_slashes=False
+)
+def delete_resource(resource_id):
     Resources.delete_resource(resource_id=resource_id)
     return "Success"
 
