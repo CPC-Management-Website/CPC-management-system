@@ -294,8 +294,9 @@ def get_mentor(user_id):
     return ""
 
 
-@views.route(urls["REGISTRATION_LEVEL"], methods=["GET"], strict_slashes=False)
-def get_registration_level():
-    user_id = request.args.get("user_id")
+@views.route(
+    "/api/users/<int:user_id>/registration-level", methods=["GET"], strict_slashes=False
+)
+def get_registration_level(user_id):
     level = Enrollment.get_enrollment_level(user_id=user_id)
     return json.dumps(level)
