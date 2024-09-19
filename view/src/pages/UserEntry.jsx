@@ -103,7 +103,7 @@ function UserEntry() {
 
   const getRoles = async () => {
     try {
-      const response = await axios.get(URLS.USER_ENTRY);
+      const response = await axios.get(URLS.ROLES);
       setRoles(
         response.data.map(({ role_id, user_role }) => ({
           platformRole: user_role,

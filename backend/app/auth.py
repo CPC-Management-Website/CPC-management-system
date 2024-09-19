@@ -160,7 +160,7 @@ def sign_up():
     return "Signup successful", 200
 
 
-@auth.route(urls["USER_ENTRY"], methods=["GET"], strict_slashes=False)
+@auth.route(urls["ROLES"], methods=["GET"], strict_slashes=False)
 def get_roles():
     roles = Permissions.get_all_roles()
     return json.dumps(roles)
