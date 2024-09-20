@@ -18,7 +18,6 @@ from .models import (
     Vars,
     Seasons,
 )
-from .urls import urls
 
 auth = Blueprint("auth", __name__)
 
@@ -38,7 +37,7 @@ def check_password_hash_sha256(pwhash: str, password: str) -> bool:
     return hmac.compare_digest(hash, hashval)
 
 
-@auth.route(urls["LOGIN"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/login", methods=["POST"], strict_slashes=False)
 def login():
     email = request.json["email"]
     password = request.json["password"]
@@ -210,7 +209,7 @@ def register_from_file():
     return " "
 
 
-@auth.route(urls["SIGNUP"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/signup", methods=["POST"], strict_slashes=False)
 def sign_up():
     name = request.json["fullName"]
     email = request.json["email"]
@@ -250,13 +249,13 @@ def sign_up():
     return "Signup successful", 200
 
 
-@auth.route(urls["ROLES"], methods=["GET"], strict_slashes=False)
+@auth.route("/api/roles", methods=["GET"], strict_slashes=False)
 def get_roles():
     roles = Permissions.get_all_roles()
     return json.dumps(roles)
 
 
-@auth.route(urls["ASSIGN_MENTORS"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/mentor-assignments", methods=["POST"], strict_slashes=False)
 def assign_mentors():
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
@@ -284,7 +283,7 @@ def assign_mentors():
     return " "
 
 
-@auth.route(urls["ENROLL"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/enrollments", methods=["POST"], strict_slashes=False)
 def enroll():
     if request.content_type == "application/json":
         return enroll_from_json()
@@ -346,7 +345,7 @@ def enroll_from_file():
     return " "
 
 
-@auth.route(urls["FORGOT_PASSWORD"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/users/forgot-password", methods=["POST"], strict_slashes=False)
 def forgot_password():
     email = request.json["email"]
     if not User.email_exists(email):
@@ -360,7 +359,7 @@ def forgot_password():
     return "", 200
 
 
-@auth.route(urls["RESET_PASSWORD"], methods=["GET"], strict_slashes=False)
+@auth.route("/api/users/reset-password", methods=["GET"], strict_slashes=False)
 def check_password_reset_link():
     token = request.args.get("token")
     if User.check_password_reset_token(token):
@@ -368,7 +367,7 @@ def check_password_reset_link():
     return "Invalid or Expired Token", 404
 
 
-@auth.route(urls["RESET_PASSWORD"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/users/reset-password", methods=["POST"], strict_slashes=False)
 def reset_password():
     token = request.json["token"]
     password = request.json["password"]

@@ -6,7 +6,6 @@ from flask import request
 import app.errors as errors
 from .models import ProgressPerContest
 from .models import User, Resources, Levels, Enrollment, Vars, Seasons
-from .urls import urls
 
 # import sys
 # # sys.path.append("..")
@@ -95,7 +94,7 @@ def edit_profile_admin(user_id):
     return {"hereeee": "here"}
 
 
-@views.route(urls["USERS"], methods=["GET"], strict_slashes=False)
+@views.route("/api/users", methods=["GET"], strict_slashes=False)
 def get_users():
     role = request.args.get("role")
     season = request.args.get("season")
@@ -249,25 +248,25 @@ def delete_resource(resource_id):
     return "Success"
 
 
-@views.route(urls["LEVELS"], methods=["GET"], strict_slashes=False)
+@views.route("/api/levels", methods=["GET"], strict_slashes=False)
 def get_levels():
     levels = Levels.get_all_levels()
     return json.dumps(levels)
 
 
-@views.route(urls["SEASONS"], methods=["GET"], strict_slashes=False)
+@views.route("/api/seasons", methods=["GET"], strict_slashes=False)
 def get_seasons():
     seasons = Seasons.get_all_seasons()
     return json.dumps(seasons)
 
 
-@views.route(urls["REGISTRATION"], methods=["GET"], strict_slashes=False)
+@views.route("/api/registration-status", methods=["GET"], strict_slashes=False)
 def get_registration_status():
     res = Vars.get_variable_value("registration")
     return res
 
 
-@views.route(urls["REGISTRATION"], methods=["PUT"], strict_slashes=False)
+@views.route("/api/registration-status", methods=["PUT"], strict_slashes=False)
 def set_registration_status():
     value = request.json["registration"]
     Vars.set_variable_value("registration", value=value)

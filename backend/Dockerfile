@@ -13,7 +13,6 @@ RUN pip3 install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 COPY ./app ./app
 RUN rm requirements.txt
-COPY ./server_urls.json ../view/src/urls/server_urls.json
 COPY ./wsgi.py .
 
 EXPOSE 5000
