@@ -1,30 +1,19 @@
-import werkzeug.exceptions
-from flask import Blueprint
-
-errors = Blueprint("errors", __name__)
-
-
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def email_doesnt_exist():
     return {"Error": "Email does not exist"}, 401
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def incorrect_password():
     return {"Error": "Incorrect Password"}, 402
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def email_already_registered():
     return {"Error": "This email is already registered"}, 403
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def vjudge_already_registered():
     return {"Error": "This vjudge handle is already registered"}, 403
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def user_already_registered_bulk(already_registered):
     message = (
         "These users have either emails or vjudge handles that are already "
@@ -36,12 +25,10 @@ def user_already_registered_bulk(already_registered):
     return {"Error": message}, 405
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def registration_closed():
     return {"Error": "Registration is currently closed!"}, 400
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def emails_do_not_exist(nonexistent_emails):
     message = (
         "These emails either do not exist or there is no mentor with the given "
@@ -54,7 +41,6 @@ def emails_do_not_exist(nonexistent_emails):
     return {"Error": message}, 405
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def emails_do_not_exist_register_file(nonexistent_emails):
     message = "These emails do not exist:\n"
     for email in nonexistent_emails:
@@ -63,16 +49,13 @@ def emails_do_not_exist_register_file(nonexistent_emails):
     return {"Error": message}, 405
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def contest_already_registered():
     return {"Error": "This contest ID is already registered"}, 406
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def invalid_date_format():
     return {"Error": "Invalid date format"}, 411
 
 
-@errors.errorhandler(werkzeug.exceptions.BadRequest)
 def user_already_enrolled():
     return {"Error": "User already enrolled in current season"}, 412

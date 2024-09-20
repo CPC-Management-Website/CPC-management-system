@@ -14,12 +14,10 @@ def create_app():
 
     from app.routes.admin import admin
     from app.routes import normal_route
-    from app.errors import errors
 
     api = Blueprint("api", __name__, url_prefix="/api")
     api.register_blueprint(admin)
     api.register_blueprint(normal_route)
-    api.register_blueprint(errors)
 
     app.register_blueprint(api)
 
