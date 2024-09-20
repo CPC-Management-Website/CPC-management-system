@@ -6,7 +6,6 @@ import React, {
   useCallback,
 } from "react";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import { Store } from "../context/store";
 import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
@@ -67,12 +66,11 @@ export default function Resources() {
 
   const getMyResources = useCallback(async () => {
     try {
-      const params = new URLSearchParams([
-        ["user_id", userInfo.id],
-        ["season", seasonID],
-      ]);
+      const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
-      const response = await axios.get(URLS.MYRESOURCES, { params });
+      const response = await axios.get(`/api/users/${userInfo.id}/resources`, {
+        params,
+      });
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_RESOURCES_FAIL" });
@@ -83,7 +81,7 @@ export default function Resources() {
     try {
       const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
-      const response = await axios.get(URLS.RESOURCES, { params });
+      const response = await axios.get("/api/resources", { params });
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_RESOURCES_FAIL" });
@@ -96,7 +94,7 @@ export default function Resources() {
     try {
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
-        URLS.RESOURCES,
+        "/api/resources",
         JSON.stringify({
           resourceTopic,
           resourceLevel,

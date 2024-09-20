@@ -31,7 +31,7 @@ export default function AlertDialog(props) {
           <p className="text-3xl font-semibold mb-4">Progress</p>
           <div className="flex flex-col space-y-4 rounded-xl">
             <ProgressList
-              email={props["email"]}
+              user_id={props["user_id"]}
               level_id={props["level_id"]}
               season={props["season"]}
             />

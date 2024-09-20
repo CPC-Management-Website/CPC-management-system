@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 import { Store } from "../context/store";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -30,13 +29,10 @@ export default function MentorProfile() {
 
   useEffect(() => {
     const getMentor = async () => {
-      const params = new URLSearchParams([
-        ["user_id", userInfo.id],
-        ["season_id", seasonID],
-      ]);
+      const params = new URLSearchParams([["season_id", seasonID]]);
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const response = await axios.get(URLS.MENTOR, {
+        const response = await axios.get(`/api/users/${userInfo.id}/mentor`, {
           params,
         });
         setMentor(response.data);

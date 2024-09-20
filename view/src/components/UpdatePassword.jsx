@@ -4,7 +4,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
@@ -38,16 +37,15 @@ export default function UpdatePassword({ user_id, isOpened, setIsOpened }) {
     }
     try {
       dispatch({ type: "UPDATE_REQUEST" });
-      await axios.post(
-        URLS.UPDATE_PASSSWORD,
+      await axios.put(
+        `/api/users/${user_id}/password`,
         JSON.stringify({
-          userID: user_id,
           oldPassword: oldPassword,
           newPassword: newPassword,
         }),
         {
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
 
       dispatch({ type: "UPDATE_SUCCESS" });

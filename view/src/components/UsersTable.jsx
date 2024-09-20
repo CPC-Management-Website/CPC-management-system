@@ -1,10 +1,8 @@
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import React, { useState, useContext, useReducer } from "react";
 import {
   UPDATE_USERS,
   DELETE_USERS,
-  RESET_PASSWORDS,
   VIEW_ALL_TRANSCRIPTS,
 } from "../permissions/permissions";
 import { Store } from "../context/store";
@@ -19,7 +17,6 @@ import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import CircularProgress from "@mui/material/CircularProgress";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Tooltip from "@mui/material/Tooltip";
 import { toast } from "react-toastify";
 import AlertDialog from "../components/AlertDialog";
@@ -53,9 +50,8 @@ function UserRow({ user, seasonID, editUser, refresh }) {
 
   const { state } = useContext(Store);
   const { userInfo } = state;
-  const [{ loadingReset, loadingDelete }, dispatch] = useReducer(reducer, {
+  const [{ loadingDelete }, dispatch] = useReducer(reducer, {
     error: "",
-    loadingReset: false,
     loadingDelete: false,
   });
 
@@ -75,15 +71,11 @@ function UserRow({ user, seasonID, editUser, refresh }) {
     },
   }));
 
-  const deleteHandler = async (email) => {
+  const deleteHandler = async (id) => {
     if (window.confirm("Are you sure that you want to delete this user?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
-        await axios.delete(URLS.USERS, {
-          params: {
-            email: email,
-          },
-        });
+        await axios.delete(`/api/users/${id}`);
         dispatch({ type: "DELETE_SUCCESS" });
         refresh();
         toast.success("User successfully deleted");
@@ -92,26 +84,6 @@ function UserRow({ user, seasonID, editUser, refresh }) {
         dispatch({
           type: "DELETE_FAIL",
         });
-      }
-    }
-  };
-
-  const resetPass = async (user_id) => {
-    if (
-      window.confirm(
-        "Are you sure that you want to reset this user's password?"
-      )
-    ) {
-      try {
-        dispatch({ type: "RESET_REQUEST" });
-        await axios.patch(URLS.USERS, JSON.stringify({ user_id }), {
-          headers: { "Content-Type": "application/json" },
-        });
-        dispatch({ type: "RESET_SUCCESS" });
-        toast.success("Password is successfully reset");
-      } catch (err) {
-        dispatch({ type: "RESET_FAIL" });
-        console.log(err);
       }
     }
   };
@@ -145,23 +117,8 @@ function UserRow({ user, seasonID, editUser, refresh }) {
                 </button>
               ) : (
                 <Tooltip placement="bottom" title="Delete User">
-                  <button onClick={() => deleteHandler(user.email)}>
+                  <button onClick={() => deleteHandler(user.user_id)}>
                     <DeleteIcon />
-                  </button>
-                </Tooltip>
-              )}
-            </>
-          )}
-          {userInfo.permissions.find((perm) => perm === RESET_PASSWORDS) && (
-            <>
-              {loadingReset ? (
-                <button>
-                  <CircularProgress size={23} thickness={4} color="inherit" />
-                </button>
-              ) : (
-                <Tooltip placement="bottom" title="Reset password">
-                  <button onClick={() => resetPass(user.user_id)}>
-                    <RestartAltIcon />
                   </button>
                 </Tooltip>
               )}
@@ -174,7 +131,7 @@ function UserRow({ user, seasonID, editUser, refresh }) {
               <Tooltip placement="bottom" title="View Progress">
                 <button>
                   <AlertDialog
-                    email={user.email}
+                    user_id={user.user_id}
                     level_id={user.level_id}
                     season={seasonID}
                   />

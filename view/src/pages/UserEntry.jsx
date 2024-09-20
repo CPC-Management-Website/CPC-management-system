@@ -53,7 +53,7 @@ function UserEntry() {
     try {
       dispatch({ type: "ADD_REQUEST" });
       const response = await axios.post(
-        URLS.USER_ENTRY,
+        "/api/admin/users",
         JSON.stringify({
           email,
           name,
@@ -86,7 +86,11 @@ function UserEntry() {
       dispatch({ type: "ADD_BULK_REQUEST" });
       const data = new FormData();
       data.append("excel-file", file, "file.xlsx");
-      const response = await axios.post(URLS.USER_ENTRY_FILE, data);
+      const response = await axios.post("/api/admin/users", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(response);
       dispatch({ type: "ADD_BULK_SUCCESS" });
       toast.success("Users added successfully");
@@ -103,7 +107,7 @@ function UserEntry() {
 
   const getRoles = async () => {
     try {
-      const response = await axios.get(URLS.USER_ENTRY);
+      const response = await axios.get(URLS.ROLES);
       setRoles(
         response.data.map(({ role_id, user_role }) => ({
           platformRole: user_role,

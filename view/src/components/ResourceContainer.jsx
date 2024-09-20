@@ -1,7 +1,6 @@
 import React, { useReducer, useState } from "react";
 import { DELETE_RESOURCES, UPDATE_RESOURCES } from "../permissions/permissions";
 import axios from "../hooks/axios";
-import URLS from "../urls/server_urls.json";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import ResourceEdit from "./ResourceEdit";
@@ -39,11 +38,9 @@ export default function ResourceContainer({
       try {
         dispatch({ type: "DELETE_REQUEST" });
         console.log("here");
-        let response = await axios.delete(URLS.RESOURCES, {
-          params: {
-            resource_id: resource.resource_id,
-          },
-        });
+        let response = await axios.delete(
+          `/api/resources/${resource.resource_id}`
+        );
         console.log(response);
         dispatch({ type: "DELETE_SUCCESS" });
         toast.success("Resource deleted successfully");

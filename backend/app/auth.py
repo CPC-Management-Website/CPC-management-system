@@ -18,7 +18,6 @@ from .models import (
     Vars,
     Seasons,
 )
-from .urls import urls
 
 auth = Blueprint("auth", __name__)
 
@@ -38,7 +37,7 @@ def check_password_hash_sha256(pwhash: str, password: str) -> bool:
     return hmac.compare_digest(hash, hashval)
 
 
-@auth.route(urls["LOGIN"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/login", methods=["POST"], strict_slashes=False)
 def login():
     email = request.json["email"]
     password = request.json["password"]
@@ -90,8 +89,15 @@ def login():
     }
 
 
-@auth.route(urls["USER_ENTRY"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/admin/users", methods=["POST"], strict_slashes=False)
 def register_admin():
+    if request.content_type == "application/json":
+        return register_admin_json()
+    else:
+        return register_from_file()
+
+
+def register_admin_json():
     name = request.json["name"]
     email = request.json["email"]
     password = secrets.token_urlsafe(PASSWORD_LENGTH)
@@ -120,53 +126,6 @@ def register_admin():
     return {"email": email, "password": password}
 
 
-@auth.route(urls["SIGNUP"], methods=["POST"], strict_slashes=False)
-def sign_up():
-    name = request.json["fullName"]
-    email = request.json["email"]
-    vjudge = request.json["vjudgeHandle"]
-    phone = request.json["phoneNumber"]
-    university = request.json["university"]
-    faculty = request.json["faculty"]
-    level = request.json["level"]
-    major = request.json["major"]
-    discord_handle = request.json["discordHandle"]
-    available_days = request.json["availDays"]
-    password = request.json["password"]
-
-    if User.email_exists(email):
-        print("email already registered")
-        return errors.email_already_registered()
-    if User.vjudge_handle_exists(vjudge_handle=vjudge):
-        print("Vjudge handle already registered")
-        return errors.vjudge_already_registered()
-    User.register_user(
-        name=name,
-        email=email,
-        vjudge=vjudge,
-        phone=phone,
-        university=university,
-        faculty=faculty,
-        university_level=level,
-        major=major,
-        discord=discord_handle,
-        password=generate_password_hash(password, method="scrypt"),
-    )
-    print("User added successfully")
-    AvailableDays.add_available_days(email=email, available_days=available_days)
-    print("Available days added successfully")
-    # Enrollment.enrollFromRegistration(email=email)
-    # sendPasswordEmails([{"name":name,"password":password,"email":email}])
-    return "Signup successful", 200
-
-
-@auth.route(urls["USER_ENTRY"], methods=["GET"], strict_slashes=False)
-def get_roles():
-    roles = Permissions.get_all_roles()
-    return json.dumps(roles)
-
-
-@auth.route(urls["USER_ENTRY_FILE"], methods=["POST"], strict_slashes=False)
 def register_from_file():
     roles = Permissions.get_all_roles()
     levels = Levels.get_all_levels()
@@ -250,7 +209,53 @@ def register_from_file():
     return " "
 
 
-@auth.route(urls["ASSIGN_MENTORS"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/signup", methods=["POST"], strict_slashes=False)
+def sign_up():
+    name = request.json["fullName"]
+    email = request.json["email"]
+    vjudge = request.json["vjudgeHandle"]
+    phone = request.json["phoneNumber"]
+    university = request.json["university"]
+    faculty = request.json["faculty"]
+    level = request.json["level"]
+    major = request.json["major"]
+    discord_handle = request.json["discordHandle"]
+    available_days = request.json["availDays"]
+    password = request.json["password"]
+
+    if User.email_exists(email):
+        print("email already registered")
+        return errors.email_already_registered()
+    if User.vjudge_handle_exists(vjudge_handle=vjudge):
+        print("Vjudge handle already registered")
+        return errors.vjudge_already_registered()
+    User.register_user(
+        name=name,
+        email=email,
+        vjudge=vjudge,
+        phone=phone,
+        university=university,
+        faculty=faculty,
+        university_level=level,
+        major=major,
+        discord=discord_handle,
+        password=generate_password_hash(password, method="scrypt"),
+    )
+    print("User added successfully")
+    AvailableDays.add_available_days(email=email, available_days=available_days)
+    print("Available days added successfully")
+    # Enrollment.enrollFromRegistration(email=email)
+    # sendPasswordEmails([{"name":name,"password":password,"email":email}])
+    return "Signup successful", 200
+
+
+@auth.route("/api/roles", methods=["GET"], strict_slashes=False)
+def get_roles():
+    roles = Permissions.get_all_roles()
+    return json.dumps(roles)
+
+
+@auth.route("/api/mentor-assignments", methods=["POST"], strict_slashes=False)
 def assign_mentors():
     file = request.files.get("excel-file")
     df = pd.DataFrame(pd.read_excel(file))
@@ -278,8 +283,15 @@ def assign_mentors():
     return " "
 
 
-@auth.route(urls["ENROLL"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/enrollments", methods=["POST"], strict_slashes=False)
 def enroll():
+    if request.content_type == "application/json":
+        return enroll_from_json()
+    else:
+        return enroll_from_file()
+
+
+def enroll_from_json():
     user_id = request.json["user_id"]
     email = request.json["email"]
     registration_status = Vars.get_variable_value(variable_name="registration")
@@ -293,8 +305,7 @@ def enroll():
     return {"enrolledSeasons": registered_seasons}
 
 
-@auth.route(urls["USER_REGISTER_FILE"], methods=["POST"], strict_slashes=False)
-def register_users():
+def enroll_from_file():
     roles = Permissions.get_all_roles()
     levels = Levels.get_all_levels()
     file = request.files.get("excel-file")
@@ -334,7 +345,7 @@ def register_users():
     return " "
 
 
-@auth.route(urls["FORGOT_PASSWORD"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/users/forgot-password", methods=["POST"], strict_slashes=False)
 def forgot_password():
     email = request.json["email"]
     if not User.email_exists(email):
@@ -348,7 +359,7 @@ def forgot_password():
     return "", 200
 
 
-@auth.route(urls["RESET_PASSWORD"], methods=["GET"], strict_slashes=False)
+@auth.route("/api/users/reset-password", methods=["GET"], strict_slashes=False)
 def check_password_reset_link():
     token = request.args.get("token")
     if User.check_password_reset_token(token):
@@ -356,7 +367,7 @@ def check_password_reset_link():
     return "Invalid or Expired Token", 404
 
 
-@auth.route(urls["RESET_PASSWORD"], methods=["POST"], strict_slashes=False)
+@auth.route("/api/users/reset-password", methods=["POST"], strict_slashes=False)
 def reset_password():
     token = request.json["token"]
     password = request.json["password"]

@@ -110,9 +110,8 @@ export default function User() {
     async (mentor_id) => {
       try {
         dispatch({ type: "FETCH_REQUEST_trainees" });
-        const response = await axios.get(URLS.MENTEES, {
+        const response = await axios.get(`/api/users/${mentor_id}/mentees`, {
           params: {
-            mentor_id,
             season: seasonID,
           },
         });
@@ -202,7 +201,7 @@ export default function User() {
 
   const handleRegistrationSwitch = async () => {
     try {
-      await axios.post(
+      await axios.put(
         URLS.REGISTRATION,
         JSON.stringify({
           registration: registration ? false : true,
@@ -244,7 +243,11 @@ export default function User() {
       dispatch({ type: "REGISTER_USERS_REQUEST" });
       const data = new FormData();
       data.append("excel-file", file, "file.xlsx");
-      const response = await axios.post(URLS.USER_REGISTER_FILE, data);
+      const response = await axios.post(URLS.ENROLL, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(response);
       dispatch({ type: "REGISTER_USERS_SUCCESS" });
       toast.success("Users registered successfully");

@@ -186,8 +186,9 @@ function Home() {
     const getRegistrationLevel = async () => {
       try {
         dispatch({ type: "GET_REGISTRATION_LEVEL_REQUEST" });
-        const params = new URLSearchParams([["user_id", userInfo.id]]);
-        const response = await axios.get(URLS.REGISTRATION_LEVEL, { params });
+        const response = await axios.get(
+          `/api/users/${userInfo.id}/registration-level`
+        );
         dispatch({
           type: "GET_REGISTRATION_LEVEL_SUCCESS",
           payload: response.data,
