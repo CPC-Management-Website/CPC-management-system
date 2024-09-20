@@ -1,13 +1,13 @@
 {
-  "LOGIN": "/api/login",
-  "ROLES": "/api/roles",
-  "ASSIGN_MENTORS": "/api/mentor-assignments",
-  "USERS": "/api/users",
-  "SIGNUP": "/api/signup",
-  "LEVELS": "/api/levels",
+  "LOGIN": "/api/auth/login",
+  "ROLES": "/api/admin/roles",
+  "ASSIGN_MENTORS": "/api/admin/mentor-assignments",
+  "USERS": "/api/admin/users",
+  "SIGNUP": "/api/auth/signup",
+  "LEVELS": "/api/admin/levels",
   "SEASONS": "/api/seasons",
   "REGISTRATION": "/api/registration-status",
   "ENROLL": "/api/enrollments",
-  "FORGOT_PASSWORD": "/api/users/forgot-password",
-  "RESET_PASSWORD": "/api/users/reset-password"
+  "FORGOT_PASSWORD": "/api/auth/forgot-password",
+  "RESET_PASSWORD": "/api/auth/reset-password"
 }

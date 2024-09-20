@@ -75,7 +75,7 @@ function UserRow({ user, seasonID, editUser, refresh }) {
     if (window.confirm("Are you sure that you want to delete this user?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
-        await axios.delete(`/api/users/${id}`);
+        await axios.delete(`/api/admin/users/${id}`);
         dispatch({ type: "DELETE_SUCCESS" });
         refresh();
         toast.success("User successfully deleted");

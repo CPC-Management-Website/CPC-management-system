@@ -39,7 +39,7 @@ export default function ResourceContainer({
         dispatch({ type: "DELETE_REQUEST" });
         console.log("here");
         let response = await axios.delete(
-          `/api/resources/${resource.resource_id}`
+          `/api/admin/resources/${resource.resource_id}`
         );
         console.log(response);
         dispatch({ type: "DELETE_SUCCESS" });

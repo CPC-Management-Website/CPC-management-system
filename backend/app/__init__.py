@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Blueprint, Flask
 
 
 def create_app():
@@ -12,13 +12,16 @@ def create_app():
 
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
-    from .views import views
-    from .auth import auth
-    from .errors import errors
+    from app.routes.admin import admin
+    from app.routes import normal_route
+    from app.errors import errors
 
-    app.register_blueprint(views, url_prefix="/")
-    app.register_blueprint(auth, url_prefix="/")
-    app.register_blueprint(errors, url_prefix="/")
+    api = Blueprint("api", __name__, url_prefix="/api")
+    api.register_blueprint(admin)
+    api.register_blueprint(normal_route)
+    api.register_blueprint(errors)
+
+    app.register_blueprint(api)
 
     from . import db
 

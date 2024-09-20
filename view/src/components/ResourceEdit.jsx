@@ -37,7 +37,7 @@ export default function ResourceEdit({
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       const request = await axios.patch(
-        `/api/resources/${tempResource.resource_id}`,
+        `/api/admin/resources/${tempResource.resource_id}`,
         JSON.stringify({ ...tempResource }),
         {
           headers: { "Content-Type": "application/json" },
