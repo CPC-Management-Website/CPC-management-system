@@ -1,7 +1,6 @@
 {
   "LOGIN": "/api/login",
   "ROLES": "/api/roles",
-  "USER_REGISTER_FILE": "/backend/userregisterfile",
   "ASSIGN_MENTORS": "/api/mentor-assignments",
   "USERS": "/api/users",
   "SIGNUP": "/api/signup",

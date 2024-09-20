@@ -92,12 +92,9 @@ def login():
 
 @auth.route("/api/admin/users", methods=["POST"], strict_slashes=False)
 def register_admin():
-    print(request.content_type)
     if request.content_type == "application/json":
-        print("registering from json")
         return register_admin_json()
     else:
-        print("registering form file")
         return register_from_file()
 
 
@@ -289,6 +286,13 @@ def assign_mentors():
 
 @auth.route(urls["ENROLL"], methods=["POST"], strict_slashes=False)
 def enroll():
+    if request.content_type == "application/json":
+        return enroll_from_json()
+    else:
+        return enroll_from_file()
+
+
+def enroll_from_json():
     user_id = request.json["user_id"]
     email = request.json["email"]
     registration_status = Vars.get_variable_value(variable_name="registration")
@@ -302,8 +306,7 @@ def enroll():
     return {"enrolledSeasons": registered_seasons}
 
 
-@auth.route(urls["USER_REGISTER_FILE"], methods=["POST"], strict_slashes=False)
-def register_users():
+def enroll_from_file():
     roles = Permissions.get_all_roles()
     levels = Levels.get_all_levels()
     file = request.files.get("excel-file")

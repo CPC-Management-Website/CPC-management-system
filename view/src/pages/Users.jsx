@@ -243,7 +243,11 @@ export default function User() {
       dispatch({ type: "REGISTER_USERS_REQUEST" });
       const data = new FormData();
       data.append("excel-file", file, "file.xlsx");
-      const response = await axios.post(URLS.USER_REGISTER_FILE, data);
+      const response = await axios.post(URLS.ENROLL, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(response);
       dispatch({ type: "REGISTER_USERS_SUCCESS" });
       toast.success("Users registered successfully");
