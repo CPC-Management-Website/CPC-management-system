@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from flask import g
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from app import errors
+
 from .APIs.email_api import send_password_reset_email
 from .APIs.vjudge_api import get_progress_bulk
 from .db import get_connection
@@ -132,6 +134,18 @@ class User:
             return True
         return False
         # return bool(cursor.rowcount)
+
+    @staticmethod
+    def check_availability(user_id, email, vjudge_handle):
+        old_email = User.get_user_email(user_id=user_id)
+        if old_email != email and User.email_exists(email=email):
+            return errors.email_already_registered()
+
+        old_vjudge_handle = User.get_vjudge_handle(user_id=user_id)
+        if old_vjudge_handle != vjudge_handle and User.vjudge_handle_exists(
+            vjudge_handle=vjudge_handle
+        ):
+            return errors.vjudge_already_registered()
 
     # deprecated
     @staticmethod

@@ -37,7 +37,7 @@ export default function ContestEdit({
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       const request = await axios.patch(
-        `/api/contests/${contest.contest_id}`,
+        `/api/admin/contests/${contest.contest_id}`,
         JSON.stringify({ ...tempContest }),
         {
           headers: { "Content-Type": "application/json" },

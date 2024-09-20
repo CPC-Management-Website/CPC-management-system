@@ -43,7 +43,7 @@ export default function ContestContainer({
         dispatch({ type: "DELETE_REQUEST" });
         console.log("here");
         const response = await axios.delete(
-          `/api/contests/${contest.contest_id}`
+          `/api/admin/contests/${contest.contest_id}`
         );
         console.log(response);
         dispatch({ type: "DELETE_SUCCESS" });

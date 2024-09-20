@@ -81,7 +81,7 @@ export default function Resources() {
     try {
       const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_RESOURCES_REQUEST" });
-      const response = await axios.get("/api/resources", { params });
+      const response = await axios.get("/api/admin/resources", { params });
       dispatch({ type: "GET_RESOURCES_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_RESOURCES_FAIL" });
@@ -94,7 +94,7 @@ export default function Resources() {
     try {
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
-        "/api/resources",
+        "/api/admin/resources",
         JSON.stringify({
           resourceTopic,
           resourceLevel,

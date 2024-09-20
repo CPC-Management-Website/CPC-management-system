@@ -58,7 +58,7 @@ function ContestDetails() {
       console.log(levelID);
       dispatch({ type: "ADD_REQUEST" });
       await axios.post(
-        `/api/contests/${contestID}`,
+        `/api/admin/contests`,
         JSON.stringify({
           contestID: contestID,
           numOfProblems,
@@ -89,7 +89,7 @@ function ContestDetails() {
     try {
       const params = new URLSearchParams([["season", seasonID]]);
       dispatch({ type: "GET_CONTESTS_REQUEST" });
-      const response = await axios.get("/api/contests", { params });
+      const response = await axios.get("/api/admin/contests", { params });
       dispatch({ type: "GET_CONTESTS_SUCCESS", payload: response.data });
     } catch (error) {
       dispatch({ type: "GET_CONTESTS_FAIL" });
