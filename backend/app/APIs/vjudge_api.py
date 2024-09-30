@@ -325,7 +325,7 @@ def get_progress_bulk(contests):
         print(f"Getting data for contest {contest_id}")
         curr_progress = get_progress(contest_id=contest_id, session=session)
         if curr_progress is None:
-            print("Couldn't get data for contest {contest_id}")
+            print(f"Couldn't get data for contest {contest_id}")
             continue
         progress[contest_id] = curr_progress
     return progress
