@@ -1,16 +1,10 @@
 #!/bin/bash
 
-# Login into azure cli
-az login --service-principal -u $APP_ID -p $PASSWORD --tenant $TENANT
-
-# Login into the container registry
-az acr login --name $REGISTRY
+# Login into Docker Hub
+echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
 
 # Pull the image corresponding to the commit of the workflow
-docker pull $REGISTRY/$IMAGE_NAME:sha-${GITHUB_SHA::7}
-
-# Sign out of azure cli
-az logout
+docker pull $DOCKERHUB_USERNAME/$IMAGE_NAME:sha-${GITHUB_SHA::7}
 
 # Stop the running container
 docker ps
@@ -21,7 +15,7 @@ docker rm $CONTAINER_NAME || echo "Failed to remove $CONTAINER_NAME"
 echo "$ENVIRONMENT_VARIABLES" > .env
 
 # Run the Docker container
-docker run -d --env-file .env -e WORKERS=$NUM_WORKERS -p $CONTAINER_PORT:5000 --name $CONTAINER_NAME -v $LOGS_VOLUME:/src/logs -v $VJUDGE_SESSION_VOLUME:/src/cache $REGISTRY/$IMAGE_NAME:sha-${GITHUB_SHA::7}
+docker run -d --env-file .env -e WORKERS=$NUM_WORKERS -p $CONTAINER_PORT:5000 --name $CONTAINER_NAME -v $LOGS_VOLUME:/src/logs -v $VJUDGE_SESSION_VOLUME:/src/cache $DOCKERHUB_USERNAME/$IMAGE_NAME:sha-${GITHUB_SHA::7}
 
 # Remove .env file
 rm .env
