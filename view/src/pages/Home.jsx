@@ -1,8 +1,6 @@
 import React, { useContext, useReducer, useEffect } from "react";
 import HERO from "../assets/developer.svg";
 import { Store } from "../context/store";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import CourseContent from "../components/CourseContent";
 import { toast } from "react-toastify";
 import axios from "../hooks/axios";
@@ -12,7 +10,7 @@ import { LOGIN } from "../urls/frontend_urls";
 
 function Home() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo, newSeasonWindowOpen } = state;
+  const { userInfo } = state;
   const navigate = useNavigate();
 
   const level1Content = [
@@ -38,7 +36,7 @@ function Home() {
     { value: "Introduction to Dynamic Programming" },
   ];
 
-  const registerLevel1 = async () => {
+  const registerLevel = async (level) => {
     try {
       dispatch({ type: "REGISTER_REQUEST" });
       const email = userInfo.email;
@@ -46,7 +44,7 @@ function Home() {
       console.log(email);
       const response = await axios.post(
         URLS.ENROLL,
-        JSON.stringify({ user_id, email }),
+        JSON.stringify({ user_id, email, level }),
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -97,11 +95,11 @@ function Home() {
   const reducer = (state, action) => {
     switch (action.type) {
       case "REGISTER_REQUEST":
-        return { ...state, loadingLevel1: true };
+        return { ...state, loadingLevel1: true, loadingLevel2: true };
       case "REGISTER_SUCCESS":
-        return { ...state, loadingLevel1: false };
+        return { ...state, loadingLevel1: false, loadingLevel2: false };
       case "REGISTER_FAIL":
-        return { ...state, loadingLevel1: false };
+        return { ...state, loadingLevel1: false, loadingLevel2: false };
       case "GET_REGISTRATION_REQUEST":
         return { ...state, loadingLevel1: true, loadingLevel2: true };
       case "GET_REGISTRATION_SUCCESS":
@@ -148,8 +146,8 @@ function Home() {
     registeredLevel: 0,
   });
 
-  const registerLevel1Handler = async () => {
-    if (userInfo) registerLevel1();
+  const registerLevelHandler = async (level) => {
+    if (userInfo) registerLevel(level);
     else {
       toast.warning(
         <div>
@@ -160,9 +158,6 @@ function Home() {
       );
       navigate(LOGIN);
     }
-  };
-  const registerLevel2Handler = async () => {
-    window.open("https://forms.gle/MAMnhMEfrA1mVvSz5", "_blank");
   };
 
   const getRegistrationStatus = async () => {
@@ -177,11 +172,6 @@ function Home() {
       dispatch({ type: "GET_REGISTRATION_FAIL" });
       console.log(error);
     }
-  };
-
-  const handleClosePopup = () => {
-    ctxDispatch({ type: "CLOSE_NEWSEASONWINDOW" });
-    sessionStorage.setItem("newSeasonWindowOpen", false);
   };
 
   useEffect(() => {
@@ -231,33 +221,6 @@ function Home() {
           </div>
         </div>
       </div>
-      {userInfo &&
-      userInfo.latestEnrollmentSeason <
-        import.meta.env.VITE_CURRENT_SEASON_ID &&
-      registrationAvailable ? (
-        <div className="flex flex-col justify-center">
-          <div>
-            <Dialog
-              fullWidth
-              open={newSeasonWindowOpen}
-              onClose={handleClosePopup}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogContent>
-                <CourseContent
-                  title={"Level 1 - Spring 2024"}
-                  contentList={level1Content}
-                  registrationEnabled={registrationAvailable ? true : false}
-                  registerHandler={registerLevel1Handler}
-                  loading={loadingLevel1}
-                  buttonText={registeredLevel == 1 ? "Registered" : "Register"}
-                />
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-      ) : null}
       <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
         <p className="text-5xl font-semibold lg:my-10 mb-4 text-center">
           Fall 2024 Training
@@ -275,7 +238,7 @@ function Home() {
                       : true
                     : false
                 }
-                registerHandler={registerLevel1Handler}
+                registerHandler={() => registerLevelHandler(1)}
                 loading={loadingLevel1}
                 buttonText={registeredLevel == 1 ? "Registered" : "Register"}
               />
@@ -293,7 +256,7 @@ function Home() {
                       : true
                     : false
                 }
-                registerHandler={registerLevel2Handler}
+                registerHandler={() => registerLevelHandler(2)}
                 loading={loadingLevel2}
                 buttonText={registeredLevel === 2 ? "Registered" : "Register"}
               />

@@ -1235,9 +1235,8 @@ class Enrollment:
         g.db.commit()
 
     @staticmethod
-    def enroll_from_registration(email):
+    def enroll_from_registration(email, level_id):
         user_id = User.get_user_id(email=email)
-        level_id = 1  # id for level 1
         Enrollment.enroll(user_id=user_id, level_id=level_id)
 
     @staticmethod
