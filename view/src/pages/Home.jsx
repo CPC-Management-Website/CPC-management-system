@@ -37,6 +37,13 @@ function Home() {
   ];
 
   const registerLevel = async (level) => {
+    if (
+      window.confirm(
+        `Are you sure that you want to register in level ${level}?\nYou won't be able to change your level later.`
+      ) === false
+    ) {
+      return;
+    }
     try {
       dispatch({ type: "REGISTER_REQUEST" });
       const email = userInfo.email;
