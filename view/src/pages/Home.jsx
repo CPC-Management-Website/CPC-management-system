@@ -26,6 +26,7 @@ function Home() {
   ];
 
   const level2Content = [
+    { value: "Recursion & Backtracking" },
     { value: "Number Theory (Mod Inverse, Fast Power)" },
     { value: "Counting Principles" },
     { value: "Bitmasks" },
