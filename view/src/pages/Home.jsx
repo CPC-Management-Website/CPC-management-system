@@ -24,15 +24,17 @@ function Home() {
     { value: "STLs (Vector, Set, Map, Queue, etc.)" },
     { value: "Elementary Number Theory & Sieve of Eratosthenes" },
     { value: "Binary Search" },
+    { value: "Recursion & Backtracking" },
   ];
 
   const level2Content = [
-    { value: "Recursion & Backtracking" },
-    { value: "Number Theory (Mod Inverse, Fast Power, Combinatorics)" },
+    { value: "Number Theory (Mod Inverse, Fast Power)" },
+    { value: "Counting Principles" },
     { value: "Bitmasks" },
     { value: "Introduction to Graph Theory" },
     { value: "Graph Traversal" },
     { value: "Graph Shortest Paths" },
+    { value: "Disjoint Set Union (DSU)" },
     { value: "Introduction to Dynamic Programming" },
   ];
 
@@ -258,7 +260,7 @@ function Home() {
       ) : null}
       <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
         <p className="text-5xl font-semibold lg:my-10 mb-4 text-center">
-          Spring 2024 Training
+          Fall 2024 Training
         </p>
         <div className="flex flex-col lg:flex-row">
           <div className="flex flex-col  lg:w-[50%] mb-0 lg:mb-4 m-4">
