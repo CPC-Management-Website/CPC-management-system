@@ -22,7 +22,7 @@ function Home() {
     { value: "STLs (Vector, Set, Map, Queue, etc.)" },
     { value: "Elementary Number Theory & Sieve of Eratosthenes" },
     { value: "Binary Search" },
-    { value: "Recursion & Backtracking" },
+    { value: "Bitmasks" },
   ];
 
   const level2Content = [
@@ -35,6 +35,7 @@ function Home() {
     { value: "Graph Shortest Paths" },
     { value: "Disjoint Set Union (DSU)" },
     { value: "Introduction to Dynamic Programming" },
+    { value: "Lowest Common Ancestor (LCA)"}
   ];
 
   const registerLevel = async (level) => {
