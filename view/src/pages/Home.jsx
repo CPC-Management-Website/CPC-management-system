@@ -231,7 +231,7 @@ function Home() {
       </div>
       <div className="flex flex-col lg:items-center p-4 lg:p-0 ">
         <p className="text-5xl font-semibold lg:my-10 mb-4 text-center">
-          Fall 2024 Training
+          Spring 2025 Training
         </p>
         <div className="flex flex-col lg:flex-row">
           <div className="flex flex-col  lg:w-[50%] mb-0 lg:mb-4 m-4">
